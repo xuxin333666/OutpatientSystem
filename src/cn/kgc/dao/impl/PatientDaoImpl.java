@@ -76,6 +76,8 @@ public class PatientDaoImpl implements PatientDao {
 				sql.append(" AND address LIKE ?");
 			} else if(QUERY_KEY_LIST[index++].equals(queryColumnName)) {
 				sql.append(" AND remark LIKE ?");
+			} else if(QUERY_KEY_LIST[index++].equals(queryColumnName)) {
+				sql.append(" AND remark LIKE ?");
 			} else if(QUERY_KEY_LIST[0].equals(queryColumnName)) {
 				sql.append(" AND id LIKE ? OR id LIKE ?");
 			}
