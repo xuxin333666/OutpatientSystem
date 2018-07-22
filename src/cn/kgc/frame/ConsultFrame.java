@@ -31,10 +31,17 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	private static final String KEY_LABEL_CONTENT = "关键字：";
 	private static final String QUERY_BUTTON_CONTENT = "搜索";
 	private static final String[] QUERY_KEY_LIST = {"证号/姓名","性别","婚姻状况","职业","联系地址","初诊处理意见","初诊备注"};   
-	private static final int QUERY_PANEL_HEIGHT = 36;
+	private static final int QUERY_PANEL_HEIGHT = 35;
 	private static final int FOOTER_HEIGHT = 80;
 	private static final int SPLIT_PANE_DIVIDER_LOCATION = 300;
 	private static final int PATIENT_SCROLL_PANE_WIDTH = 1000;
+	private static final int START_TIME_LABEL_POSITION_X = 40;
+	private static final int START_TIME_LABEL_POSITION_Y = 5;
+	private static final int START_TIME_LABEL_WIDTH = 70;
+	private static final int START_TIME_LABEL_HIGHT = 25;
+	private static final int START_TIME_FIELD_WIDTH = 120;
+	private static final int START_TIME_FIELD_HIGHT = 25;
+	private static final int COMPONENT_DISTANSE = 10;
 	
 	
 	private JFrame jFrame = new JFrame(TITLE);
@@ -71,31 +78,39 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	}
 	
 	private void createQueryPanel() {
-		DateChooser dateChooser = DateChooser.getInstance("yyyy-MM-dd");
-		
+		DateChooser startTimeChooser = DateChooser.getInstance("yyyy-MM-dd");
+		DateChooser endTimeChooser = DateChooser.getInstance("yyyy-MM-dd");
+		queryPanel.setLayout(null);
 		
 		JLabel startTimeLabel = new JLabel(START_TIME_LABEL_CONTENT);
+		startTimeLabel.setBounds(START_TIME_LABEL_POSITION_X, START_TIME_LABEL_POSITION_Y, START_TIME_LABEL_WIDTH, START_TIME_LABEL_HIGHT);
 		
-		JPanel startTimePanel = new JPanel();
-		startTimePanel.setLayout(null);
-		dateChooser.register(startTimeField);
-		startTimeField.setBounds(0, 0, 100, 25);
+		startTimeChooser.register(startTimeField); 
+		startTimeField.setBounds(startTimeLabel.getX() + startTimeLabel.getWidth() + COMPONENT_DISTANSE, START_TIME_LABEL_POSITION_Y, START_TIME_FIELD_WIDTH, START_TIME_FIELD_HIGHT);
 		
 		JLabel endTimeLabel = new JLabel(END_TIME_LABEL_CONTENT);
+		endTimeLabel.setBounds(startTimeField.getX() + startTimeField.getWidth() + COMPONENT_DISTANSE, START_TIME_LABEL_POSITION_Y, START_TIME_LABEL_WIDTH, START_TIME_LABEL_HIGHT);
 		
-		dateChooser.register(endTimeField);
+		endTimeChooser.register(endTimeField);
+		endTimeField.setBounds(endTimeLabel.getX() + endTimeLabel.getWidth() + COMPONENT_DISTANSE, START_TIME_LABEL_POSITION_Y, START_TIME_FIELD_WIDTH, START_TIME_FIELD_HIGHT);
 		
 		JLabel queryLocationLabel = new JLabel(QUERY_LOCATION_LABEL_CONTENT);
+		queryLocationLabel.setBounds(endTimeField.getX() + endTimeField.getWidth() + COMPONENT_DISTANSE, START_TIME_LABEL_POSITION_Y, START_TIME_LABEL_WIDTH, START_TIME_LABEL_HIGHT);
 		
 		queryColumnNameComboBox = new JComboBox<>(QUERY_KEY_LIST);
+		queryColumnNameComboBox.setBounds(queryLocationLabel.getX() + queryLocationLabel.getWidth() + COMPONENT_DISTANSE, START_TIME_LABEL_POSITION_Y, START_TIME_FIELD_WIDTH, START_TIME_FIELD_HIGHT);
 		
 		JLabel keyLabel = new JLabel(KEY_LABEL_CONTENT);
+		keyLabel.setBounds(queryColumnNameComboBox.getX() + queryColumnNameComboBox.getWidth() + COMPONENT_DISTANSE, START_TIME_LABEL_POSITION_Y, START_TIME_LABEL_WIDTH, START_TIME_LABEL_HIGHT);
+		
+		keyField.setBounds(keyLabel.getX() + keyLabel.getWidth() + COMPONENT_DISTANSE, START_TIME_LABEL_POSITION_Y, START_TIME_FIELD_WIDTH, START_TIME_FIELD_HIGHT);
 		
 		JButton queryButton = new JButton(QUERY_BUTTON_CONTENT);
+		queryButton.setBounds(keyField.getX() + keyField.getWidth() + COMPONENT_DISTANSE, START_TIME_LABEL_POSITION_Y, START_TIME_LABEL_WIDTH, START_TIME_LABEL_HIGHT);
 		
 		
 		queryPanel.add(startTimeLabel);
-		queryPanel.add(startTimePanel);
+		queryPanel.add(startTimeField);
 		queryPanel.add(endTimeLabel);
 		queryPanel.add(endTimeField);
 		queryPanel.add(queryLocationLabel);
@@ -103,8 +118,6 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 		queryPanel.add(keyLabel);
 		queryPanel.add(keyField);
 		queryPanel.add(queryButton);
-		
-		startTimeLabel.add(startTimeField);
 		
 		queryButton.addActionListener(new PatientQueryButtonListener(this));
 	}
