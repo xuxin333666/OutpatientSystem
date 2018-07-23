@@ -1,6 +1,9 @@
 package cn.kgc.test;
 
+
+
 import cn.kgc.frame.LoginFrame;
+
 
 public class Test1 {
 
@@ -8,6 +11,5 @@ public class Test1 {
 		LoginFrame login = new LoginFrame();
 		login.execute();
 	}
-	
 
 }

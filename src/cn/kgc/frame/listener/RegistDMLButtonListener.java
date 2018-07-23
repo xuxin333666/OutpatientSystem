@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -16,7 +17,9 @@ import cn.kgc.frame.ConsultFrame;
 import cn.kgc.model.Patient;
 import cn.kgc.service.impl.PatientServiceImpl;
 import cn.kgc.service.intf.PatientService;
+import cn.kgc.utils.DateUtils;
 import cn.kgc.utils.FrameUtils;
+import cn.kgc.utils.PatientUtils;
 import cn.kgc.utils.RegistDMLButtonUtils;
 import cn.kgc.utils.StringUtils;
 
@@ -111,29 +114,55 @@ public class RegistDMLButtonListener implements ActionListener {
 		try {
 			for (int i = 0; i < fields.size(); i++) {
 				attributes[i].setAccessible(true);
+				String str;
 				if(fields.get(i) instanceof JTextField) {
 					JTextField field = (JTextField)fields.get(i);
-					String str = field.getText();
+					str = field.getText();
 					if(StringUtils.isEmpty(str)) {
 						if(i==1) {
 							throw new Exception("姓名不能为空！");
 						}
 					}
-					attributes[i].set(patient, str);
+					if(i == 3) {
+						str = DateUtils.calculateAgeByStr(str);					
+					}
 				} else if(fields.get(i) instanceof JTextArea) {
 					JTextArea area = (JTextArea)fields.get(i);
-					String str = area.getText();
-					attributes[i].set(patient, str);
+					str = area.getText();
 				} else {
 					JComboBox<?> combo = (JComboBox<?>)fields.get(i);
-					String str = (String)combo.getSelectedItem();
-					attributes[i].set(patient, str);
+					str = (String)combo.getSelectedItem();
+					if(i == 2) {
+						str = PatientUtils.Str2status(str, PatientUtils.sexRule);
+					} else if(i == 4) {
+						str = PatientUtils.Str2status(str, PatientUtils.marriedRule);
+					} else if(i == 5) {
+						str = PatientUtils.Str2status(str, PatientUtils.jobRule);
+					} else if(i == 7) {
+						str = PatientUtils.Str2status(str, PatientUtils.bloodRule);
+					}
+				
 				}
+				patientSetAttribute(attributes[i],patient,str);
 			}
 		} catch (Exception e) {
 			FrameUtils.DialogErorr("错误，" + e.getMessage());
 		}
-		return null;
+		return patient;
+	}
+
+	private void patientSetAttribute(Field field, Patient patient, String str) throws IllegalArgumentException, IllegalAccessException {
+		Class<?> type = field.getType();
+		if(type.equals(String.class)) {
+			field.set(patient, str);
+		} else if(type.equals(Integer.class)) {
+			field.set(patient, Integer.valueOf(str));
+		} else if(type.equals(Double.class)) {
+			field.set(patient, Double.valueOf(str));
+		} else if(type.equals(Date.class)) {
+			field.set(patient, DateUtils.String2Date(str));
+		}
+		
 	}
 
 	public void undo(JButton button) {

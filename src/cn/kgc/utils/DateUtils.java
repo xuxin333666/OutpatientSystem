@@ -46,4 +46,18 @@ public class DateUtils {
 		return dateFormat.format(bornTime);
 	}
 
+
+	public static String calculateAgeByStr(String birthday) {
+		java.util.Date nowDate = new java.util.Date();
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			java.util.Date birthDate =dateFormat.parse(birthday);
+			long time = nowDate.getTime() - birthDate.getTime();
+			return (time/1000/60/60/24/365) + "";
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}	
+		return null;
+	}
+
 }
