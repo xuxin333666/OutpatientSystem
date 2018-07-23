@@ -24,5 +24,17 @@ public class PatientServiceImpl implements PatientService {
 		List<Patient> patients = patientDao.query(patientDto);
 		return PatientUtils.list2Array(patients);
 	}
+	
+	@Override
+	public Patient getPatientInfoById(String id) throws Exception {
+		PatientDao patientDao = new PatientDaoImpl();
+		return patientDao.query(id);
+	}
+
+	@Override
+	public String getMinEmptyId() throws Exception {
+		PatientDao patientDao = new PatientDaoImpl();
+		return patientDao.queryMinEmptyId();
+	}
 
 }

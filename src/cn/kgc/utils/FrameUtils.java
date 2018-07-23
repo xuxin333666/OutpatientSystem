@@ -2,6 +2,7 @@ package cn.kgc.utils;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,18 +24,31 @@ public class FrameUtils {
 		button.setBorderPainted(false);
 
 		parentPanel.add(button);
+		buttonAddMouseListener(button);
 		
+		
+		return button;		
+	}	
+	
+	public static void buttonAddMouseListener(JButton button) {
 		button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-            	button.setBorderPainted(true);
+            	if(button.isEnabled()) {
+            		button.setBorderPainted(true);          		
+            	}
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
             	button.setBorderPainted(false);
             }
         });
-		
-		return button;		
-	}	
+	}
+	
+	public static void buttonRemoveMouseListener(JButton button) {
+		MouseListener[] mListeners = button.getMouseListeners();
+		for(int j=0;j<mListeners.length;j++) {
+			button.removeMouseListener(mListeners[j]);					
+		}
+	}
 	
 	public static void statusInfo(int status,String succuss,String erorr) {
 		if(status <= 0) {
@@ -47,4 +61,5 @@ public class FrameUtils {
 	public static void DialogErorr(String msg) {
 		JOptionPane.showMessageDialog(null, msg, "´íÎó", JOptionPane.ERROR_MESSAGE);
 	}
+	
 }

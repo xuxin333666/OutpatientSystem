@@ -8,11 +8,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import cn.kgc.frame.intf.BusinessButtonFrameIntf;
 
 
-public class BusinessButtonUtils {
-	private static final String PROPERTIES_URL = "./BusinessButton.properties";
+public class RegistDMLButtonUtils {
+	private static final String PROPERTIES_URL = "./RegistDMLButton.properties";
 	
 	public static Properties p;
 	
@@ -26,11 +25,8 @@ public class BusinessButtonUtils {
 		}
 	}
 	
-	
-	public static BusinessButtonFrameIntf getBusinessButtonFrame(String imgUrl) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		String businessButtonFrameStr = p.getProperty(imgUrl);
-		BusinessButtonFrameIntf businessButtonFrame = (BusinessButtonFrameIntf) Class.forName(businessButtonFrameStr).newInstance();
-		return businessButtonFrame;
+	public static String getMethodName(String imgUrl) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+		return  p.getProperty(imgUrl);
 	}
 	
 	public static List<String> getList() {
@@ -43,4 +39,15 @@ public class BusinessButtonUtils {
 		Collections.sort(imgUrlList);
 		return imgUrlList;
 	} 
+	
+	public static String getButtonNameByMethodName(String methodName) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+		Set<Object> keySet = p.keySet();
+		for (Object key : keySet) {
+			String value = p.getProperty(key.toString());
+			if(value.equals(methodName)) {
+				return key.toString();
+			}
+		}
+		return null;
+	}
 }

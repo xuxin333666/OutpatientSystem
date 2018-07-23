@@ -118,7 +118,87 @@ public class PatientDaoImpl implements PatientDao {
 		return patients;
 	}
 	
+	@Override
+	public Patient query(String id) throws Exception {
+		DBPoolConnection dBP = DBPoolConnection.getInstance();
+		String sql = "SELECT * FROM t_patient WHERE id = ?";
+		Connection cn = null;
+		PreparedStatement psm = null;
+		ResultSet result = null;
+		try {
+			cn = dBP.getConnection();
+			psm = cn.prepareStatement(sql);
+			psm.setString(1, id);
+			result = psm.executeQuery();
+			return result2User(result);		
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			if(cn != null) {
+				cn.close();
+			}	
+		}
+	}
 	
+	@Override
+	public String queryMinEmptyId() throws Exception {
+		DBPoolConnection dBP = DBPoolConnection.getInstance();
+		String sql = "SELECT minid FROM (SELECT id,ROWNUM+10000 minid FROM t_patient) WHERE minid <> id AND ROWNUM = 1";
+		Connection cn = null;
+		PreparedStatement psm = null;
+		ResultSet result = null;
+		try {
+			cn = dBP.getConnection();
+			psm = cn.prepareStatement(sql);
+			result = psm.executeQuery();
+			if(result.next()) {
+				return result.getString("minid");
+			}
+			return queryMaxId();		
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			if(cn != null) {
+				cn.close();
+			}	
+		}
+	}
+	
+	
+	private String queryMaxId() throws Exception {
+		DBPoolConnection dBP = DBPoolConnection.getInstance();
+		String sql = "SELECT nvl(max(id),10000)+1 minid FROM t_patient";
+		Connection cn = null;
+		PreparedStatement psm = null;
+		ResultSet result = null;
+		try {
+			cn = dBP.getConnection();
+			psm = cn.prepareStatement(sql);
+			result = psm.executeQuery();
+			if(result.next()) {
+				return result.getString("minid");
+			}
+			return null;		
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			if(cn != null) {
+				cn.close();
+			}	
+		}
+	}
+	private Patient result2User(ResultSet result) throws SQLException {
+		List<Patient> patients =  new ArrayList<>();
+		result2List(result, patients);
+		if(patients.size() != 0) {
+			return patients.get(0);
+		}
+		return null;
+	}
+	
+	
+
+
 	private void result2List(ResultSet result, List<Patient> patients) throws SQLException {
 		while(result.next()) {
 			int index = 0;

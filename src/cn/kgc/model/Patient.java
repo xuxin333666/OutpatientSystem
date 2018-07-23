@@ -181,6 +181,15 @@ public class Patient {
 	public void setHandlingSug(String handlingSug) {
 		this.handlingSug = handlingSug;
 	}
+
+
+	@Override
+	public String toString() {
+		return "Patient [id=" + id + ", name=" + name + ", sex=" + sex + ", age=" + age + ", married=" + married
+				+ ", job=" + job + ", weight=" + weight + ", blood=" + blood + ", phoneNumber=" + phoneNumber
+				+ ", registerTime=" + registerTime + ", address=" + address + ", allergy=" + allergy + ", handlingSug="
+				+ handlingSug + ", remark=" + remark + "]";
+	}
 	
 	
 }

@@ -36,5 +36,14 @@ public class DateUtils {
 		}
 		return date;		
 	}
+	
+	
+	public static String age2Date(Double age) {
+		java.util.Date nowTime = new java.util.Date();
+		long time = nowTime.getTime() - (long)(age*365*24*60*60*1000);
+		java.util.Date bornTime = new java.util.Date(time);
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		return dateFormat.format(bornTime);
+	}
 
 }

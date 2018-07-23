@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.kgc.dao.intf.UserDao;
 import cn.kgc.model.User;
@@ -24,14 +26,7 @@ public class UserDaoImpl implements UserDao {
 			psm.setString(1, user.getName());
 			psm.setString(2, user.getPwd());
 			result = psm.executeQuery();
-			if(result.next()) {
-				String id = result.getString("id");
-				String name = result.getString("name");
-				String pwd = result.getString("pwd");
-				String status = result.getString("status");
-				User queryUser = new User(id, name, pwd, status);
-				return queryUser;
-			}
+			result2User(result);		
 		} catch (SQLException e) {
 			throw new Exception(e.getMessage());
 		} finally {
@@ -40,6 +35,28 @@ public class UserDaoImpl implements UserDao {
 			}	
 		}
 		return null;
+	}
+	
+	
+	private User result2User(ResultSet result) throws SQLException {
+		List<User> users = result2List(result);
+		if(users.size() != 0) {
+			return result2List(result).get(0);
+		}
+		return null;
+	}
+
+	private List<User> result2List(ResultSet result) throws SQLException {
+		List<User> users = new ArrayList<>();
+		while(result.next()) {
+			String id = result.getString("id");
+			String name = result.getString("name");
+			String pwd = result.getString("pwd");
+			String status = result.getString("status");
+			User queryUser = new User(id, name, pwd, status);
+			users.add(queryUser);
+		}
+		return users;
 	}
 
 	@Override

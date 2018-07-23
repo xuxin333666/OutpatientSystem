@@ -23,13 +23,15 @@ import javax.swing.JTextField;
 
 import cn.kgc.frame.intf.BusinessButtonFrameIntf;
 import cn.kgc.frame.listener.PatientQueryButtonListener;
+import cn.kgc.frame.listener.PatientTableFocusListener;
+import cn.kgc.frame.listener.RegistDMLButtonListener;
 import cn.kgc.frame.model.PatientTableModel;
 import cn.kgc.service.impl.PatientServiceImpl;
 import cn.kgc.service.intf.PatientService;
-import cn.kgc.utils.DMLPatientButtonUtils;
 import cn.kgc.utils.DateChooser;
 import cn.kgc.utils.FrameUtils;
 import cn.kgc.utils.PatientUtils;
+import cn.kgc.utils.RegistDMLButtonUtils;
 import cn.kgc.utils.ScreenSizeUtils;
 import cn.kgc.utils.StringUtils;
 
@@ -43,6 +45,7 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	private static final String KEY_LABEL_CONTENT = "关键字：";
 	private static final String QUERY_BUTTON_CONTENT = "搜索";
 	private static final String REGIST_TITLE_LABEL_CONTENT = "患者初诊登记";
+	private static final String REGIST_CONTENT_LINE_IMGURL = "./img/line.jpg";
 	private static final String[] QUERY_KEY_LIST = {"证号/姓名","性别","婚姻状况","职业","联系地址","初诊处理意见","初诊备注"};
 	
 	private static final int PATIENT_ATTRIBUTE_COUNT = PatientUtils.PATIENT_ATTRIBUTE_COUNT;
@@ -80,7 +83,7 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	private JPanel patientTablePanel = new JPanel();
 	private JTabbedPane patientRegistTabbedPane = new JTabbedPane();
 	private JSplitPane contentPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, patientTablePanel, patientRegistTabbedPane);
-	private static JTable patientTable;
+	public static JTable patientTable;
 	
 	private JPanel queryPanel = new JPanel();
 	private JTextField startTimeField  = new JTextField();
@@ -91,9 +94,10 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	private JPanel registPanel = new JPanel();
 	private JPanel DMLButtonPanel = new JPanel();
 	private JPanel registContentPanel = new JPanel();
-	private List<JComponent> fields = new ArrayList<>();
+	private List<JComponent> registContentFields = new ArrayList<>();
+	private List<JButton> registDMLButtons = new ArrayList<>();
 	
-	private List<String> imgUrl = DMLPatientButtonUtils.getList();
+	private List<String> imgUrl = RegistDMLButtonUtils.getList();
 	
 	
 	
@@ -168,6 +172,7 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 		JScrollPane scrollPane = new JScrollPane(patientTable);
 		scrollPane.setBounds(0, 0, PATIENT_SCROLL_PANE_WIDTH, ScreenSizeUtils.screenHeight-QUERY_PANEL_HEIGHT - FOOTER_HEIGHT);
 		patientTablePanel.add(scrollPane);
+		patientTable.addFocusListener(new PatientTableFocusListener(this));
 		getDataAndRefreshTable();
 	}
 	
@@ -194,7 +199,7 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	}
 
 	private void createRegistContentPanel() {
-		ImageIcon lineImg = new ImageIcon("./img/line.jpg");
+		ImageIcon lineImg = new ImageIcon(REGIST_CONTENT_LINE_IMGURL);
 		lineImg.setImage(lineImg.getImage().getScaledInstance(DML_BUTTON_PANEL_WIDTH,5,Image.SCALE_DEFAULT ));
 		JLabel lineLabel = new JLabel(lineImg);
 		lineLabel.setBounds(REGIST_TITLE_LABEL_WIDTH, REGIST_TITLE_LABEL_HEIGHT/2,DML_BUTTON_PANEL_WIDTH,LINE_LABEL_HEIGHT);
@@ -257,17 +262,21 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 				X = REGIST_INPUT_CONTENT_POSITON_X;
 				Y += field.getHeight() + COMPONENT_DISTANSE;			
 			}
-			fields.add(field);
+			registContentFields.add(field);
 			registInputContentPanel.add(field);
 			registInputContentPanel.add(idLabel);
-		}
-		
+		}	
 	}
 
 	private void createDMLButtonPanel() {
 		for(int i=0,positionX=0;i<imgUrl.size();i++) {
-			FrameUtils.addButton(imgUrl.get(i), positionX, DML_BUTTON_WIDTH, DML_BUTTON_PANEL_HEIGHT, DMLButtonPanel);
-//			button.addActionListener(new );
+			JButton button = FrameUtils.addButton(imgUrl.get(i), positionX, DML_BUTTON_WIDTH, DML_BUTTON_PANEL_HEIGHT, DMLButtonPanel);
+			button.setName(imgUrl.get(i));
+			if("./img/004.PNG".equals(imgUrl.get(i)) || "./img/005.PNG".equals(imgUrl.get(i))) {
+				button.setEnabled(false);
+			}
+			registDMLButtons.add(button);
+			button.addActionListener(new RegistDMLButtonListener(this));
 			positionX += DML_BUTTON_WIDTH;
 		}
 		
@@ -313,6 +322,18 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 
 	public JTextField getKeyField() {
 		return keyField;
+	}
+
+	public static int getDmlButtonPanelWidth() {
+		return DML_BUTTON_PANEL_WIDTH;
+	}
+
+	public List<JComponent> getRegistContentFields() {
+		return registContentFields;
+	}
+
+	public List<JButton> getRegistDMLButtons() {
+		return registDMLButtons;
 	}
 	
 }
