@@ -20,7 +20,7 @@ public class PatientDaoImpl implements PatientDao {
 	private final String SQL_ERORR = "后台数据错误，";
 	private final String[] COLUMN_NAME = {"id","name","sex","age","married","job",
 										"weight","blood","phone_number","register_time",
-										"address","allergy","remark"};
+										"address","allergy","handling_sug","remark"};
 	private static final String[] QUERY_KEY_LIST = {"证号/姓名","性别","婚姻状况","职业","联系地址","初诊处理意见","初诊备注"};  
 	@Override
 	public List<Patient> query() throws Exception {
@@ -75,7 +75,7 @@ public class PatientDaoImpl implements PatientDao {
 			} else if(QUERY_KEY_LIST[index++].equals(queryColumnName)) {
 				sql.append(" AND address LIKE ?");
 			} else if(QUERY_KEY_LIST[index++].equals(queryColumnName)) {
-				sql.append(" AND remark LIKE ?");
+				sql.append(" AND handling_sug LIKE ?");
 			} else if(QUERY_KEY_LIST[index++].equals(queryColumnName)) {
 				sql.append(" AND remark LIKE ?");
 			} else if(QUERY_KEY_LIST[0].equals(queryColumnName)) {
@@ -134,9 +134,10 @@ public class PatientDaoImpl implements PatientDao {
 			Date registerTime = result.getDate(COLUMN_NAME[index++]);
 			String address = result.getString(COLUMN_NAME[index++]);
 			String allergy = result.getString(COLUMN_NAME[index++]);
+			String handlingSug = result.getString(COLUMN_NAME[index++]);
 			String remark = result.getString(COLUMN_NAME[index++]);
 			Patient patient = new Patient(id, name, sex, age, married, job, weight, blood, 
-					phoneNumber, registerTime, address, allergy, remark);
+					phoneNumber, registerTime, address, allergy,handlingSug, remark);
 			patients.add(patient);
 		}
 	}

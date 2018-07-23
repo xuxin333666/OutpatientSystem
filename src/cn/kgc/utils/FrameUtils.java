@@ -1,25 +1,40 @@
 package cn.kgc.utils;
 
+import java.awt.Color;
+import java.awt.Image;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+
 
 
 public class FrameUtils {
 	
 	
-//	public static String[] getText(JTextField[] jTextFields) {
-//		if(jTextFields == null) {
-//			return null;
-//		}
-//		String[] datas = new String[jTextFields.length];
-//		int count = 0;
-//		for (JTextField jTextField : jTextFields) {
-//			if(jTextField != null) {
-//				datas[count++] = jTextField.getText();				
-//			}
-//		}
-//		return datas;
-//	}
-//	
+	public static JButton addButton(String imgUrl,int positionX ,int width,int height,JPanel parentPanel) {
+		ImageIcon img = new ImageIcon(imgUrl);
+		img.setImage(img.getImage().getScaledInstance(width-10,height-10,Image.SCALE_DEFAULT ));
+		JButton button = new JButton(img);
+		button.setBounds(positionX, 0,width, height);
+		button.setBackground(Color.WHITE);
+		button.setBorderPainted(false);
+
+		parentPanel.add(button);
+		
+		button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+            	button.setBorderPainted(true);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+            	button.setBorderPainted(false);
+            }
+        });
+		
+		return button;		
+	}	
 	
 	public static void statusInfo(int status,String succuss,String erorr) {
 		if(status <= 0) {

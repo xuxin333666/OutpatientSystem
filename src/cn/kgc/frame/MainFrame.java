@@ -2,16 +2,21 @@ package cn.kgc.frame;
 
 
 import java.awt.Image;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
+import cn.kgc.frame.listener.BusinessButtonListener;
 import cn.kgc.frame.listener.ModifyPswButtonListener;
 import cn.kgc.model.User;
+import cn.kgc.utils.BusinessButtonUtils;
 import cn.kgc.utils.FrameUtils;
 import cn.kgc.utils.ScreenSizeUtils;
 
@@ -34,6 +39,8 @@ public class MainFrame {
 	private final int DEFAULT_DISTANCE = 10;
 	private final int MODIFYPWD_PANEL_WIDTH = MODIFYPWD_LABEL_WIDTH+MODIFYPWD_FIELD_WIDTH+MODIFYPWD_BUTTON_WIDTH + 2*DEFAULT_DISTANCE;
 	private final int MODIFYPWD_PANEL_HEIGHT = ScreenSizeUtils.screenHeight;
+	
+	private final int MENUBAR_HEIGHT = 23;
 	
 	private static MainFrame mainFrame;
 	private User user;
@@ -134,6 +141,72 @@ public class MainFrame {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+	
+	
+	public class MainMenuBarFrame {
+		private final String[] MENU_LIST = {"划价收费管理（S）","处方病例管理（T）","药房管理（U）","人事管理（V）","财务管理（W）","查询报表（X）","信息维护管理（Y）","帮助（Z）"};
+		
+		private JPanel servicePanel;
+		private JMenuBar menuBar = new JMenuBar();
+		
+		public MainMenuBarFrame(JPanel servicePanel) {
+			this.servicePanel = servicePanel;
+		}
+		
+		public void execute() {	
+			menuBar.setBounds(0, 0, ScreenSizeUtils.screenWidth, MENUBAR_HEIGHT);
+			addMenu();
+			servicePanel.add(menuBar);
+			
+		}
+		
+		private void addMenu() {
+			for (String string : MENU_LIST) {
+				JMenu menu = new JMenu(string);
+				menuBar.add(menu);
+			}
+		}
+
+		public JMenuBar getMenuBar() {
+			return menuBar;
+		}
+
+	}
+	
+	
+	public class BusinessButtonFrame {
+		private final int BUSINESS_BUTTON_PANEL_HEIGHT = 70;
+		private final int BUSINESS_BUTTON_WIDTH = 70;
+		
+		
+		
+		private List<String> BusinessButtonUrlList = BusinessButtonUtils.getList();
+		private JPanel servicePanel;
+		private JPanel buttonPanel = new JPanel();
+		
+		public BusinessButtonFrame(JPanel servicePanel) {
+			this.servicePanel = servicePanel;
+		}
+
+		public void execute() {	
+			buttonPanel.setOpaque(false);
+			buttonPanel.setLayout(null);
+			buttonPanel.setBounds(0, MENUBAR_HEIGHT, ScreenSizeUtils.screenWidth, BUSINESS_BUTTON_PANEL_HEIGHT);		
+			servicePanel.add(buttonPanel);
+			addButton();
+		}
+
+		private void addButton() {
+			int positionX = 0;
+			for (String string : BusinessButtonUrlList) {
+				JButton button = FrameUtils.addButton(string, positionX, BUSINESS_BUTTON_WIDTH, BUSINESS_BUTTON_PANEL_HEIGHT, buttonPanel);
+				button.addActionListener(new BusinessButtonListener(string));
+				positionX += BUSINESS_BUTTON_WIDTH;
+			}
+		}
+		
+		
 	}
 
 }

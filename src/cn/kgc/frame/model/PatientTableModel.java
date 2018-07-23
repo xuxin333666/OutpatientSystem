@@ -1,5 +1,6 @@
 package cn.kgc.frame.model;
 
+
 import javax.swing.table.AbstractTableModel;
 
 public class PatientTableModel extends AbstractTableModel {
@@ -10,10 +11,10 @@ public class PatientTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -2768971685554043463L;
 	private static PatientTableModel patientTableModel;
 	private Object[][] datas;
-	private final String[] columnName = {"医疗证号","姓名","性别","年龄","婚姻状态","职业","体重",
-									"血型","联系电话","登记日期","地址","过敏史","备注"};
+	private final String[] columnName = {"医疗证号","姓名","性别","年龄","婚姻状态","职业","体重(KG)",
+									"血型","联系电话","登记日期","地址","过敏史","初诊意见","备注"};
 
-	
+
 	
 	private PatientTableModel() {}
 	
@@ -52,5 +53,6 @@ public class PatientTableModel extends AbstractTableModel {
 	public String[] getColumnName() {
 		return columnName;
 	}
+
 
 }

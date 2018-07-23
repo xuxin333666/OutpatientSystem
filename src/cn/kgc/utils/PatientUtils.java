@@ -8,7 +8,7 @@ import java.util.Set;
 import cn.kgc.model.Patient;
 
 public class PatientUtils {
-	private static final int PATIENT_ATTRIBUTE_COUNT = 13;
+	public static final int PATIENT_ATTRIBUTE_COUNT = 14;
 	private static final String STATUS_ERORR = "δ֪";
 	public static HashMap<String, String> sexRule;
 	public static HashMap<String, String> marriedRule;
@@ -55,6 +55,7 @@ public class PatientUtils {
 			datas[count][index++] = patient.getRegisterTime();
 			datas[count][index++] = patient.getAddress();
 			datas[count][index++] = patient.getAllergy();
+			datas[count][index++] = patient.getHandlingSug();
 			datas[count++][index++] = patient.getRemark();
 		}
 		return datas;
@@ -71,7 +72,7 @@ public class PatientUtils {
 	public static String Str2status(String str,Map<String, String> rule) {
 		Set<String> set = rule.keySet();
 		for (String string : set) {
-			if(rule.get(string).equals(str)) {
+			if(rule.get(string).indexOf(str) != -1) {
 				return string;
 			}
 		}

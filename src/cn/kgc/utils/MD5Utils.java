@@ -20,4 +20,5 @@ public class MD5Utils {
         String newstr=base64en.encode(md5.digest(str.getBytes("utf-8")));
         return newstr;
     }
+	
 }

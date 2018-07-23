@@ -15,6 +15,7 @@ public class Patient {
 	private Date registerTime;
 	private String address;
 	private String allergy;
+	private String handlingSug;
 	private String remark;
 	
 	
@@ -24,7 +25,7 @@ public class Patient {
 	public Patient(String id, String name, String sex, 
 			Double age, String married, String job, Double weight,
 			String blood, String phoneNumber, Date registerTime, 
-			String address, String allergy, String remark) {
+			String address, String allergy,String handlingSug, String remark) {
 		this.id = id;
 		this.name = name;
 		this.sex = sex;
@@ -37,6 +38,7 @@ public class Patient {
 		this.registerTime = registerTime;
 		this.address = address;
 		this.allergy = allergy;
+		this.handlingSug = handlingSug;
 		this.remark = remark;
 	}
 
@@ -168,6 +170,16 @@ public class Patient {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+
+	public String getHandlingSug() {
+		return handlingSug;
+	}
+
+
+	public void setHandlingSug(String handlingSug) {
+		this.handlingSug = handlingSug;
 	}
 	
 	
