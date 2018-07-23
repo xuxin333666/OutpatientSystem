@@ -1,10 +1,12 @@
 package cn.kgc.frame;
 
 
+import java.awt.Color;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -225,6 +227,7 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 				field.setBounds(X, Y, REGUST_INPUT_CONTENT_FIELD_BIG_WIDTH, REGUST_INPUT_CONTENT_FIELD_HEIGHT);
 			} else if(colName.equals("初诊意见") || colName.equals("备注")) {
 				field = new JTextArea();
+				field.setBorder (BorderFactory.createLineBorder(Color.GRAY,1));
 				field.setBounds(X, Y, REGUST_INPUT_CONTENT_FIELD_BIG_WIDTH, REGUST_INPUT_CONTENT_AREA_HEIGHT);	
 			} else {
 				if(colName.equals("性别")) {
