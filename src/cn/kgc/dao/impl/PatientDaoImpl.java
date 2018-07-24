@@ -1,5 +1,6 @@
 package cn.kgc.dao.impl;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -26,7 +27,7 @@ public class PatientDaoImpl implements PatientDao {
 	public List<Patient> query() throws Exception {
 		DBPoolConnection dbp = new DBPoolConnection();
 		List<Patient> patients =  new ArrayList<>();
-		String sql = "SELECT * FROM t_patient";
+		String sql = "SELECT * FROM t_patient ORDER BY id";
 		Connection cn = null;
 		PreparedStatement psm = null;
 		ResultSet result = null;
@@ -81,6 +82,7 @@ public class PatientDaoImpl implements PatientDao {
 			} else if(QUERY_KEY_LIST[0].equals(queryColumnName)) {
 				sql.append(" AND id LIKE ? OR id LIKE ?");
 			}
+			sql.append(" ORDER BY id");
 		}
 		Connection cn = null;
 		PreparedStatement psm = null;
@@ -164,7 +166,97 @@ public class PatientDaoImpl implements PatientDao {
 		}
 	}
 	
+	@Override
+	public int insert(Patient patient) throws Exception {
+		DBPoolConnection dBP = DBPoolConnection.getInstance();
+		String sql = "INSERT INTO t_patient VALUES (?,?,?,?,?,?,?,?,?,nvl(?,SYSDATE),?,?,?,?)";
+		Connection cn = null;
+		PreparedStatement psm = null;
+		try {
+			cn = dBP.getConnection();
+			psm = cn.prepareStatement(sql);
+			prepareStatementSetValue(psm,patient,0);
+			return psm.executeUpdate();	
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			if(cn != null) {
+				cn.close();
+			}	
+		}
+	}
 	
+	@Override
+	public int update(Patient patient) throws Exception {
+		DBPoolConnection dBP = DBPoolConnection.getInstance();
+		StringBuilder sql = new StringBuilder("UPDATE t_patient SET");
+		Connection cn = null;
+		PreparedStatement psm = null;
+		for (int i=1;i<COLUMN_NAME.length;i++) {
+			sql.append(" " + COLUMN_NAME[i] + " = ?");
+			if(i != COLUMN_NAME.length-1) {
+				sql.append(",");
+			}
+		}
+		sql.append(" WHERE id = ?");	
+		try {
+			cn = dBP.getConnection();
+			psm = cn.prepareStatement(sql.toString());
+			prepareStatementSetValue(psm,patient,1);
+			psm.setString(14, patient.getId());
+			return psm.executeUpdate();	
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			if(cn != null) {
+				cn.close();
+			}	
+		}
+	}
+	
+	
+	@Override
+	public int delete(String id) throws Exception {
+		DBPoolConnection dBP = DBPoolConnection.getInstance();
+		String sql = "DELETE FROM t_patient WHERE id = ?";
+		Connection cn = null;
+		PreparedStatement psm = null;
+		try {
+			cn = dBP.getConnection();
+			psm = cn.prepareStatement(sql);
+			psm.setString(1, id);
+			return psm.executeUpdate();	
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			if(cn != null) {
+				cn.close();
+			}	
+		}
+	}
+	
+	
+	private void prepareStatementSetValue(PreparedStatement psm,Patient patient,int i) throws IllegalArgumentException, IllegalAccessException, SQLException {
+		Field[] fields = patient.getClass().getDeclaredFields();
+		int index = 1;
+		for (;i<fields.length;i++) {
+			fields[i].setAccessible(true);
+			Object value = fields[i].get(patient);
+			if(value == null) {
+				psm.setObject(index++, null);
+				continue;
+			}
+			Class<?> clazz = fields[i].getType();
+			if(clazz.equals(String.class)) {
+				psm.setString(index++, value.toString());
+			} else if (clazz.equals(Double.class)) {
+				psm.setDouble(index++,Double.valueOf(value.toString()));
+			} else if(clazz.equals(java.util.Date.class)) {
+				psm.setDate(index++, DateUtils.date2SqlDate((java.util.Date)value));
+			}
+		}
+		
+	}
 	private String queryMaxId() throws Exception {
 		DBPoolConnection dBP = DBPoolConnection.getInstance();
 		String sql = "SELECT nvl(max(id),10000)+1 minid FROM t_patient";
@@ -221,5 +313,8 @@ public class PatientDaoImpl implements PatientDao {
 			patients.add(patient);
 		}
 	}
+
+
+
 
 }

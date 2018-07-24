@@ -20,10 +20,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 import cn.kgc.frame.intf.BusinessButtonFrameIntf;
 import cn.kgc.frame.listener.PatientQueryButtonListener;
-import cn.kgc.frame.listener.PatientTableFocusListener;
+import cn.kgc.frame.listener.PatientTableMouseAdapter;
 import cn.kgc.frame.listener.RegistDMLButtonListener;
 import cn.kgc.frame.model.PatientTableModel;
 import cn.kgc.service.impl.PatientServiceImpl;
@@ -168,11 +169,12 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	private void createPatientTablePanel() {
 		PatientTableModel patientTableModel = PatientTableModel.getInstance();
 		patientTable = new JTable(patientTableModel);
+		patientTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		patientTablePanel.setLayout(null);
 		JScrollPane scrollPane = new JScrollPane(patientTable);
 		scrollPane.setBounds(0, 0, PATIENT_SCROLL_PANE_WIDTH, ScreenSizeUtils.screenHeight-QUERY_PANEL_HEIGHT - FOOTER_HEIGHT);
 		patientTablePanel.add(scrollPane);
-		patientTable.addFocusListener(new PatientTableFocusListener(this));
+		patientTable.addMouseListener(new PatientTableMouseAdapter(this));
 		getDataAndRefreshTable();
 	}
 	
@@ -227,7 +229,7 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 			idLabel.setBounds(X, Y, REGUST_INPUT_CONTENT_LABEL_WIDTH, REGUST_INPUT_CONTENT_LABEL_HEIGHT);
 			X += REGUST_INPUT_CONTENT_LABEL_WIDTH;
 			
-			JComponent field = new JTextField();			
+			JComponent field = new JTextField();
 			if(colName.equals("地址") || colName.equals("过敏史")) {
 				field.setBounds(X, Y, REGUST_INPUT_CONTENT_FIELD_BIG_WIDTH, REGUST_INPUT_CONTENT_FIELD_HEIGHT);
 			} else if(colName.equals("初诊意见") || colName.equals("备注")) {
@@ -282,7 +284,7 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 		
 	}
 
-	private void getDataAndRefreshTable() {
+	public void getDataAndRefreshTable() {
 		PatientService patientService = new PatientServiceImpl();
 		Object[][] datas;
 		try {		

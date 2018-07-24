@@ -1,7 +1,7 @@
 package cn.kgc.frame.listener;
 
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -18,15 +18,15 @@ import cn.kgc.service.intf.PatientService;
 import cn.kgc.utils.DateUtils;
 import cn.kgc.utils.FrameUtils;
 
-public class PatientTableFocusListener implements FocusListener {
+public class PatientTableMouseAdapter implements MouseListener {
 	private ConsultFrame consultFrame;
 	
-	public PatientTableFocusListener(ConsultFrame consultFrame) {
+	public PatientTableMouseAdapter(ConsultFrame consultFrame) {
 		this.consultFrame = consultFrame;
 	}
 
 	@Override
-	public void focusGained(FocusEvent e) {
+	public void mouseClicked(MouseEvent e) {
 		JTable table = ConsultFrame.patientTable;
 		if(table.getSelectedRowCount() == 1) {
 			int rowNo = table.getSelectedRow();
@@ -64,6 +64,18 @@ public class PatientTableFocusListener implements FocusListener {
 	}
 
 	@Override
-	public void focusLost(FocusEvent e) {}
+	public void mousePressed(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		mouseClicked(e);
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
+	
 
 }

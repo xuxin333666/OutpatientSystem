@@ -13,4 +13,10 @@ public interface PatientService {
 
 	String getMinEmptyId() throws Exception;
 
+	int add(Patient patient) throws Exception;
+
+	int modify(Patient patient) throws Exception;
+
+	int delete(String id) throws Exception;
+
 }

@@ -14,5 +14,11 @@ public interface PatientDao {
 	Patient query(String id) throws Exception;
 
 	String queryMinEmptyId() throws Exception;
+
+	int insert(Patient patient) throws Exception;
+
+	int update(Patient patient) throws Exception;
+
+	int delete(String id) throws Exception;
 	
 }

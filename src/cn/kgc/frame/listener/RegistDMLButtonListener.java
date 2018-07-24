@@ -13,6 +13,7 @@ import javax.swing.JComponent;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+
 import cn.kgc.frame.ConsultFrame;
 import cn.kgc.model.Patient;
 import cn.kgc.service.impl.PatientServiceImpl;
@@ -32,9 +33,12 @@ public class RegistDMLButtonListener implements ActionListener {
 	private static final int DEFAULT_INDEX = 0;
 	private static final String OTHER_TO_DO = "暂未开发该功能";
 	private static final String DEFAULT_CONTENT = "";
+	private static final String SAVE_SUCCUSS = "保存成功";
+	private static final String SAVE_ERORR = "保存失败";
 	
 	private ConsultFrame consultFrame;
 	private static int command;
+	private PatientService patientService = new PatientServiceImpl();	
 	
 	public RegistDMLButtonListener(ConsultFrame consultFrame) {
 		this.consultFrame = consultFrame;
@@ -42,6 +46,10 @@ public class RegistDMLButtonListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		List<JComponent> fields = consultFrame.getRegistContentFields();
+		JTextField field = (JTextField)fields.get(0);
+		field.setEditable(false);
+		
 		JButton button = (JButton)e.getSource();
 		try {
 			String methodName = RegistDMLButtonUtils.getMethodName(button.getName());
@@ -49,6 +57,7 @@ public class RegistDMLButtonListener implements ActionListener {
 			method.invoke(this,button);
 		} catch (Exception e1) {
 			e1.printStackTrace();
+			FrameUtils.DialogErorr("错误，" + e1.getMessage());
 		}
 	}
 	
@@ -57,9 +66,7 @@ public class RegistDMLButtonListener implements ActionListener {
 		controlButtonEnable();
 		List<JComponent> fields = consultFrame.getRegistContentFields();
 		emptyRegistContentFields(fields);
-		JTextField field = (JTextField)fields.get(0);
-		field.setEditable(false);
-		PatientService patientService = new PatientServiceImpl();			
+		JTextField field = (JTextField)fields.get(0);		
 		try {
 			String id = patientService.getMinEmptyId();
 			field.setText(id);
@@ -94,64 +101,93 @@ public class RegistDMLButtonListener implements ActionListener {
 	}
 	
 	public void savePatient(JButton button) {
-		switch(command) {
-		case COMMAND_ADD:
-			List<JComponent> fields = consultFrame.getRegistContentFields();
-			Patient patient = RegistContentFieldsValue2Patient(fields);
+		int status = 0;
+		List<JComponent> fields = consultFrame.getRegistContentFields();
+		try {
+			switch(command) {
+			case COMMAND_ADD:
+				Patient patient = RegistContentFieldsValue2Patient(fields);
+				status = patientService.add(patient);				
 			break;
-		case COMMAND_MODIFY:
-			break;
-		case COMMAND_DELETE:
-			break;
+			case COMMAND_MODIFY:
+				patient = RegistContentFieldsValue2Patient(fields);
+				status = patientService.modify(patient);
+				break;
+			case COMMAND_DELETE:
+				JTextField idField = (JTextField)fields.get(0);
+				String id = idField.getText();
+				status = patientService.delete(id);
+				if(status != 0) {
+					emptyRegistContentFields(fields);
+				}
+				break;
+			}
+			FrameUtils.statusInfo(status, SAVE_SUCCUSS, SAVE_ERORR);
+			consultFrame.getDataAndRefreshTable();
+			command = COMMAND_SAVE;
+			controlButtonEnable();
+		} catch (Exception e) {
+			FrameUtils.DialogErorr("错误，" + e.getMessage());
+			e.printStackTrace();
 		}
-		command = COMMAND_SAVE;
+	}
+	
+	public void undo(JButton button) {
+		List<JComponent> fields = consultFrame.getRegistContentFields();
+		emptyRegistContentFields(fields);
+		command = COMMAND_UNDO;
 		controlButtonEnable();
 	}
 	
-	private Patient RegistContentFieldsValue2Patient(List<JComponent> fields) {
+	public void otherToDo(JButton button) {
+		FrameUtils.DialogErorr(OTHER_TO_DO);
+	}
+	
+	private Patient RegistContentFieldsValue2Patient(List<JComponent> fields) throws Exception {
 		Patient patient = new Patient();
 		Field[] attributes = patient.getClass().getDeclaredFields();
-		try {
-			for (int i = 0; i < fields.size(); i++) {
-				attributes[i].setAccessible(true);
-				String str;
-				if(fields.get(i) instanceof JTextField) {
-					JTextField field = (JTextField)fields.get(i);
-					str = field.getText();
-					if(StringUtils.isEmpty(str)) {
-						if(i==1) {
-							throw new Exception("姓名不能为空！");
-						}
+		for (int i = 0; i < fields.size(); i++) {
+			attributes[i].setAccessible(true);
+			String str;
+			if(fields.get(i) instanceof JTextField) {
+				JTextField field = (JTextField)fields.get(i);
+				str = field.getText();
+				if(StringUtils.isEmpty(str)) {
+					if(i==1) {
+						throw new Exception("姓名不能为空！");
 					}
-					if(i == 3) {
-						str = DateUtils.calculateAgeByStr(str);					
-					}
-				} else if(fields.get(i) instanceof JTextArea) {
-					JTextArea area = (JTextArea)fields.get(i);
-					str = area.getText();
-				} else {
-					JComboBox<?> combo = (JComboBox<?>)fields.get(i);
-					str = (String)combo.getSelectedItem();
-					if(i == 2) {
-						str = PatientUtils.Str2status(str, PatientUtils.sexRule);
-					} else if(i == 4) {
-						str = PatientUtils.Str2status(str, PatientUtils.marriedRule);
-					} else if(i == 5) {
-						str = PatientUtils.Str2status(str, PatientUtils.jobRule);
-					} else if(i == 7) {
-						str = PatientUtils.Str2status(str, PatientUtils.bloodRule);
-					}
-				
 				}
-				patientSetAttribute(attributes[i],patient,str);
+				if(i == 3) {
+					str = DateUtils.calculateAgeByStr(str);					
+				}
+			} else if(fields.get(i) instanceof JTextArea) {
+				JTextArea area = (JTextArea)fields.get(i);
+				str = area.getText();
+			} else {
+				JComboBox<?> combo = (JComboBox<?>)fields.get(i);
+				str = (String)combo.getSelectedItem();
+				if(i == 2) {
+					str = PatientUtils.Str2status(str, PatientUtils.sexRule);
+				} else if(i == 4) {
+					str = PatientUtils.Str2status(str, PatientUtils.marriedRule);
+				} else if(i == 5) {
+					str = PatientUtils.Str2status(str, PatientUtils.jobRule);
+				} else if(i == 7) {
+					str = PatientUtils.Str2status(str, PatientUtils.bloodRule);
+				}
+			
 			}
-		} catch (Exception e) {
-			FrameUtils.DialogErorr("错误，" + e.getMessage());
-		}
+			patientSetAttribute(attributes[i],patient,str);
+			}
+		
 		return patient;
 	}
 
 	private void patientSetAttribute(Field field, Patient patient, String str) throws IllegalArgumentException, IllegalAccessException {
+		if(StringUtils.isEmpty(str)) {
+			field.set(patient, null);
+			return;
+		}
 		Class<?> type = field.getType();
 		if(type.equals(String.class)) {
 			field.set(patient, str);
@@ -165,14 +201,6 @@ public class RegistDMLButtonListener implements ActionListener {
 		
 	}
 
-	public void undo(JButton button) {
-		command = COMMAND_UNDO;
-		controlButtonEnable();
-	}
-	
-	public void otherToDo(JButton button) {
-		FrameUtils.DialogErorr(OTHER_TO_DO);
-	}
 	
 	private void controlButtonEnable() {
 		List<JButton> buttons = consultFrame.getRegistDMLButtons();

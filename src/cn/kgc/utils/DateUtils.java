@@ -26,6 +26,9 @@ public class DateUtils {
 	}
 	
 	public static java.util.Date String2Date(String dateStr) {
+		if(StringUtils.isEmpty(dateStr)) {
+			return null;
+		}
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		java.util.Date date = null;
 		try {
@@ -48,6 +51,9 @@ public class DateUtils {
 
 
 	public static String calculateAgeByStr(String birthday) {
+		if(StringUtils.isEmpty(birthday)) {
+			return null;
+		}
 		java.util.Date nowDate = new java.util.Date();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		try {

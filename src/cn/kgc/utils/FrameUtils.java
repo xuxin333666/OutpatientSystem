@@ -50,9 +50,9 @@ public class FrameUtils {
 		}
 	}
 	
-	public static void statusInfo(int status,String succuss,String erorr) {
+	public static void statusInfo(int status,String succuss,String erorr) throws Exception {
 		if(status <= 0) {
-			JOptionPane.showMessageDialog(null, erorr, "´íÎó", JOptionPane.ERROR_MESSAGE);
+			throw new Exception(erorr);
 		} else {
 			JOptionPane.showMessageDialog(null, succuss, "³É¹¦", JOptionPane.INFORMATION_MESSAGE);
 		}
