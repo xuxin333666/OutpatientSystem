@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import cn.kgc.frame.intf.BusinessButtonFrameIntf;
 
 
 public class CaseDMLButtonUtils {
@@ -27,11 +26,9 @@ public class CaseDMLButtonUtils {
 	}
 	
 	
-//	public static BusinessButtonFrameIntf getBusinessButtonFrame(String imgUrl) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-//		String businessButtonFrameStr = p.getProperty(imgUrl);
-//		BusinessButtonFrameIntf businessButtonFrame = (BusinessButtonFrameIntf) Class.forName(businessButtonFrameStr).newInstance();
-//		return businessButtonFrame;
-//	}
+	public static String getMethodName(String imgUrl) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+		return  p.getProperty(imgUrl);
+	}
 	
 	public static List<String> getList() {
 		Set<Object> imgUrlSet = p.keySet();

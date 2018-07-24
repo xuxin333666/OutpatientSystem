@@ -117,7 +117,7 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	public static JTable caseTable;
 	private List<JButton> caseDMLButtons = new ArrayList<>();
 	private List<JLabel> caseToolLabels = new ArrayList<>();
-	private List<JTextComponent> caseDescriptionLabels = new ArrayList<>();
+	private List<JComponent> caseDescriptionLabels = new ArrayList<>();
 	
 	
 	private List<String> registButtonImgUrl = RegistDMLButtonUtils.getList();

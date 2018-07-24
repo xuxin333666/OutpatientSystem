@@ -2,14 +2,12 @@ package cn.kgc.frame.listener;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.lang.reflect.Field;
 import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import cn.kgc.frame.ConsultFrame;
@@ -41,29 +39,10 @@ public class PatientTableMouseAdapter implements MouseListener {
 			try {
 				Patient patient = patientService.getPatientInfoById(id);
 				fields = consultFrame.getRegistContentFields();
-				Field[] attributes = patient.getClass().getDeclaredFields();
-				for (int i = 0; i < fields.size(); i++) {
-					attributes[i].setAccessible(true);
-					Object value = attributes[i].get(patient);
-					if(value == null) {
-						continue;
-					}
-					if(fields.get(i) instanceof JTextField && i != 3) {
-						JTextField field = (JTextField)fields.get(i);
-						field.setText(value.toString());
-					} else if(i == 3) {
-						JTextField field = (JTextField)fields.get(i);
-						field.setText(DateUtils.age2Date(Double.parseDouble(value.toString())));
-					} else if(fields.get(i) instanceof JTextArea) {
-						JTextArea area = (JTextArea)fields.get(i);
-						area.setText(value.toString());
-					} else {
-						JComboBox<?> combo = (JComboBox<?>)fields.get(i);
-						combo.setSelectedIndex(Integer.parseInt(value.toString()));
-					}
-				}
-				
-				
+				FrameUtils.object2Component(patient,fields);
+				JTextField field = (JTextField)fields.get(3);
+				field.setText(DateUtils.age2Date(patient.getAge()));
+						
 				
 				refreshCaseTable();
 				refreshCaseTool();

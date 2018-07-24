@@ -3,12 +3,18 @@ package cn.kgc.utils;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.MouseListener;
+import java.lang.reflect.Field;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import cn.kgc.dto.PatientDto;
 import cn.kgc.frame.ConsultFrame;
@@ -112,6 +118,28 @@ public class FrameUtils {
 	public static void refreshTable(Object[][] datas,TableModelSetDate t,JTable table) {
 		t.setDatas(datas);
 		table.updateUI();
+	}
+	
+	public static void object2Component(Object obj,List<JComponent> fields) throws IllegalArgumentException, IllegalAccessException {
+		Field[] attributes = obj.getClass().getDeclaredFields();
+		for (int i=0;i<fields.size();i++) {
+			attributes[i].setAccessible(true);
+			Object value = attributes[i].get(obj);
+			if(value == null) {
+				continue;
+			}
+			JComponent field = fields.get(i);
+			if(field instanceof JTextField) {
+				JTextField textField = (JTextField)field;
+				textField.setText(value.toString());
+			} else if(field instanceof JTextArea) {
+				JTextArea textArea = (JTextArea)field;
+				textArea.setText(value.toString());
+			} else if(field instanceof JComboBox<?>) {
+				JComboBox<?> combo = (JComboBox<?>)field;
+				combo.setSelectedIndex(Integer.parseInt(value.toString()));
+			}
+		}
 	}
 	
 }
