@@ -1,4 +1,4 @@
-package cn.kgc.dao.impl;
+package cn.kgc.dao.intf;
 
 import java.util.List;
 

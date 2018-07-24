@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.kgc.dao.intf.CaseDao;
 import cn.kgc.model.Case;
 import cn.kgc.model.Patient;
 import cn.kgc.utils.DBPoolConnection;
@@ -62,6 +63,8 @@ public class CaseDaoImpl implements CaseDao {
 
 
 	private void result2List(ResultSet result, List<Case> cases) throws SQLException {
+		Patient patient = null;
+		int count = 0;
 		while(result.next()) {
 			int index = 0;
 			String mainSymptom = result.getString(COLUMN_NAME[index++]);
@@ -76,25 +79,28 @@ public class CaseDaoImpl implements CaseDao {
 			Date examinationTime = result.getDate(COLUMN_NAME[index++]);
 			String id = result.getString(COLUMN_NAME[index++]);
 			
-			String patientId = result.getString(COLUMN_NAME[index++]);
-			String name = result.getString(COLUMN_NAME[index++]);
-			String sex = result.getString(COLUMN_NAME[index++]);
-			Double age = result.getDouble(COLUMN_NAME[index++]);
-			String married = result.getString(COLUMN_NAME[index++]);
-			String job = result.getString(COLUMN_NAME[index++]);
-			Double weight = result.getDouble(COLUMN_NAME[index++]);
-			String blood = result.getString(COLUMN_NAME[index++]);
-			String phoneNumber = result.getString(COLUMN_NAME[index++]);
-			Date registerTime = result.getDate(COLUMN_NAME[index++]);
-			String address = result.getString(COLUMN_NAME[index++]);
-			String allergy = result.getString(COLUMN_NAME[index++]);
-			String handlingSug = result.getString(COLUMN_NAME[index++]);
-			String remark = result.getString(COLUMN_NAME[index++]);
-			Patient patient = new Patient(patientId, name, sex, age, married, job, weight, blood, 
-					phoneNumber, registerTime, address, allergy,handlingSug, remark);
+			if(count == 0) {			
+				String patientId = result.getString(COLUMN_NAME[index++]);
+				String name = result.getString(COLUMN_NAME[index++]);
+				String sex = result.getString(COLUMN_NAME[index++]);
+				Double age = result.getDouble(COLUMN_NAME[index++]);
+				String married = result.getString(COLUMN_NAME[index++]);
+				String job = result.getString(COLUMN_NAME[index++]);
+				Double weight = result.getDouble(COLUMN_NAME[index++]);
+				String blood = result.getString(COLUMN_NAME[index++]);
+				String phoneNumber = result.getString(COLUMN_NAME[index++]);
+				Date registerTime = result.getDate(COLUMN_NAME[index++]);
+				String address = result.getString(COLUMN_NAME[index++]);
+				String allergy = result.getString(COLUMN_NAME[index++]);
+				String handlingSug = result.getString(COLUMN_NAME[index++]);
+				String remark = result.getString(COLUMN_NAME[index++]);
+				patient = new Patient(patientId, name, sex, age, married, job, weight, blood, 
+						phoneNumber, registerTime, address, allergy,handlingSug, remark);
+			}
 			Case $case = new Case(id, mainSymptom, nowSymptom, pastSymptom, personalSymptom,
 					bodyTest, labTest, examination, advice, otherExplain, examinationTime, patient);
 			cases.add($case);
+			count++;
 		}
 	}
 

@@ -3,8 +3,8 @@ package cn.kgc.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.kgc.dao.impl.CaseDao;
 import cn.kgc.dao.impl.CaseDaoImpl;
+import cn.kgc.dao.intf.CaseDao;
 import cn.kgc.model.Case;
 import cn.kgc.service.intf.CaseService;
 import cn.kgc.utils.ListUtils;

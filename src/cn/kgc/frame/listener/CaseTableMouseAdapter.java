@@ -19,7 +19,7 @@ import cn.kgc.service.intf.PatientService;
 import cn.kgc.utils.DateUtils;
 import cn.kgc.utils.FrameUtils;
 
-public class PatientTableMouseAdapter implements MouseListener {
+public class CaseTableMouseAdapter implements MouseListener {
 	private static final String REFRESH_CASE_TABLE_COMMAND = "case";
 	private static final String[] CASE_TOOL_LABEL_PATIENT_ID_TITLEs = {"医疗证号:","姓名:","性别:","年龄:"};
 	
@@ -27,7 +27,7 @@ public class PatientTableMouseAdapter implements MouseListener {
 	private List<JComponent> fields;
 	private String id;
 	
-	public PatientTableMouseAdapter(ConsultFrame consultFrame) {
+	public CaseTableMouseAdapter(ConsultFrame consultFrame) {
 		this.consultFrame = consultFrame;
 	}
 

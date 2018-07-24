@@ -21,6 +21,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.text.JTextComponent;
 
 import cn.kgc.frame.intf.BusinessButtonFrameIntf;
 import cn.kgc.frame.listener.PatientQueryButtonListener;
@@ -28,6 +29,7 @@ import cn.kgc.frame.listener.PatientTableMouseAdapter;
 import cn.kgc.frame.listener.RegistDMLButtonListener;
 import cn.kgc.frame.model.CaseTableModel;
 import cn.kgc.frame.model.PatientTableModel;
+import cn.kgc.utils.CaseDMLButtonUtils;
 import cn.kgc.utils.DateChooser;
 import cn.kgc.utils.FrameUtils;
 import cn.kgc.utils.PatientUtils;
@@ -40,6 +42,7 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	private static final String REGIST_PANEL_TITLE = "初 诊 登 记";
 	private static final String CASEMANAGER_PANEL_TITLE = "病 例 管 理";
 	private static final String CASE_DESCRIPTION_TITLE = "病例描述";
+	private static final String[] CASE_TOOL_LABEL_PATIENT_ID_TITLEs = {"医疗证号:","姓名:","性别:","年龄:"};
 	private static final String START_TIME_LABEL_CONTENT = "起始时间：";
 	private static final String END_TIME_LABEL_CONTENT = "截止时间：";
 	private static final String QUERY_LOCATION_LABEL_CONTENT = "查询位置：";
@@ -52,6 +55,7 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	private static final String REFRESH_CASE_TABLE_COMMAND = "case";
 	
 	private static final int PATIENT_ATTRIBUTE_COUNT = PatientUtils.PATIENT_ATTRIBUTE_COUNT;
+	private static final int CASE_ATTRIBUTE_COUNT = 10;
 	private static final int QUERY_PANEL_HEIGHT = 35;
 	private static final int FOOTER_HEIGHT = 80;
 	private static final int SPLIT_PANE_DIVIDER_LOCATION = 300;
@@ -82,7 +86,12 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	private static final int REGUST_INPUT_CONTENT_AREA_HEIGHT = 70;
 	
 	
-	private static final int CASE_TABLE_HEIGHT = 100;
+	private static final int CASE_TABLE_HEIGHT = 130;
+	private static final int CASE_DESCRIPTION_TOOL_PANEL_HEIGHT = 100;
+	private static final int CASE_TOOL_LABEL_PATIENT_ID_HEIGHT = 30;
+	private static final int CASE_TOOL_LABEL_COUNT = 4;
+	private static final int CASE_INPUT_CONTENT_AREA_HEIGHT = 40;
+	private static final int CASE_INPUT_CONTENT_AREA_WIDTH = 700;
 	
 	
 	private JFrame jFrame = new JFrame(TITLE);
@@ -106,8 +115,13 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	private JPanel caseManagerPanel = new JPanel();
 	private JTabbedPane caseManagerChildpanel = new JTabbedPane();
 	public static JTable caseTable;
+	private List<JButton> caseDMLButtons = new ArrayList<>();
+	private List<JLabel> caseToolLabels = new ArrayList<>();
+	private List<JTextComponent> caseDescriptionLabels = new ArrayList<>();
 	
-	private List<String> imgUrl = RegistDMLButtonUtils.getList();
+	
+	private List<String> registButtonImgUrl = RegistDMLButtonUtils.getList();
+	private List<String> caseButtonImgUrl = CaseDMLButtonUtils.getList();
 	
 	
 	
@@ -282,10 +296,10 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	}
 
 	private void createDMLButtonPanel() {
-		for(int i=0,positionX=0;i<imgUrl.size();i++) {
-			JButton button = FrameUtils.addButton(imgUrl.get(i), positionX, DML_BUTTON_WIDTH, DML_BUTTON_PANEL_HEIGHT, DMLButtonPanel);
-			button.setName(imgUrl.get(i));
-			if("./img/004.PNG".equals(imgUrl.get(i)) || "./img/005.PNG".equals(imgUrl.get(i))) {
+		for(int i=0,positionX=0;i<registButtonImgUrl.size();i++) {
+			JButton button = FrameUtils.addButton(registButtonImgUrl.get(i), positionX, DML_BUTTON_WIDTH, DML_BUTTON_PANEL_HEIGHT, DMLButtonPanel);
+			button.setName(registButtonImgUrl.get(i));
+			if("./img/004.PNG".equals(registButtonImgUrl.get(i)) || "./img/005.PNG".equals(registButtonImgUrl.get(i))) {
 				button.setEnabled(false);
 			}
 			registDMLButtons.add(button);
@@ -311,15 +325,91 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 
 	private void createCaseTablePane() {
 		CaseTableModel caseTableModel = CaseTableModel.getInstance();
-		caseTable = new JTable(caseTableModel);		
+		
+		caseTable = new JTable(caseTableModel);	
+		caseTable.addMouseListener(new PatientTableMouseAdapter(this));
 	}
 
 	private void createCaseDescriptionPanel() {
 		JPanel caseDescriptionPanel = new JPanel();
+		caseDescriptionPanel.setLayout(null);
+		
+		JPanel caseDescriptionToolPanel = new JPanel();
+		caseDescriptionToolPanel.setBounds(0, 0, caseManagerChildpanel.getWidth(), CASE_DESCRIPTION_TOOL_PANEL_HEIGHT );
+		caseDescriptionToolPanel.setLayout(null);
+		createCaseDescriptionToolPanel(caseDescriptionToolPanel);
+		
+		JPanel caseDescriptionInputContentPanel = new JPanel();
+		caseDescriptionInputContentPanel.setBounds(0, caseDescriptionToolPanel.getHeight(), caseManagerChildpanel.getWidth(), caseManagerChildpanel.getHeight() - CASE_DESCRIPTION_TOOL_PANEL_HEIGHT );
+		caseDescriptionInputContentPanel.setLayout(null);
+		createCaseDescriptionInputContentPanel(caseDescriptionInputContentPanel);
+
+		caseDescriptionPanel.add(caseDescriptionToolPanel);
+		caseDescriptionPanel.add(caseDescriptionInputContentPanel);
 		caseManagerChildpanel.add(CASE_DESCRIPTION_TITLE, caseDescriptionPanel);	
 	}
 
 	
+
+	private void createCaseDescriptionToolPanel(JPanel caseDescriptionPanel) {
+		for(int i=0,positionX=0;i<caseButtonImgUrl.size();i++) {
+			JButton button = FrameUtils.addButton(caseButtonImgUrl.get(i), positionX, DML_BUTTON_WIDTH, DML_BUTTON_PANEL_HEIGHT, caseDescriptionPanel);
+			button.setName(caseButtonImgUrl.get(i));
+			if("./img/004.PNG".equals(caseButtonImgUrl.get(i)) || "./img/005.PNG".equals(caseButtonImgUrl.get(i))) {
+				button.setEnabled(false);
+			}
+			caseDMLButtons.add(button);
+//			button.addActionListener(new RegistDMLButtonListener(this));
+			positionX += DML_BUTTON_WIDTH;
+		}
+		
+		for(int i=0;i<CASE_TOOL_LABEL_COUNT;i++) {
+			JLabel label = new  JLabel(CASE_TOOL_LABEL_PATIENT_ID_TITLEs[i]);
+			label.setBounds(COMPONENT_DISTANSE + START_TIME_FIELD_WIDTH*i, DML_BUTTON_PANEL_HEIGHT + COMPONENT_DISTANSE, START_TIME_FIELD_WIDTH, CASE_TOOL_LABEL_PATIENT_ID_HEIGHT);
+			caseDescriptionPanel.add(label);
+			caseToolLabels.add(label);
+		}
+		
+		CaseTableModel caseTableModel = CaseTableModel.getInstance();
+		JLabel examinationTimeLabel = new JLabel(caseTableModel.getColumnName(0) + ":");
+		examinationTimeLabel.setBounds(caseToolLabels.get(CASE_TOOL_LABEL_COUNT-1).getX() + caseToolLabels.get(CASE_TOOL_LABEL_COUNT-1).getWidth(), DML_BUTTON_PANEL_HEIGHT + COMPONENT_DISTANSE, REGUST_INPUT_CONTENT_LABEL_WIDTH, CASE_TOOL_LABEL_PATIENT_ID_HEIGHT);
+		
+		DateChooser examinationTimeChooser = DateChooser.getInstance("yyyy-MM-dd");
+		JTextField examinationTimeField = new JTextField();
+		examinationTimeField.setBounds(examinationTimeLabel.getX() + examinationTimeLabel.getWidth(), DML_BUTTON_PANEL_HEIGHT + COMPONENT_DISTANSE, REGUST_INPUT_CONTENT_FIELD_SMALL_WIDTH, CASE_TOOL_LABEL_PATIENT_ID_HEIGHT);
+		examinationTimeChooser.register(examinationTimeField);
+		
+		
+		caseDescriptionPanel.add(examinationTimeField);
+		caseDescriptionPanel.add(examinationTimeLabel);
+		
+		caseDescriptionLabels.add(examinationTimeField);
+		
+	}
+	
+	private void createCaseDescriptionInputContentPanel(JPanel caseDescriptionInputContentPanel) {
+		int X = REGIST_INPUT_CONTENT_POSITON_X;
+		int Y = REGIST_INPUT_CONTENT_POSITON_Y;
+		CaseTableModel caseTableModel = CaseTableModel.getInstance();
+		for(int i=1;i<CASE_ATTRIBUTE_COUNT;i++) {
+			String colName = caseTableModel.getColumnName(i);
+			JLabel idLabel = new JLabel(colName + ":");
+			idLabel.setBounds(X, Y, REGUST_INPUT_CONTENT_LABEL_WIDTH, REGUST_INPUT_CONTENT_LABEL_HEIGHT);
+			X += REGUST_INPUT_CONTENT_LABEL_WIDTH;
+			
+			JTextComponent field = new JTextArea();
+			field.setBorder (BorderFactory.createLineBorder(Color.GRAY,1));
+			field.setBounds(X, Y, CASE_INPUT_CONTENT_AREA_WIDTH, CASE_INPUT_CONTENT_AREA_HEIGHT);	
+			
+			X = REGIST_INPUT_CONTENT_POSITON_X;
+			Y += field.getHeight();	
+			
+			caseDescriptionLabels.add(field);
+			caseDescriptionInputContentPanel.add(field);
+			caseDescriptionInputContentPanel.add(idLabel);
+		}	
+	}
+
 	public static void main(String[] args) {
 		ConsultFrame c = new ConsultFrame();
 		c.execute();
@@ -355,6 +445,10 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 
 	public List<JButton> getRegistDMLButtons() {
 		return registDMLButtons;
+	}
+
+	public List<JLabel> getCaseToolLabels() {
+		return caseToolLabels;
 	}
 	
 }
