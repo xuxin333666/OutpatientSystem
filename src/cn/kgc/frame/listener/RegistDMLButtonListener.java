@@ -35,6 +35,7 @@ public class RegistDMLButtonListener implements ActionListener {
 	private static final String DEFAULT_CONTENT = "";
 	private static final String SAVE_SUCCUSS = "保存成功";
 	private static final String SAVE_ERORR = "保存失败";
+	private static final String REFRESH_PATIENT_TABLE_COMMAND = "patient";
 	
 	private ConsultFrame consultFrame;
 	private static int command;
@@ -123,7 +124,7 @@ public class RegistDMLButtonListener implements ActionListener {
 				break;
 			}
 			FrameUtils.statusInfo(status, SAVE_SUCCUSS, SAVE_ERORR);
-			consultFrame.getDataAndRefreshTable();
+			FrameUtils.getDataAndRefreshTable(REFRESH_PATIENT_TABLE_COMMAND);
 			command = COMMAND_SAVE;
 			controlButtonEnable();
 		} catch (Exception e) {

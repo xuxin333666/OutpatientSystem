@@ -19,7 +19,10 @@ import cn.kgc.utils.DateUtils;
 import cn.kgc.utils.FrameUtils;
 
 public class PatientTableMouseAdapter implements MouseListener {
+	private static final String REFRESH_CASE_TABLE_COMMAND = "case";
+	
 	private ConsultFrame consultFrame;
+	private List<JComponent> fields;
 	
 	public PatientTableMouseAdapter(ConsultFrame consultFrame) {
 		this.consultFrame = consultFrame;
@@ -34,7 +37,7 @@ public class PatientTableMouseAdapter implements MouseListener {
 			PatientService patientService = new PatientServiceImpl();
 			try {
 				Patient patient = patientService.getPatientInfoById(id.toString());
-				List<JComponent> fields = consultFrame.getRegistContentFields();
+				fields = consultFrame.getRegistContentFields();
 				Field[] attributes = patient.getClass().getDeclaredFields();
 				for (int i = 0; i < fields.size(); i++) {
 					attributes[i].setAccessible(true);
@@ -57,10 +60,21 @@ public class PatientTableMouseAdapter implements MouseListener {
 					}
 				}
 				
+				
+				
+				refreshCaseTable();
+				
 			} catch (Exception e1) {
 				FrameUtils.DialogErorr("´íÎó£¬" + e1.getMessage());
 			}
 		}
+		
+	}
+
+	private void refreshCaseTable() {
+		JTextField idField = (JTextField)fields.get(0);
+		String patientId = idField.getText();
+		FrameUtils.getDataAndRefreshTableBySearch(REFRESH_CASE_TABLE_COMMAND, patientId);
 	}
 
 	@Override

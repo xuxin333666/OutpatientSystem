@@ -39,24 +39,21 @@ public class PatientUtils {
 	}
 
 	public static Object[][] list2Array(List<Patient> patients) {
-		Object[][] datas = new Object[patients.size()][PATIENT_ATTRIBUTE_COUNT];
-		int count = 0;
-		for (Patient patient : patients) {
-			int  index = 0;
-			datas[count][index++] = patient.getId();
-			datas[count][index++] = patient.getName();
-			datas[count][index++] = status2Str(patient.getSex(),sexRule);
-			datas[count][index++] = patient.getAge();
-			datas[count][index++] = status2Str(patient.getMarried(),marriedRule);
-			datas[count][index++] = status2Str(patient.getJob(),jobRule);
-			datas[count][index++] = patient.getWeight();
-			datas[count][index++] = status2Str(patient.getBlood(),bloodRule);
-			datas[count][index++] = patient.getPhoneNumber();
-			datas[count][index++] = patient.getRegisterTime();
-			datas[count][index++] = patient.getAddress();
-			datas[count][index++] = patient.getAllergy();
-			datas[count][index++] = patient.getHandlingSug();
-			datas[count++][index++] = patient.getRemark();
+		Object[][] datas = new Object[0][PATIENT_ATTRIBUTE_COUNT];
+		try {
+			datas = ListUtils.list2TableArray(patients,PATIENT_ATTRIBUTE_COUNT);
+			for (int i = 0; i < datas.length; i++) {
+				Object[] data = datas[i];
+				Patient patient = patients.get(i);
+				data[2] = status2Str(patient.getSex(),sexRule);
+				data[4] = status2Str(patient.getMarried(),marriedRule);
+				data[5] = status2Str(patient.getJob(),jobRule);
+				data[7] = status2Str(patient.getBlood(),bloodRule);
+			}
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
 		}
 		return datas;
 	}

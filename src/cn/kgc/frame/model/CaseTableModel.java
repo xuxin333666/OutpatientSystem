@@ -3,24 +3,24 @@ package cn.kgc.frame.model;
 
 import javax.swing.table.AbstractTableModel;
 
-public class PatientTableModel extends AbstractTableModel implements TableModelSetDate  {
+public class CaseTableModel extends AbstractTableModel implements TableModelSetDate {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2768971685554043463L;
-	private static PatientTableModel patientTableModel;
+	private static final long serialVersionUID = -2768971685554043464L;
+	private static CaseTableModel patientTableModel;
 	private Object[][] datas;
-	private final String[] columnName = {"医疗证号","姓名","性别","年龄","婚姻状态","职业","体重(KG)",
-									"血型","联系电话","登记日期","地址","过敏史","初诊意见","备注"};
+	private final String[] columnName = {"诊断日期","主述","现病史","既往史","个人史","体格检查","实验室检测",
+									"诊断","意见","其他说明"};
 
 
 	
-	private PatientTableModel() {}
+	private CaseTableModel() {}
 	
-	public static PatientTableModel getInstance() {
+	public static CaseTableModel getInstance() {
 		if(patientTableModel == null) {
-			patientTableModel = new PatientTableModel();
+			patientTableModel = new CaseTableModel();
 		}
 		return patientTableModel;
 	}
@@ -45,13 +45,15 @@ public class PatientTableModel extends AbstractTableModel implements TableModelS
 		return columnName[column];
 	}
 	
-	@Override
-	public void setDatas(Object[][] datas) {
-		this.datas = datas;
-	}
+
 
 	public String[] getColumnName() {
 		return columnName;
+	}
+
+	@Override
+	public void setDatas(Object[][] datas) {
+		this.datas = datas;
 	}
 
 

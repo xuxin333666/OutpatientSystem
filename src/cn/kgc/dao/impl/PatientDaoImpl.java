@@ -132,7 +132,7 @@ public class PatientDaoImpl implements PatientDao {
 			psm = cn.prepareStatement(sql);
 			psm.setString(1, id);
 			result = psm.executeQuery();
-			return result2User(result);		
+			return result2patient(result);		
 		} catch (SQLException e) {
 			throw new Exception(e.getMessage());
 		} finally {
@@ -279,7 +279,7 @@ public class PatientDaoImpl implements PatientDao {
 			}	
 		}
 	}
-	private Patient result2User(ResultSet result) throws SQLException {
+	private Patient result2patient(ResultSet result) throws SQLException {
 		List<Patient> patients =  new ArrayList<>();
 		result2List(result, patients);
 		if(patients.size() != 0) {
