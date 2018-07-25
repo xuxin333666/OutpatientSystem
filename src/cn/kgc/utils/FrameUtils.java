@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.MouseListener;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -15,23 +16,14 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.table.TableModel;
 
-import cn.kgc.dto.PatientDto;
-import cn.kgc.frame.ConsultFrame;
-import cn.kgc.frame.model.CaseTableModel;
-import cn.kgc.frame.model.PatientTableModel;
-import cn.kgc.frame.model.TableModelSetDate;
-import cn.kgc.service.impl.CaseServiceImpl;
-import cn.kgc.service.impl.PatientServiceImpl;
-import cn.kgc.service.intf.CaseService;
-import cn.kgc.service.intf.PatientService;
+
 
 
 
 
 public class FrameUtils {
-	private static final String REFRESH_PATIENT_TABLE_COMMAND = "patient";
-	private static final String REFRESH_CASE_TABLE_COMMAND = "case";
 	
 	public static JButton addButton(String imgUrl,int positionX ,int width,int height,JPanel parentPanel) {
 		ImageIcon img = new ImageIcon(imgUrl);
@@ -81,42 +73,35 @@ public class FrameUtils {
 	}
 	
 	
-	public static void getDataAndRefreshTable(String type) {
+	public static void getDataAndRefreshTable(JTable table,Class<?> clazz) {
 		try {
-			if(REFRESH_PATIENT_TABLE_COMMAND.equals(type)) {
-				PatientService patientService = new PatientServiceImpl();
-				Object[][] datas = patientService.getAllPatientInfo();
-				refreshTable(datas,PatientTableModel.getInstance(),ConsultFrame.patientTable);			
-			} else if(REFRESH_CASE_TABLE_COMMAND.equals(type)) {
-				CaseService caseService = new CaseServiceImpl();
-				Object[][] datas = caseService.getAllCaseInfo();
-				refreshTable(datas,CaseTableModel.getInstance(),ConsultFrame.caseTable);
-			}
+			Object service = clazz.newInstance();
+			Method method = clazz.getMethod("getAllInfo");
+			Object[][] datas = (Object[][])method.invoke(service);
+			refreshTable(datas,table);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			FrameUtils.DialogErorr(e.getMessage());
+		}
+	}
+		
+	public static void getDataAndRefreshTableBySearch(JTable table,Class<?> clazz,Object dto) {
+		try {
+			Object service = clazz.newInstance();
+			Method method = clazz.getMethod("getAllInfoBySearch",dto.getClass());
+			Object[][] datas = (Object[][])method.invoke(service,dto);
+			refreshTable(datas,table);		
 		} catch (Exception e) {
 			e.printStackTrace();
 			FrameUtils.DialogErorr(e.getMessage());
 		}
 	}
 	
-	public static void getDataAndRefreshTableBySearch(String type,Object dto) {
-		try {
-			if(REFRESH_PATIENT_TABLE_COMMAND.equals(type)) {
-				PatientService patientService = new PatientServiceImpl();
-				Object[][] datas = patientService.getAllPatientInfoBySearch((PatientDto)dto);
-				refreshTable(datas,PatientTableModel.getInstance(),ConsultFrame.patientTable);			
-			} else if(REFRESH_CASE_TABLE_COMMAND.equals(type)) {
-				CaseService caseService = new CaseServiceImpl();
-				Object[][] datas = caseService.getAllCaseInfoByPatient(dto.toString());
-				refreshTable(datas,CaseTableModel.getInstance(),ConsultFrame.caseTable);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			FrameUtils.DialogErorr(e.getMessage());
-		}
-	}
-	
-	public static void refreshTable(Object[][] datas,TableModelSetDate t,JTable table) {
-		t.setDatas(datas);
+	public static void refreshTable(Object[][] datas,JTable table) throws Exception {
+		TableModel model = table.getModel();
+		Field field = model.getClass().getDeclaredField("datas");
+		field.setAccessible(true);
+		field.set(model, datas);
 		table.updateUI();
 	}
 	

@@ -5,9 +5,9 @@ import cn.kgc.model.Patient;
 
 public interface PatientService {
 
-	Object[][] getAllPatientInfo() throws Exception;
+	Object[][] getAllInfo() throws Exception;
 
-	Object[][] getAllPatientInfoBySearch(PatientDto patientDto) throws Exception;
+	Object[][] getAllInfoBySearch(PatientDto patientDto) throws Exception;
 
 	Patient getPatientInfoById(String id) throws Exception;
 

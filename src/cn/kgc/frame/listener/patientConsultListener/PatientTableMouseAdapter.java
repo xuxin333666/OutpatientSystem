@@ -1,4 +1,4 @@
-package cn.kgc.frame.listener;
+package cn.kgc.frame.listener.patientConsultListener;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -12,13 +12,13 @@ import javax.swing.JTextField;
 
 import cn.kgc.frame.ConsultFrame;
 import cn.kgc.model.Patient;
+import cn.kgc.service.impl.CaseServiceImpl;
 import cn.kgc.service.impl.PatientServiceImpl;
 import cn.kgc.service.intf.PatientService;
 import cn.kgc.utils.DateUtils;
 import cn.kgc.utils.FrameUtils;
 
 public class PatientTableMouseAdapter implements MouseListener {
-	private static final String REFRESH_CASE_TABLE_COMMAND = "case";
 	private static final String[] CASE_TOOL_LABEL_PATIENT_ID_TITLEs = {"医疗证号:","姓名:","性别:","年龄:"};
 	
 	private ConsultFrame consultFrame;
@@ -76,7 +76,7 @@ public class PatientTableMouseAdapter implements MouseListener {
 	}
 
 	private void refreshCaseTable() {
-		FrameUtils.getDataAndRefreshTableBySearch(REFRESH_CASE_TABLE_COMMAND,id);
+		FrameUtils.getDataAndRefreshTableBySearch(ConsultFrame.caseTable,CaseServiceImpl.class,id);
 	}
 
 	@Override

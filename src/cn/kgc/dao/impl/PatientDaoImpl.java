@@ -17,34 +17,18 @@ import cn.kgc.utils.PatientUtils;
 import cn.kgc.utils.StringUtils;
 
 public class PatientDaoImpl extends BaseDaoImpl implements PatientDao {
-	private final String SQL_ERORR = "后台数据错误，";
 	private final String[] COLUMN_NAME = {"id","name","sex","age","married","job",
 										"weight","blood","phone_number","register_time",
 										"address","allergy","handling_sug","remark"};
 	private static final String[] QUERY_KEY_LIST = {"证号/姓名","性别","婚姻状况","职业","联系地址","初诊处理意见","初诊备注"};  
 	@Override
 	public List<Patient> query() throws Exception {
-		DBPoolConnection dbp = new DBPoolConnection();
-		List<Patient> patients =  new ArrayList<>();
 		String sql = "SELECT * FROM t_patient ORDER BY id";
-		Connection cn = null;
-		PreparedStatement psm = null;
-		ResultSet result = null;
-		try {
-			cn = dbp.getConnection();
-			psm = cn.prepareStatement(sql); 
-			result = psm.executeQuery();
-			result2List(result,patients);
-		} catch (SQLException e) {
-			throw new Exception(SQL_ERORR + e.getMessage());
-		} finally {
-			if(cn != null) {
-				try {
-					cn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+		List<Object> objs = query(sql, Patient.class, null, COLUMN_NAME);
+		List<Patient> patients = new ArrayList<>();
+		for (Object object : objs) {
+			Patient patient = (Patient)object;
+			patients.add(patient);
 		}
 		return patients;
 	}

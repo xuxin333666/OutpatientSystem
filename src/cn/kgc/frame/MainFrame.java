@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
 import cn.kgc.frame.listener.BusinessButtonListener;
-import cn.kgc.frame.listener.ModifyPswButtonListener;
+import cn.kgc.frame.listener.loginListener.ModifyPswButtonListener;
 import cn.kgc.model.User;
 import cn.kgc.utils.BusinessButtonUtils;
 import cn.kgc.utils.FrameUtils;

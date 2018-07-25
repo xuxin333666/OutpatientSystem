@@ -9,8 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import cn.kgc.frame.listener.LoginFrameCancelButtonListener;
-import cn.kgc.frame.listener.LoginFrameLoginButtonListener;
+import cn.kgc.frame.listener.loginListener.LoginFrameCancelButtonListener;
+import cn.kgc.frame.listener.loginListener.LoginFrameLoginButtonListener;
 import cn.kgc.utils.ScreenSizeUtils;
 
 public class LoginFrame {

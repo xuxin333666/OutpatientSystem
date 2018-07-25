@@ -1,4 +1,4 @@
-package cn.kgc.frame.listener;
+package cn.kgc.frame.listener.loginListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

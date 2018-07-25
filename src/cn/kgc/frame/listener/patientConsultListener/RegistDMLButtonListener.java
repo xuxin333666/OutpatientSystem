@@ -1,4 +1,4 @@
-package cn.kgc.frame.listener;
+package cn.kgc.frame.listener.patientConsultListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 
 
 import cn.kgc.frame.ConsultFrame;
+import cn.kgc.frame.listener.BaseDMLButtonListener;
 import cn.kgc.model.Patient;
 import cn.kgc.service.impl.PatientServiceImpl;
 import cn.kgc.service.intf.PatientService;
@@ -22,7 +23,6 @@ import cn.kgc.utils.StringUtils;
 public class RegistDMLButtonListener extends BaseDMLButtonListener implements ActionListener {
 	private static final String SAVE_SUCCUSS = "保存成功";
 	private static final String SAVE_ERORR = "保存失败";
-	private static final String REFRESH_PATIENT_TABLE_COMMAND = "patient";
 	
 	private ConsultFrame consultFrame;
 	private static int command;
@@ -106,7 +106,7 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 				break;
 			}
 			FrameUtils.statusInfo(status, SAVE_SUCCUSS, SAVE_ERORR);
-			FrameUtils.getDataAndRefreshTable(REFRESH_PATIENT_TABLE_COMMAND);
+			FrameUtils.getDataAndRefreshTable(ConsultFrame.patientTable,patientService.getClass());
 			command = COMMAND_SAVE;
 			controlButtonEnable(consultFrame.getRegistDMLButtons(),command);
 		} catch (Exception e) {

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import cn.kgc.frame.intf.BusinessButtonFrameIntf;
+import cn.kgc.frame.intf.BaseBusinessButtonFrame;
 
 
 public class BusinessButtonUtils {
@@ -27,9 +27,9 @@ public class BusinessButtonUtils {
 	}
 	
 	
-	public static BusinessButtonFrameIntf getBusinessButtonFrame(String imgUrl) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public static BaseBusinessButtonFrame getBusinessButtonFrame(String imgUrl) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		String businessButtonFrameStr = p.getProperty(imgUrl);
-		BusinessButtonFrameIntf businessButtonFrame = (BusinessButtonFrameIntf) Class.forName(businessButtonFrameStr).newInstance();
+		BaseBusinessButtonFrame businessButtonFrame = (BaseBusinessButtonFrame) Class.forName(businessButtonFrameStr).newInstance();
 		return businessButtonFrame;
 	}
 	

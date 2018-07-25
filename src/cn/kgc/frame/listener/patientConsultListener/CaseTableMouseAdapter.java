@@ -1,4 +1,4 @@
-package cn.kgc.frame.listener;
+package cn.kgc.frame.listener.patientConsultListener;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -33,6 +33,7 @@ public class CaseTableMouseAdapter implements MouseListener {
 			fields = consultFrame.getCaseDescriptionFields();
 			FrameUtils.object2Component($case,fields,1);
 		} catch (Exception e1) {
+			e1.printStackTrace();
 			FrameUtils.DialogErorr("´íÎó£¬" + e1.getMessage());
 		}
 		

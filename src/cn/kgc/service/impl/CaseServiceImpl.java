@@ -17,14 +17,14 @@ public class CaseServiceImpl implements CaseService {
 
 
 	@Override
-	public Object[][] getAllCaseInfoByPatient(String patientId) throws Exception {
+	public Object[][] getAllInfoBySearch(String patientId) throws Exception {
 		List<Case> cases = caseDao.queryByPatientId(patientId);
 		return ListUtils.list2TableArray(cases,CASE_ATTRIBUTE_COUNT);
 	}
 
 
 	@Override
-	public Object[][] getAllCaseInfo() throws IllegalArgumentException, IllegalAccessException {
+	public Object[][] getAllInfo() throws IllegalArgumentException, IllegalAccessException {
 		List<Case> cases = new ArrayList<>();
 		return ListUtils.list2TableArray(cases,CASE_ATTRIBUTE_COUNT);
 	}

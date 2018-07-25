@@ -1,8 +1,8 @@
 package cn.kgc.frame;
 
-import cn.kgc.frame.intf.BusinessButtonFrameIntf;
+import cn.kgc.frame.intf.BaseBusinessButtonFrame;
 
-public class ExitSystemFrame implements BusinessButtonFrameIntf {
+public class ExitSystemFrame implements BaseBusinessButtonFrame {
 
 	@Override
 	public void execute() {

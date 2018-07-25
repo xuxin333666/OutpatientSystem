@@ -14,39 +14,27 @@ import cn.kgc.model.Patient;
 import cn.kgc.utils.DBPoolConnection;
 
 public class CaseDaoImpl extends BaseDaoImpl implements CaseDao {
-	private final String[] COLUMN_NAME = {"examination_time","main_symptom","now_symptom","past_symptom","personal_symptom","body_test",
+	private final String[] COLUMN_NAME = {"cid","examination_time","main_symptom","now_symptom","past_symptom","personal_symptom","body_test",
 			"lab_test","examination","advice","other_explain",
-			"cid","pid","name","sex","age","married","job",
+			"pid","name","sex","age","married","job",
 			"weight","blood","phone_number","register_time",
 			"address","allergy","handling_sug","remark"};
 	private final String[] COLUMN_NAME_UPDATE = {"id","examination_time","main_symptom","now_symptom","past_symptom","personal_symptom","body_test",
 			"lab_test","examination","advice","other_explain"};
-	private final String SELECT_CASE_AND_PATINT_TABLE_SQL =  "SELECT examination_time,main_symptom,now_symptom,past_symptom,personal_symptom,body_test,"
+	private final String SELECT_CASE_AND_PATINT_TABLE_SQL =  "SELECT c.id cid,examination_time,main_symptom,now_symptom,past_symptom,personal_symptom,body_test,"
 			+ "lab_test,examination,advice,other_explain,"
-			+ "c.id cid,p.id pid,name,sex,age,married,job,"
+			+ "p.id pid,name,sex,age,married,job,"
 			+ "weight,blood,phone_number,register_time,"
 			+ "address,allergy,handling_sug,remark FROM t_case c JOIN t_patient p ON patient_id = p.id";
 
 	@Override
 	public List<Case> queryByPatientId(String patientId) throws Exception {
-		DBPoolConnection dBP = DBPoolConnection.getInstance();
-		List<Case> cases =  new ArrayList<>();
 		String sql = SELECT_CASE_AND_PATINT_TABLE_SQL + " WHERE patient_id = ?";
-		Connection cn = null;
-		PreparedStatement psm = null;
-		ResultSet result = null;
-		try {
-			cn = dBP.getConnection();
-			psm = cn.prepareStatement(sql);
-			psm.setString(1, patientId);
-			result = psm.executeQuery();
-			result2List(result,cases);		
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			if(cn != null) {
-				cn.close();
-			}	
+		List<Object> list = queryById(sql, Case.class, Patient.class, COLUMN_NAME, patientId);
+		List<Case> cases = new ArrayList<>();
+		for (Object object : list) {
+			Case $case = (Case)object;
+			cases.add($case);
 		}
 		return cases;
 	}
@@ -141,6 +129,7 @@ public class CaseDaoImpl extends BaseDaoImpl implements CaseDao {
 		int count = 0;
 		while(result.next()) {
 			int index = 0;
+			String id = result.getString(COLUMN_NAME[index++]);
 			Date examinationTime = result.getDate(COLUMN_NAME[index++]);
 			String mainSymptom = result.getString(COLUMN_NAME[index++]);
 			String nowSymptom = result.getString(COLUMN_NAME[index++]);
@@ -151,7 +140,7 @@ public class CaseDaoImpl extends BaseDaoImpl implements CaseDao {
 			String examination = result.getString(COLUMN_NAME[index++]);
 			String advice = result.getString(COLUMN_NAME[index++]);
 			String otherExplain = result.getString(COLUMN_NAME[index++]);
-			String id = result.getString(COLUMN_NAME[index++]);
+			
 			
 			if(count == 0) {			
 				String patientId = result.getString(COLUMN_NAME[index++]);

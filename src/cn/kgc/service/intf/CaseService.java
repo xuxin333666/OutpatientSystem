@@ -4,9 +4,9 @@ import cn.kgc.model.Case;
 
 public interface CaseService {
 
-	Object[][] getAllCaseInfoByPatient(String patientId) throws Exception;
+	Object[][] getAllInfoBySearch(String patientId) throws Exception;
 
-	Object[][] getAllCaseInfo() throws IllegalArgumentException, IllegalAccessException;
+	Object[][] getAllInfo() throws IllegalArgumentException, IllegalAccessException;
 
 	Case getCaseInfoById(String caseId, String patientId) throws Exception;
 

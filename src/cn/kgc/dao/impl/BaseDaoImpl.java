@@ -2,14 +2,101 @@ package cn.kgc.dao.impl;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.kgc.utils.DBPoolConnection;
 import cn.kgc.utils.DateUtils;
 
-public class BaseDaoImpl {
+public class BaseDaoImpl {	
+	protected final String SQL_ERORR = "后台数据错误，";
+	
+	protected List<Object> query(String sql,Class<?> clazz,Class<?> subClazz,String[] columnName) throws Exception {
+		List<Object> list =  new ArrayList<>();
+		DBPoolConnection dbp = new DBPoolConnection();
+		Connection cn = null;
+		PreparedStatement psm = null;
+		ResultSet result = null;
+		try {
+			cn = dbp.getConnection();
+			psm = cn.prepareStatement(sql); 
+			result = psm.executeQuery();
+			result2List(result,list,clazz,subClazz,columnName);
+		} catch (SQLException e) {
+			throw new Exception(SQL_ERORR + e.getMessage());
+		} finally {
+			if(cn != null) {
+				try {
+					cn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	}
+	
+	protected List<Object> queryById(String sql,Class<?> clazz,Class<?> subClazz,String[] columnName,String id) throws Exception {
+		List<Object> list =  new ArrayList<>();
+		DBPoolConnection dbp = new DBPoolConnection();
+		Connection cn = null;
+		PreparedStatement psm = null;
+		ResultSet result = null;
+		try {
+			cn = dbp.getConnection();
+			psm = cn.prepareStatement(sql); 
+			psm.setString(1, id);
+			result = psm.executeQuery();
+			result2List(result,list,clazz,subClazz,columnName);
+		} catch (SQLException e) {
+			throw new Exception(SQL_ERORR + e.getMessage());
+		} finally {
+			if(cn != null) {
+				try {
+					cn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	}
+	
+	protected void result2List(ResultSet result, List<Object> list,Class<?> clazz,Class<?> subClazz,String[] columnName) throws Exception {
+		while(result.next()) {
+			
+			Object obj = setValue(result,clazz,subClazz,columnName,0);
+			list.add(obj);
+		}
+	}
+	
+	private Object setValue(ResultSet result,Class<?> clazz,Class<?> subClazz,String[] columnName,int index) throws Exception  {
+		Object obj = clazz.newInstance();
+		Field[] fields = clazz.getDeclaredFields();
+		for (Field field : fields) {
+			field.setAccessible(true);
+			Object type = field.getType();
+			if(type.equals(String.class)) {
+				String str = result.getString(columnName[index++]);
+				field.set(obj, str);
+			} else if(type.equals(Double.class)) {
+				Double db = result.getDouble(columnName[index++]);
+				field.set(obj, db);
+			} else if(type.equals(java.util.Date.class)) {
+				Date db = result.getDate(columnName[index++]);
+				field.set(obj, db);
+			} else if(type.equals(subClazz)) {
+				Object obj2 = setValue(result,subClazz,null,columnName,index);
+				field.set(obj, obj2);
+			}
+		}
+		return obj;
+	}
+
 	
 	protected String queryMinEmptyId(String sql,String sql2,String columnName) throws Exception {
 		DBPoolConnection dBP = DBPoolConnection.getInstance();

@@ -13,13 +13,13 @@ public class PatientServiceImpl implements PatientService {
 	private PatientDao patientDao = new PatientDaoImpl();
 
 	@Override
-	public Object[][] getAllPatientInfo() throws Exception {
+	public Object[][] getAllInfo() throws Exception {
 		List<Patient> patients = patientDao.query();
 		return PatientUtils.list2Array(patients);
 	}
 
 	@Override
-	public Object[][] getAllPatientInfoBySearch(PatientDto patientDto) throws Exception {
+	public Object[][] getAllInfoBySearch(PatientDto patientDto) throws Exception {
 		List<Patient> patients = patientDao.query(patientDto);
 		return PatientUtils.list2Array(patients);
 	}

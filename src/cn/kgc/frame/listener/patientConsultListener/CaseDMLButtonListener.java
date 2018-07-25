@@ -1,4 +1,4 @@
-package cn.kgc.frame.listener;
+package cn.kgc.frame.listener.patientConsultListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 
 
 import cn.kgc.frame.ConsultFrame;
+import cn.kgc.frame.listener.BaseDMLButtonListener;
 import cn.kgc.model.Case;
 import cn.kgc.model.Patient;
 import cn.kgc.service.impl.CaseServiceImpl;
@@ -25,7 +26,6 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 	private static final String SAVE_ERORR = "保存失败";
 	private static final String MAIN_SYMPTOM_IS_EMPTY = "主述不能为空";
 	private static final String EXAMINATION_IS_EMPTY = "诊断不能为空";
-	private static final String CASE_BUTTON_DML_COMMAND = "case";
 	
 	private ConsultFrame consultFrame;
 	private static int command;
@@ -115,7 +115,7 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 				break;
 			}
 			FrameUtils.statusInfo(status, SAVE_SUCCUSS, SAVE_ERORR);
-			FrameUtils.getDataAndRefreshTableBySearch(CASE_BUTTON_DML_COMMAND, patient.getId());
+			FrameUtils.getDataAndRefreshTableBySearch(ConsultFrame.caseTable,caseService.getClass(), patient.getId());
 			command = COMMAND_SAVE;
 			controlButtonEnable(consultFrame.getCaseDMLButtons(),command);
 		} catch (Exception e) {

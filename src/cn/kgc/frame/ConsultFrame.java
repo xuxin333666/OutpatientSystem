@@ -23,21 +23,23 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.text.JTextComponent;
 
-import cn.kgc.frame.intf.BusinessButtonFrameIntf;
-import cn.kgc.frame.listener.CaseDMLButtonListener;
-import cn.kgc.frame.listener.CaseTableMouseAdapter;
-import cn.kgc.frame.listener.PatientQueryButtonListener;
-import cn.kgc.frame.listener.PatientTableMouseAdapter;
-import cn.kgc.frame.listener.RegistDMLButtonListener;
+import cn.kgc.frame.intf.BaseBusinessButtonFrame;
+import cn.kgc.frame.listener.patientConsultListener.CaseDMLButtonListener;
+import cn.kgc.frame.listener.patientConsultListener.CaseTableMouseAdapter;
+import cn.kgc.frame.listener.patientConsultListener.PatientQueryButtonListener;
+import cn.kgc.frame.listener.patientConsultListener.PatientTableMouseAdapter;
+import cn.kgc.frame.listener.patientConsultListener.RegistDMLButtonListener;
 import cn.kgc.frame.model.CaseTableModel;
 import cn.kgc.frame.model.PatientTableModel;
+import cn.kgc.service.impl.CaseServiceImpl;
+import cn.kgc.service.impl.PatientServiceImpl;
 import cn.kgc.utils.DateChooser;
 import cn.kgc.utils.FrameUtils;
 import cn.kgc.utils.PatientUtils;
 import cn.kgc.utils.ScreenSizeUtils;
 import cn.kgc.utils.StringUtils;
 
-public class ConsultFrame implements BusinessButtonFrameIntf {
+public class ConsultFrame implements BaseBusinessButtonFrame {
 	private static final String TITLE = "患 者 咨 询";
 	private static final String REGIST_PANEL_TITLE = "初 诊 登 记";
 	private static final String CASEMANAGER_PANEL_TITLE = "病 例 管 理";
@@ -51,8 +53,6 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 	private static final String REGIST_TITLE_LABEL_CONTENT = "患者初诊登记";
 	private static final String REGIST_CONTENT_LINE_IMGURL = "./img/line.jpg";
 	private static final String[] QUERY_KEY_LIST = {"证号/姓名","性别","婚姻状况","职业","联系地址","初诊处理意见","初诊备注"};
-	private static final String REFRESH_PATIENT_TABLE_COMMAND = "patient";
-	private static final String REFRESH_CASE_TABLE_COMMAND = "case";
 	
 	private static final int PATIENT_ATTRIBUTE_COUNT = PatientUtils.PATIENT_ATTRIBUTE_COUNT;
 	private static final int CASE_ATTRIBUTE_COUNT = 11;
@@ -199,7 +199,7 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 		scrollPane.setBounds(0, 0, PATIENT_SCROLL_PANE_WIDTH, ScreenSizeUtils.screenHeight-QUERY_PANEL_HEIGHT - FOOTER_HEIGHT);
 		patientTablePanel.add(scrollPane);
 		patientTable.addMouseListener(new PatientTableMouseAdapter(this));
-		FrameUtils.getDataAndRefreshTable(REFRESH_PATIENT_TABLE_COMMAND);
+		FrameUtils.getDataAndRefreshTable(patientTable,PatientServiceImpl.class);
 	}
 	
 	private void createPatientRegistTabbedPane() {
@@ -319,7 +319,7 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 		caseTablePane.setBounds(0, caseManagerChildpanel.getHeight(), caseManagerChildpanel.getWidth(), CASE_TABLE_HEIGHT);
 		caseManagerPanel.add(caseManagerChildpanel);
 		caseManagerPanel.add(caseTablePane);
-		FrameUtils.getDataAndRefreshTable(REFRESH_CASE_TABLE_COMMAND);		
+		FrameUtils.getDataAndRefreshTable(caseTable,CaseServiceImpl.class);
 		caseTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 
@@ -411,13 +411,6 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 		}	
 	}
 
-
-
-	public static void main(String[] args) {
-		ConsultFrame c = new ConsultFrame();
-		c.execute();
-	}
-	
 	
 	public JTextField getStartTimeField() {
 		return startTimeField;
@@ -460,6 +453,12 @@ public class ConsultFrame implements BusinessButtonFrameIntf {
 
 	public List<JButton> getCaseDMLButtons() {
 		return caseDMLButtons;
+	}
+	
+
+	public static void main(String[] args) {
+		ConsultFrame c = new ConsultFrame();
+		c.execute();
 	}
 	
 }
