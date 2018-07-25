@@ -79,6 +79,9 @@ public class BaseDaoImpl {
 		Object obj = clazz.newInstance();
 		Field[] fields = clazz.getDeclaredFields();
 		for (Field field : fields) {
+			if(columnName.length == index) {
+				return obj;
+			}
 			field.setAccessible(true);
 			Object type = field.getType();
 			if(type.equals(String.class)) {

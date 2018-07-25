@@ -1,21 +1,29 @@
 package cn.kgc.frame;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 
+import cn.kgc.model.MedicineType;
 import cn.kgc.frame.intf.BaseBusinessButtonFrame;
 import cn.kgc.frame.listener.MedicineDMLButtonListener;
+import cn.kgc.frame.listener.MedicineTreeMouseAdapter;
 import cn.kgc.frame.model.MedicineTableModel;
 import cn.kgc.service.impl.MedicineServiceImpl;
+import cn.kgc.service.impl.MedicineTypeServiceImpl;
+import cn.kgc.service.intf.MedicineTypeService;
 import cn.kgc.utils.FrameUtils;
 import cn.kgc.utils.ScreenSizeUtils;
 
@@ -26,23 +34,25 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 	private static final int HEIGHT = 500;
 	
 	private static final int TOOL_PANEL_WIDTH = WIDTH;
-	private static final int TOOL_PANEL_HEIGHT = 65;
+	private static final int TOOL_PANEL_HEIGHT = 60;
 	private static final int SPLIT_DIVIDER_LOCATION = 250;
 	
 	
-	private static final int MEDICINE_DML_BUTTON_WIDTH = 65;
+	private static final int MEDICINE_DML_BUTTON_WIDTH = 60;
 	
 	private JFrame medicineFrame = new JFrame(TITLE);
 	private JPanel medicineToolPanel = new JPanel();
 	private JTabbedPane medicineTabbedPane = new JTabbedPane();
-	private JPanel medicineTreePanel = new JPanel();
+	private JScrollPane medicineTreePanel = new JScrollPane();
 	private JSplitPane medicineSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, medicineTreePanel, medicineTabbedPane);
 	
 	private static JTable medicineTable;
+	private static  JTree tree;
 	
 	
 	private List<String> medicineButtonImgUrl;
 	private List<JButton> medicineDMLButtons = new ArrayList<>();
+	private MedicineTypeService medicineTypeService = new MedicineTypeServiceImpl();
 	
 	@Override
 	public void execute() {
@@ -53,14 +63,12 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 		createLayout();
 		createDrugToolPanel();
 		createDrugTabbedPane();
-//		createDrugTreePanel();
+		createDrugTreePanel();
 		
 		medicineFrame.setVisible(true);
 		
 	}
 	
-
-
 
 
 
@@ -103,9 +111,46 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 			medicineDMLButtons.add(button);
 			button.addActionListener(medicineDMLButtonListener);
 			positionX += MEDICINE_DML_BUTTON_WIDTH;
-		}
+		} 
 
 	}
+
+
+
+
+
+	private void createDrugTreePanel() {		
+			//½¨tree
+		List<MedicineType> listArr = medicineTypeService.getAllInfoByParentId(null);
+		if(listArr.size() != 0) {
+			DefaultMutableTreeNode root = new DefaultMutableTreeNode(listArr.get(0));  
+			tree = new JTree(root);	
+			List<MedicineType> listArrChild = medicineTypeService.getAllInfoByParentId(listArr.get(0).getId());
+			addTreeNode(root,listArrChild);
+			
+			tree.addMouseListener(new MedicineTreeMouseAdapter(tree));
+			medicineTreePanel.getViewport().add(tree); 		
+		}				 
+	}
+
+
+
+	
+	
+	private void addTreeNode(DefaultMutableTreeNode treeNode, List<MedicineType> listArr) {
+		if(listArr.size() != 0) {			
+			for (MedicineType medicineType : listArr) {
+				DefaultMutableTreeNode treeNodeChild = new DefaultMutableTreeNode(medicineType);  
+				treeNode.add(treeNodeChild);
+				List<MedicineType> listArrChild = medicineTypeService.getAllInfoByParentId(medicineType.getId());
+				addTreeNode(treeNodeChild,listArrChild);
+			}
+		}	
+	}
+
+
+
+
 
 
 	public static void main(String[] args) {

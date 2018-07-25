@@ -3,15 +3,15 @@ package cn.kgc.model;
 public class MedicineType {
 	private String id;
 	private String name;
-	private String parentMedicineTypeId;
+	private MedicineType parentMedicineType;
 	
 	
 	public MedicineType() {}
 	
-	public MedicineType(String id, String name, String parentMedicineTypeId) {
+	public MedicineType(String id, String name, MedicineType parentMedicineType) {
 		this.id = id;
 		this.name = name;
-		this.parentMedicineTypeId = parentMedicineTypeId;
+		this.parentMedicineType = parentMedicineType;
 	}
 
 	public String getId() {
@@ -30,12 +30,17 @@ public class MedicineType {
 		this.name = name;
 	}
 
-	public String getParentMedicineTypeId() {
-		return parentMedicineTypeId;
+	public MedicineType getParentMedicineType() {
+		return parentMedicineType;
 	}
 
-	public void setParentMedicineTypeId(String parentMedicineTypeId) {
-		this.parentMedicineTypeId = parentMedicineTypeId;
+	public void setParentMedicineType(MedicineType parentMedicineType) {
+		this.parentMedicineType = parentMedicineType;
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 	
 	
