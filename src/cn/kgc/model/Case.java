@@ -3,6 +3,7 @@ package cn.kgc.model;
 import java.util.Date;
 
 public class Case {
+	private String id;
 	private Date examinationTime;
 	private String mainSymptom;
 	private String nowSymptom;
@@ -14,7 +15,7 @@ public class Case {
 	private String advice;
 	private String otherExplain;
 	private Patient patient;
-	private String id;
+
 	
 	
 	public String getId() {
@@ -107,4 +108,11 @@ public class Case {
 		this.patient = patient;
 	}
 	public Case() {}
+	@Override
+	public String toString() {
+		return "Case [id=" + id + ", examinationTime=" + examinationTime + ", mainSymptom=" + mainSymptom
+				+ ", nowSymptom=" + nowSymptom + ", pastSymptom=" + pastSymptom + ", personalSymptom=" + personalSymptom
+				+ ", bodyTest=" + bodyTest + ", labTest=" + labTest + ", examination=" + examination + ", advice="
+				+ advice + ", otherExplain=" + otherExplain + ", patient=" + patient + "]";
+	}
 }

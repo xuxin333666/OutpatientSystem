@@ -120,11 +120,11 @@ public class FrameUtils {
 		table.updateUI();
 	}
 	
-	public static void object2Component(Object obj,List<JComponent> fields) throws IllegalArgumentException, IllegalAccessException {
+	public static void object2Component(Object obj,List<JComponent> fields,int AttributeStart) throws IllegalArgumentException, IllegalAccessException {
 		Field[] attributes = obj.getClass().getDeclaredFields();
-		for (int i=0;i<fields.size();i++) {
-			attributes[i].setAccessible(true);
-			Object value = attributes[i].get(obj);
+		for (int i=0;i<fields.size();i++,AttributeStart++) {
+			attributes[AttributeStart].setAccessible(true);
+			Object value = attributes[AttributeStart].get(obj);
 			if(value == null) {
 				continue;
 			}
@@ -140,6 +140,18 @@ public class FrameUtils {
 				combo.setSelectedIndex(Integer.parseInt(value.toString()));
 			}
 		}
+	}
+	
+	public static void object2Component(Object obj,List<JComponent> fields) throws IllegalArgumentException, IllegalAccessException {
+		object2Component(obj,fields,0);
+	}
+	
+	public static Object getTableSelectedRowInfo(JTable table,int columnNum) throws Exception {
+		if(table.getSelectedRowCount() == 1) {
+			int rowNo = table.getSelectedRow();
+			return table.getValueAt(rowNo, columnNum);
+		}
+		throw new Exception();
 	}
 	
 }

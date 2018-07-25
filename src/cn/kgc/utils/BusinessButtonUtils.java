@@ -17,7 +17,7 @@ public class BusinessButtonUtils {
 	public static Properties p;
 	
 	static {
-		InputStream is = RegistDMLButtonUtils.class.getClassLoader().getResourceAsStream(PROPERTIES_URL);
+		InputStream is = BusinessButtonUtils.class.getClassLoader().getResourceAsStream(PROPERTIES_URL);
 		p = new Properties();
 		try {
 			p.load(is);

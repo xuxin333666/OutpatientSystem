@@ -11,7 +11,7 @@ public class CaseTableModel extends AbstractTableModel implements TableModelSetD
 	private static final long serialVersionUID = -2768971685554043464L;
 	private static CaseTableModel patientTableModel;
 	private Object[][] datas;
-	private final String[] columnName = {"诊断日期","主述","现病史","既往史","个人史","体格检查","实验室检测",
+	private final String[] columnName = {"序号","诊断日期","主述","现病史","既往史","个人史","体格检查","实验室检测",
 									"诊断","意见","其他说明"};
 
 

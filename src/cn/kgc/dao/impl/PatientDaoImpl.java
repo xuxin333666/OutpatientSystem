@@ -1,6 +1,5 @@
 package cn.kgc.dao.impl;
 
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -17,7 +16,7 @@ import cn.kgc.utils.DateUtils;
 import cn.kgc.utils.PatientUtils;
 import cn.kgc.utils.StringUtils;
 
-public class PatientDaoImpl implements PatientDao {
+public class PatientDaoImpl extends BaseDaoImpl implements PatientDao {
 	private final String SQL_ERORR = "后台数据错误，";
 	private final String[] COLUMN_NAME = {"id","name","sex","age","married","job",
 										"weight","blood","phone_number","register_time",
@@ -144,26 +143,9 @@ public class PatientDaoImpl implements PatientDao {
 	
 	@Override
 	public String queryMinEmptyId() throws Exception {
-		DBPoolConnection dBP = DBPoolConnection.getInstance();
 		String sql = "SELECT minid FROM (SELECT id,ROWNUM+10000 minid FROM t_patient) WHERE minid <> id AND ROWNUM = 1";
-		Connection cn = null;
-		PreparedStatement psm = null;
-		ResultSet result = null;
-		try {
-			cn = dBP.getConnection();
-			psm = cn.prepareStatement(sql);
-			result = psm.executeQuery();
-			if(result.next()) {
-				return result.getString("minid");
-			}
-			return queryMaxId();		
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			if(cn != null) {
-				cn.close();
-			}	
-		}
+		String sql2 = "SELECT nvl(max(id),10000)+1 minid FROM t_patient";
+		return queryMinEmptyId(sql,sql2,"minid");
 	}
 	
 	@Override
@@ -175,7 +157,7 @@ public class PatientDaoImpl implements PatientDao {
 		try {
 			cn = dBP.getConnection();
 			psm = cn.prepareStatement(sql);
-			prepareStatementSetValue(psm,patient,0);
+			prepareStatementSetValue(psm, patient, 0, 13);
 			return psm.executeUpdate();	
 		} catch (SQLException e) {
 			throw new Exception(e.getMessage());
@@ -188,97 +170,18 @@ public class PatientDaoImpl implements PatientDao {
 	
 	@Override
 	public int update(Patient patient) throws Exception {
-		DBPoolConnection dBP = DBPoolConnection.getInstance();
 		StringBuilder sql = new StringBuilder("UPDATE t_patient SET");
-		Connection cn = null;
-		PreparedStatement psm = null;
-		for (int i=1;i<COLUMN_NAME.length;i++) {
-			sql.append(" " + COLUMN_NAME[i] + " = ?");
-			if(i != COLUMN_NAME.length-1) {
-				sql.append(",");
-			}
-		}
-		sql.append(" WHERE id = ?");	
-		try {
-			cn = dBP.getConnection();
-			psm = cn.prepareStatement(sql.toString());
-			prepareStatementSetValue(psm,patient,1);
-			psm.setString(14, patient.getId());
-			return psm.executeUpdate();	
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			if(cn != null) {
-				cn.close();
-			}	
-		}
+		return updateById(sql, patient, COLUMN_NAME, patient.getId());
 	}
 	
 	
 	@Override
 	public int delete(String id) throws Exception {
-		DBPoolConnection dBP = DBPoolConnection.getInstance();
 		String sql = "DELETE FROM t_patient WHERE id = ?";
-		Connection cn = null;
-		PreparedStatement psm = null;
-		try {
-			cn = dBP.getConnection();
-			psm = cn.prepareStatement(sql);
-			psm.setString(1, id);
-			return psm.executeUpdate();	
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			if(cn != null) {
-				cn.close();
-			}	
-		}
+		return deleteById(sql, id);
 	}
 	
-	
-	private void prepareStatementSetValue(PreparedStatement psm,Patient patient,int i) throws IllegalArgumentException, IllegalAccessException, SQLException {
-		Field[] fields = patient.getClass().getDeclaredFields();
-		int index = 1;
-		for (;i<fields.length;i++) {
-			fields[i].setAccessible(true);
-			Object value = fields[i].get(patient);
-			if(value == null) {
-				psm.setObject(index++, null);
-				continue;
-			}
-			Class<?> clazz = fields[i].getType();
-			if(clazz.equals(String.class)) {
-				psm.setString(index++, value.toString());
-			} else if (clazz.equals(Double.class)) {
-				psm.setDouble(index++,Double.valueOf(value.toString()));
-			} else if(clazz.equals(java.util.Date.class)) {
-				psm.setDate(index++, DateUtils.date2SqlDate((java.util.Date)value));
-			}
-		}
-		
-	}
-	private String queryMaxId() throws Exception {
-		DBPoolConnection dBP = DBPoolConnection.getInstance();
-		String sql = "SELECT nvl(max(id),10000)+1 minid FROM t_patient";
-		Connection cn = null;
-		PreparedStatement psm = null;
-		ResultSet result = null;
-		try {
-			cn = dBP.getConnection();
-			psm = cn.prepareStatement(sql);
-			result = psm.executeQuery();
-			if(result.next()) {
-				return result.getString("minid");
-			}
-			return null;		
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			if(cn != null) {
-				cn.close();
-			}	
-		}
-	}
+
 	private Patient result2patient(ResultSet result) throws SQLException {
 		List<Patient> patients =  new ArrayList<>();
 		result2List(result, patients);

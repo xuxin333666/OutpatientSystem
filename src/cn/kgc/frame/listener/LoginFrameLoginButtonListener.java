@@ -31,6 +31,7 @@ public class LoginFrameLoginButtonListener implements ActionListener {
 			openMainFrame(user);
 		} catch (Exception e1) {
 			FrameUtils.DialogErorr("´íÎó£¬" + e1.getMessage());
+			e1.printStackTrace();
 		}
 	}
 

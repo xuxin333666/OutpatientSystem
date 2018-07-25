@@ -26,7 +26,7 @@ public class UserDaoImpl implements UserDao {
 			psm.setString(1, user.getName());
 			psm.setString(2, user.getPwd());
 			result = psm.executeQuery();
-			result2User(result);		
+			return result2User(result);		
 		} catch (SQLException e) {
 			throw new Exception(e.getMessage());
 		} finally {
@@ -34,14 +34,13 @@ public class UserDaoImpl implements UserDao {
 				cn.close();
 			}	
 		}
-		return null;
 	}
 	
 	
 	private User result2User(ResultSet result) throws SQLException {
 		List<User> users = result2List(result);
 		if(users.size() != 0) {
-			return result2List(result).get(0);
+			return users.get(0);
 		}
 		return null;
 	}

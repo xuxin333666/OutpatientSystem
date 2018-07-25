@@ -5,19 +5,19 @@ import java.awt.event.MouseListener;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JTable;
 
 import cn.kgc.frame.ConsultFrame;
-import cn.kgc.model.Patient;
-import cn.kgc.service.impl.PatientServiceImpl;
-import cn.kgc.service.intf.PatientService;
+import cn.kgc.model.Case;
+import cn.kgc.service.impl.CaseServiceImpl;
+import cn.kgc.service.intf.CaseService;
 import cn.kgc.utils.FrameUtils;
 
 public class CaseTableMouseAdapter implements MouseListener {
 	
 	private ConsultFrame consultFrame;
 	private List<JComponent> fields;
-	private String id;
+	private Object caseId;
+	private Object patientId;
 	
 	public CaseTableMouseAdapter(ConsultFrame consultFrame) {
 		this.consultFrame = consultFrame;
@@ -25,18 +25,15 @@ public class CaseTableMouseAdapter implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		JTable table = ConsultFrame.caseTable;
-		if(table.getSelectedRowCount() == 1) {
-			int rowNo = table.getSelectedRow();
-			id = table.getValueAt(rowNo, 0).toString();
-			PatientService patientService = new PatientServiceImpl();
-			try {
-				Patient patient = patientService.getPatientInfoById(id);
-				fields = consultFrame.getRegistContentFields();
-				FrameUtils.object2Component(patient,fields);
-			} catch (Exception e1) {
-				FrameUtils.DialogErorr("´íÎó£¬" + e1.getMessage());
-			}
+		try {
+			caseId = FrameUtils.getTableSelectedRowInfo(ConsultFrame.caseTable, 0);
+			patientId = FrameUtils.getTableSelectedRowInfo(ConsultFrame.patientTable, 0);
+			CaseService caseService = new CaseServiceImpl();
+			Case $case = caseService.getCaseInfoById(caseId.toString(),patientId.toString());
+			fields = consultFrame.getCaseDescriptionFields();
+			FrameUtils.object2Component($case,fields,1);
+		} catch (Exception e1) {
+			FrameUtils.DialogErorr("´íÎó£¬" + e1.getMessage());
 		}
 		
 	}
