@@ -1,7 +1,6 @@
 package cn.kgc.dao.impl;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,13 +29,8 @@ public class CaseDaoImpl extends BaseDaoImpl implements CaseDao {
 	@Override
 	public List<Case> queryByPatientId(String patientId) throws Exception {
 		String sql = SELECT_CASE_AND_PATINT_TABLE_SQL + " WHERE patient_id = ?";
-		List<Object> list = queryById(sql, Case.class, Patient.class, COLUMN_NAME, patientId);
-		List<Case> cases = new ArrayList<>();
-		for (Object object : list) {
-			Case $case = (Case)object;
-			cases.add($case);
-		}
-		return cases;
+		List<Object> objs = queryById(sql, Case.class, Patient.class, COLUMN_NAME, patientId);
+		return obj2Case(objs);
 	}
 	
 
@@ -53,7 +47,9 @@ public class CaseDaoImpl extends BaseDaoImpl implements CaseDao {
 			psm.setString(1, patientId);
 			psm.setString(2, caseId);
 			result = psm.executeQuery();
-			return result2Case(result);		
+			List<Object> objs = new ArrayList<>();
+			result2List(result, objs, Case.class, Patient.class, COLUMN_NAME);
+			return (Case)objs.get(0);
 		} catch (SQLException e) {
 			throw new Exception(e.getMessage());
 		} finally {
@@ -66,27 +62,15 @@ public class CaseDaoImpl extends BaseDaoImpl implements CaseDao {
 
 	@Override
 	public int insert(Case $case) throws Exception {
-		DBPoolConnection dBP = DBPoolConnection.getInstance();
 		String sql =  "insert into t_case(id,examination_time,main_symptom,now_symptom,past_symptom,personal_symptom,body_test,"
 				+ "lab_test,examination,advice,other_explain,patient_id) "
 				+ "values (?,nvl(?,sysdate),?,?,?,?,?,?,?,?,?,?)";
-		Connection cn = null;
-		PreparedStatement psm = null;
-		try {
-			cn = dBP.getConnection();		
-			psm = cn.prepareStatement(sql);
-			prepareStatementSetValue(psm, $case, 0, 10);
-			psm.setString(12, $case.getPatient().getId());
-			return psm.executeUpdate();	
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			if(cn != null) {
-				cn.close();
-			}	
-		}
+		return insert(sql, $case, 0, 10,$case.getPatient().getId());
+		
 	}
 	
+
+
 
 	@Override
 	public String queryMinEmptyId() throws Exception {
@@ -110,61 +94,13 @@ public class CaseDaoImpl extends BaseDaoImpl implements CaseDao {
 	}
 	
 	
-	
-	private Case result2Case(ResultSet result) throws SQLException {
-		List<Case> cases =  new ArrayList<>();
-		result2List(result, cases);
-		if(cases.size() != 0) {
-			return cases.get(0);
-		}
-		return null;
-	}
-
-	
-	
-
-
-	private void result2List(ResultSet result, List<Case> cases) throws SQLException {
-		Patient patient = null;
-		int count = 0;
-		while(result.next()) {
-			int index = 0;
-			String id = result.getString(COLUMN_NAME[index++]);
-			Date examinationTime = result.getDate(COLUMN_NAME[index++]);
-			String mainSymptom = result.getString(COLUMN_NAME[index++]);
-			String nowSymptom = result.getString(COLUMN_NAME[index++]);
-			String pastSymptom = result.getString(COLUMN_NAME[index++]);
-			String personalSymptom = result.getString(COLUMN_NAME[index++]);
-			String bodyTest = result.getString(COLUMN_NAME[index++]);
-			String labTest = result.getString(COLUMN_NAME[index++]);
-			String examination = result.getString(COLUMN_NAME[index++]);
-			String advice = result.getString(COLUMN_NAME[index++]);
-			String otherExplain = result.getString(COLUMN_NAME[index++]);
-			
-			
-			if(count == 0) {			
-				String patientId = result.getString(COLUMN_NAME[index++]);
-				String name = result.getString(COLUMN_NAME[index++]);
-				String sex = result.getString(COLUMN_NAME[index++]);
-				Double age = result.getDouble(COLUMN_NAME[index++]);
-				String married = result.getString(COLUMN_NAME[index++]);
-				String job = result.getString(COLUMN_NAME[index++]);
-				Double weight = result.getDouble(COLUMN_NAME[index++]);
-				String blood = result.getString(COLUMN_NAME[index++]);
-				String phoneNumber = result.getString(COLUMN_NAME[index++]);
-				Date registerTime = result.getDate(COLUMN_NAME[index++]);
-				String address = result.getString(COLUMN_NAME[index++]);
-				String allergy = result.getString(COLUMN_NAME[index++]);
-				String handlingSug = result.getString(COLUMN_NAME[index++]);
-				String remark = result.getString(COLUMN_NAME[index++]);
-				patient = new Patient(patientId, name, sex, age, married, job, weight, blood, 
-						phoneNumber, registerTime, address, allergy,handlingSug, remark);
-			}
-			Case $case = new Case(id, mainSymptom, nowSymptom, pastSymptom, personalSymptom,
-					bodyTest, labTest, examination, advice, otherExplain, examinationTime, patient);
+	private List<Case> obj2Case(List<Object> objs) {
+		List<Case> cases = new ArrayList<>();
+		for (Object object : objs) {
+			Case $case = (Case)object;
 			cases.add($case);
-			count++;
 		}
+		return cases;
 	}
 
 

@@ -1,5 +1,9 @@
 package cn.kgc.frame;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -9,6 +13,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
 import cn.kgc.frame.intf.BaseBusinessButtonFrame;
+import cn.kgc.frame.listener.MedicineDMLButtonListener;
 import cn.kgc.frame.model.MedicineTableModel;
 import cn.kgc.service.impl.MedicineServiceImpl;
 import cn.kgc.utils.FrameUtils;
@@ -21,8 +26,11 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 	private static final int HEIGHT = 500;
 	
 	private static final int TOOL_PANEL_WIDTH = WIDTH;
-	private static final int TOOL_PANEL_HEIGHT = 90;
+	private static final int TOOL_PANEL_HEIGHT = 65;
 	private static final int SPLIT_DIVIDER_LOCATION = 250;
+	
+	
+	private static final int MEDICINE_DML_BUTTON_WIDTH = 65;
 	
 	private JFrame medicineFrame = new JFrame(TITLE);
 	private JPanel medicineToolPanel = new JPanel();
@@ -32,6 +40,10 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 	
 	private static JTable medicineTable;
 	
+	
+	private List<String> medicineButtonImgUrl;
+	private List<JButton> medicineDMLButtons = new ArrayList<>();
+	
 	@Override
 	public void execute() {
 		
@@ -39,7 +51,7 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 		medicineFrame.setLayout(null);
 		
 		createLayout();
-//		createDrugToolPanel();
+		createDrugToolPanel();
 		createDrugTabbedPane();
 //		createDrugTreePanel();
 		
@@ -47,6 +59,9 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 		
 	}
 	
+
+
+
 
 
 
@@ -76,6 +91,21 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 		
 	}
 
+
+
+	private void createDrugToolPanel() {
+		medicineToolPanel.setLayout(null);
+		MedicineDMLButtonListener medicineDMLButtonListener = new MedicineDMLButtonListener(this);
+		medicineButtonImgUrl = medicineDMLButtonListener.getList();
+		for (int i = 0,positionX=0; i < medicineButtonImgUrl.size(); i++) {
+			JButton button = FrameUtils.addButton(medicineButtonImgUrl.get(i), positionX, MEDICINE_DML_BUTTON_WIDTH, TOOL_PANEL_HEIGHT, medicineToolPanel);
+			button.setName(medicineButtonImgUrl.get(i));
+			medicineDMLButtons.add(button);
+			button.addActionListener(medicineDMLButtonListener);
+			positionX += MEDICINE_DML_BUTTON_WIDTH;
+		}
+
+	}
 
 
 	public static void main(String[] args) {

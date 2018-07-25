@@ -39,6 +39,7 @@ public class BaseDaoImpl {
 		}
 		return list;
 	}
+
 	
 	protected List<Object> queryById(String sql,Class<?> clazz,Class<?> subClazz,String[] columnName,String id) throws Exception {
 		List<Object> list =  new ArrayList<>();
@@ -131,6 +132,43 @@ public class BaseDaoImpl {
 				return result.getString(columnName);
 			}
 			return null;		
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			if(cn != null) {
+				cn.close();
+			}	
+		}
+	}
+	
+	protected int insert(String sql,Object obj,int attributeStrat,int attributeEnd) throws Exception {
+		DBPoolConnection dBP = DBPoolConnection.getInstance();
+		Connection cn = null;
+		PreparedStatement psm = null;
+		try {
+			cn = dBP.getConnection();
+			psm = cn.prepareStatement(sql);
+			prepareStatementSetValue(psm, obj, attributeStrat, attributeEnd);
+			return psm.executeUpdate();	
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			if(cn != null) {
+				cn.close();
+			}	
+		}
+	}
+	
+	protected int insert(String sql,Object obj,int attributeStrat,int attributeEnd, String fkId) throws Exception {
+		DBPoolConnection dBP = DBPoolConnection.getInstance();
+		Connection cn = null;
+		PreparedStatement psm = null;
+		try {
+			cn = dBP.getConnection();
+			psm = cn.prepareStatement(sql);
+			prepareStatementSetValue(psm, obj, attributeStrat, attributeEnd);
+			psm.setString(attributeEnd+2, fkId);
+			return psm.executeUpdate();	
 		} catch (SQLException e) {
 			throw new Exception(e.getMessage());
 		} finally {

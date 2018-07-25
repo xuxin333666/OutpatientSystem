@@ -16,9 +16,13 @@ public class MedicineDaoImpl extends BaseDaoImpl implements MedicineDao {
 	@Override
 	public List<Medicine> query() throws Exception {
 		String sql = SELECT_MEDICINE_AND_TYPE_TABLE_SQL + " ORDER BY mid";
-		List<Object> list = query(sql,Medicine.class,MedicineType.class,COLUMN_NAMES);
+		List<Object> objs = query(sql,Medicine.class,MedicineType.class,COLUMN_NAMES);
+		return obj2Medicine(objs);
+	}
+	
+	private List<Medicine> obj2Medicine(List<Object> objs) {
 		List<Medicine> medicines = new ArrayList<>();
-		for (Object object : list) {
+		for (Object object : objs) {
 			Medicine medicine = (Medicine)object;
 			medicines.add(medicine);
 		}

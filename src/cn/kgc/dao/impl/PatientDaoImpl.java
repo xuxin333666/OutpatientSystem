@@ -1,7 +1,6 @@
 package cn.kgc.dao.impl;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,17 +24,12 @@ public class PatientDaoImpl extends BaseDaoImpl implements PatientDao {
 	public List<Patient> query() throws Exception {
 		String sql = "SELECT * FROM t_patient ORDER BY id";
 		List<Object> objs = query(sql, Patient.class, null, COLUMN_NAME);
-		List<Patient> patients = new ArrayList<>();
-		for (Object object : objs) {
-			Patient patient = (Patient)object;
-			patients.add(patient);
-		}
-		return patients;
+		return obj2Patient(objs);
 	}
+
 	@Override
 	public List<Patient> query(PatientDto patientDto) throws Exception {
 		DBPoolConnection dbp = new DBPoolConnection();
-		List<Patient> patients =  new ArrayList<>();
 		StringBuilder sql = new StringBuilder("SELECT * FROM t_patient WHERE 1=1");
 		String queryColumnName = patientDto.getQueryColumnNameStr();
 		String key = patientDto.getKeyStr();
@@ -87,7 +81,9 @@ public class PatientDaoImpl extends BaseDaoImpl implements PatientDao {
 				}
 			}
 			result = psm.executeQuery();
-			result2List(result,patients);
+			List<Object> objs = new ArrayList<>();
+			result2List(result, objs, Patient.class, null, COLUMN_NAME);
+			return obj2Patient(objs);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new Exception(SQL_ERORR + e.getMessage());
@@ -100,29 +96,13 @@ public class PatientDaoImpl extends BaseDaoImpl implements PatientDao {
 				}
 			}
 		}
-		return patients;
 	}
 	
 	@Override
 	public Patient query(String id) throws Exception {
-		DBPoolConnection dBP = DBPoolConnection.getInstance();
 		String sql = "SELECT * FROM t_patient WHERE id = ?";
-		Connection cn = null;
-		PreparedStatement psm = null;
-		ResultSet result = null;
-		try {
-			cn = dBP.getConnection();
-			psm = cn.prepareStatement(sql);
-			psm.setString(1, id);
-			result = psm.executeQuery();
-			return result2patient(result);		
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			if(cn != null) {
-				cn.close();
-			}	
-		}
+		List<Object> objs = queryById(sql, Patient.class, null, COLUMN_NAME, id);
+		return (Patient)objs.get(0);
 	}
 	
 	@Override
@@ -134,22 +114,8 @@ public class PatientDaoImpl extends BaseDaoImpl implements PatientDao {
 	
 	@Override
 	public int insert(Patient patient) throws Exception {
-		DBPoolConnection dBP = DBPoolConnection.getInstance();
 		String sql = "INSERT INTO t_patient VALUES (?,?,?,?,?,?,?,?,?,nvl(?,SYSDATE),?,?,?,?)";
-		Connection cn = null;
-		PreparedStatement psm = null;
-		try {
-			cn = dBP.getConnection();
-			psm = cn.prepareStatement(sql);
-			prepareStatementSetValue(psm, patient, 0, 13);
-			return psm.executeUpdate();	
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			if(cn != null) {
-				cn.close();
-			}	
-		}
+		return insert(sql, patient, 0, 13);
 	}
 	
 	@Override
@@ -165,43 +131,15 @@ public class PatientDaoImpl extends BaseDaoImpl implements PatientDao {
 		return deleteById(sql, id);
 	}
 	
-
-	private Patient result2patient(ResultSet result) throws SQLException {
-		List<Patient> patients =  new ArrayList<>();
-		result2List(result, patients);
-		if(patients.size() != 0) {
-			return patients.get(0);
-		}
-		return null;
-	}
 	
-	
-
-
-	private void result2List(ResultSet result, List<Patient> patients) throws SQLException {
-		while(result.next()) {
-			int index = 0;
-			String id = result.getString(COLUMN_NAME[index++]);
-			String name = result.getString(COLUMN_NAME[index++]);
-			String sex = result.getString(COLUMN_NAME[index++]);
-			Double age = result.getDouble(COLUMN_NAME[index++]);
-			String married = result.getString(COLUMN_NAME[index++]);
-			String job = result.getString(COLUMN_NAME[index++]);
-			Double weight = result.getDouble(COLUMN_NAME[index++]);
-			String blood = result.getString(COLUMN_NAME[index++]);
-			String phoneNumber = result.getString(COLUMN_NAME[index++]);
-			Date registerTime = result.getDate(COLUMN_NAME[index++]);
-			String address = result.getString(COLUMN_NAME[index++]);
-			String allergy = result.getString(COLUMN_NAME[index++]);
-			String handlingSug = result.getString(COLUMN_NAME[index++]);
-			String remark = result.getString(COLUMN_NAME[index++]);
-			Patient patient = new Patient(id, name, sex, age, married, job, weight, blood, 
-					phoneNumber, registerTime, address, allergy,handlingSug, remark);
+	private List<Patient> obj2Patient(List<Object> objs) {
+		List<Patient> patients = new ArrayList<>();
+		for (Object object : objs) {
+			Patient patient = (Patient)object;
 			patients.add(patient);
 		}
+		return patients;
 	}
-
-
-
+	
 
 }
