@@ -57,7 +57,7 @@ public class PatientDaoImpl extends BaseDaoImpl implements PatientDao {
 			} else if(QUERY_KEY_LIST[index++].equals(queryColumnName)) {
 				sql.append(" AND remark LIKE ?");
 			} else if(QUERY_KEY_LIST[0].equals(queryColumnName)) {
-				sql.append(" AND id LIKE ? OR id LIKE ?");
+				sql.append(" AND id LIKE ? OR name LIKE ?");
 			}
 			sql.append(" ORDER BY id");
 		}
