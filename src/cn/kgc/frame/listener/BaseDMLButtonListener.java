@@ -100,7 +100,7 @@ public abstract class BaseDMLButtonListener {
 				str = area.getText();
 			} else {
 				JComboBox<?> combo = (JComboBox<?>)fields.get(i);
-				str = (String)combo.getSelectedItem();			
+				str = combo.getSelectedItem().toString();			
 			}
 			objectSetAttribute(attributes[attributeStart],object,str);
 			}

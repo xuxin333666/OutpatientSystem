@@ -1,6 +1,7 @@
 package cn.kgc.service.impl;
 
 import java.util.List;
+import java.util.Vector;
 
 import cn.kgc.dao.impl.MedicineTypeDaoImpl;
 import cn.kgc.dao.intf.MedicineTypeDao;
@@ -30,6 +31,14 @@ public class MedicineTypeServiceImpl implements MedicineTypeService {
 	@Override
 	public int deleteTypeNode(MedicineType selectedType) throws Exception {
 		return medicineTypeDao.delete(selectedType);
+	}
+
+	@Override
+	public Vector<MedicineType> getAllInfoByNoChildId() throws Exception {
+		List<MedicineType> types = medicineTypeDao.queryByNoChildId();
+		Vector<MedicineType> typesVetor = new Vector<>();
+		typesVetor.addAll(types);
+		return typesVetor;
 	}
 
 

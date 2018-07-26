@@ -16,4 +16,6 @@ public interface MedicineTypeDao {
 
 	int delete(MedicineType selectedType) throws Exception;
 
+	List<MedicineType> queryByNoChildId() throws Exception;
+
 }

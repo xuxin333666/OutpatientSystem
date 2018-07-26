@@ -28,6 +28,31 @@ public class MedicineServiceImpl implements MedicineService {
 		List<Medicine> medicines = medicineDao.queryByTypeId(typeId);
 		return ListUtils.list2TableArray(medicines, 7);
 	}
+
+	@Override
+	public Medicine getInfoById(String id) throws Exception {
+		return medicineDao.queryById(id);
+	}
+
+	@Override
+	public String getMinEmptyId() throws Exception {
+		return medicineDao.getMinEmptyId();
+	}
+
+	@Override
+	public int add(Medicine medicine) throws Exception {
+		return medicineDao.insert(medicine);
+	}
+
+	@Override
+	public int modify(Medicine medicine) throws Exception {
+		return medicineDao.update(medicine);
+	}
+
+	@Override
+	public int delete(String medicineId) throws Exception {
+		return medicineDao.delete(medicineId);
+	}
 	
 
 }

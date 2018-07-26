@@ -11,6 +11,7 @@ import cn.kgc.model.MedicineType;
 
 public class MedicineDaoImpl extends BaseDaoImpl implements MedicineDao {
 	private static final String[] COLUMN_NAMES = {"mid","mname","norms","unit","price","uasge","needing_attention","tid","tname","parent_id"};
+	private static final String[] COLUMN_NAMES_UPDATE = {"id","name","norms","unit","price","uasge","needing_attention","medicine_type_id"};
 	private final String SELECT_MEDICINE_AND_TYPE_TABLE_SQL =  "SELECT m.id mid,m.name mname,norms,unit,price,uasge,"
 			+ "needing_attention,t.id tid,t.name tname,parent_id"
 			+ " FROM t_medicine m JOIN t_medicine_type t ON medicine_type_id = t.id";
@@ -44,6 +45,39 @@ public class MedicineDaoImpl extends BaseDaoImpl implements MedicineDao {
 			medicines.add(medicine);
 		}
 		return medicines;
+	}
+
+	@Override
+	public String getMinEmptyId() throws Exception {
+		String sql = "SELECT minid FROM (SELECT id,ROWNUM minid FROM t_medicine ORDER BY id) WHERE minid <> id AND ROWNUM = 1";
+		String sql2 = "SELECT nvl(max(id),0)+1 minid FROM t_medicine";
+		return queryMinEmptyId(sql,sql2,"minid");
+	}
+
+	@Override
+	public int insert(Medicine medicine) throws Exception {
+		String sql =  "insert into t_medicine values (?,?,?,?,?,?,?,?)";
+		return insert(sql, medicine, 0, 6,medicine.getMedicineType().getId());
+	}
+
+	@Override
+	public int delete(String medicineId) throws Exception {
+		String sql = "DELETE FROM t_medicine WHERE id = ?";
+		return deleteById(sql, medicineId);
+	}
+
+	@Override
+	public Medicine queryById(String id) throws Exception {
+		String sql = SELECT_MEDICINE_AND_TYPE_TABLE_SQL + " WHERE m.id = ?";
+		List<Object> objs = queryById(sql, Medicine.class, MedicineType.class, COLUMN_NAMES, id);
+		return (Medicine)objs.get(0);
+	}
+
+	@Override
+	public int update(Medicine medicine) throws Exception {
+		System.out.println(medicine.getMedicineType().getId());
+		StringBuilder sql = new StringBuilder("UPDATE t_medicine SET");
+		return updateById(sql, medicine, COLUMN_NAMES_UPDATE, medicine.getId(),medicine.getMedicineType().getId());
 	}
 
 

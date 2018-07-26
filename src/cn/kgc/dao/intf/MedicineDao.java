@@ -13,4 +13,14 @@ public interface MedicineDao {
 
 	List<Medicine> queryBySearch(MedicineDto medicineDto) throws Exception;
 
+	String getMinEmptyId() throws Exception;
+
+	int insert(Medicine medicine) throws Exception;
+
+	int delete(String medicineId) throws Exception;
+
+	Medicine queryById(String id) throws Exception;
+
+	int update(Medicine medicine) throws Exception;
+
 }

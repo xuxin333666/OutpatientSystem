@@ -138,7 +138,7 @@ public class FrameUtils {
 			int rowNo = table.getSelectedRow();
 			return table.getValueAt(rowNo, columnNum);
 		}
-		throw new Exception();
+		throw new Exception("«Î—°‘Ò“ª––");
 	}
 	
 }

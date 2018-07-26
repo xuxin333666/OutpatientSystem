@@ -36,15 +36,7 @@ public class MedicineTypeDaoImpl extends BaseDaoImpl implements MedicineTypeDao 
 		String sql =  "insert into t_medicine_type(id,name,parent_id) values (?,?,?)";
 		return insert(sql, type, 0, 1,type.getParentMedicineType().getId());
 	}
-	
-	private List<MedicineType> obj2MedicineType(List<Object> objs) {
-		List<MedicineType> medicineTypes = new ArrayList<>();
-		for (Object object : objs) {
-			MedicineType medicineType = (MedicineType)object;
-			medicineTypes.add(medicineType);
-		}
-		return medicineTypes;
-	}
+
 
 	@Override
 	public int update(MedicineType selectedType) throws Exception {
@@ -58,4 +50,21 @@ public class MedicineTypeDaoImpl extends BaseDaoImpl implements MedicineTypeDao 
 		return deleteById(sql, selectedType.getId());
 	}
 
+	@Override
+	public List<MedicineType> queryByNoChildId() throws Exception {
+		String sql = "SELECT id cid,name cname,parent_id pid FROM  t_medicine_type "
+				+ "WHERE id != ALL (SELECT  NVL(parent_id,0) FROM t_medicine_type)";
+		List<Object> objs = query(sql, MedicineType.class, MedicineType.class, columnName);
+		return obj2MedicineType(objs);
+	}
+
+	
+	private List<MedicineType> obj2MedicineType(List<Object> objs) {
+		List<MedicineType> medicineTypes = new ArrayList<>();
+		for (Object object : objs) {
+			MedicineType medicineType = (MedicineType)object;
+			medicineTypes.add(medicineType);
+		}
+		return medicineTypes;
+	}
 }

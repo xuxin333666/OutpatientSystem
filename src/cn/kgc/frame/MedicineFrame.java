@@ -37,7 +37,7 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 	
 	private static final int TOOL_PANEL_WIDTH = WIDTH;
 	private static final int TOOL_PANEL_HEIGHT = 60;
-	private static final int SPLIT_DIVIDER_LOCATION = 250;
+	private static final int SPLIT_DIVIDER_LOCATION = 150;
 	
 	
 	private static final int MEDICINE_DML_BUTTON_WIDTH = 60;
@@ -73,6 +73,7 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 		createDrugTabbedPane();
 		createMedicineTreePanel();
 		
+		medicineFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		medicineFrame.setVisible(true);
 		
 	}
@@ -114,7 +115,7 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 		MedicineDMLButtonListener medicineDMLButtonListener = new MedicineDMLButtonListener(this);
 		medicineButtonImgUrl = medicineDMLButtonListener.getList();
 		int positionX = 0;
-		for (int i = 0; i < medicineButtonImgUrl.size(); i++) {
+		for (int i = 0; i < medicineButtonImgUrl.size() -2; i++) {
 			JButton button = FrameUtils.addButton(medicineButtonImgUrl.get(i), positionX, MEDICINE_DML_BUTTON_WIDTH, TOOL_PANEL_HEIGHT, medicineToolPanel);
 			button.setName(medicineButtonImgUrl.get(i));
 			medicineDMLButtons.add(button);

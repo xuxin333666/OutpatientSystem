@@ -233,6 +233,10 @@ public class BaseDaoImpl {
 	}
 	
 	protected int updateById(StringBuilder sql,Object obj,String[] columnName,String id) throws Exception {
+		return updateById(sql, obj, columnName, id, null);
+	}
+	
+	protected int updateById(StringBuilder sql,Object obj,String[] columnName,String id,String fkId) throws Exception {
 		DBPoolConnection dBP = DBPoolConnection.getInstance();
 		Connection cn = null;
 		PreparedStatement psm = null;
@@ -246,7 +250,12 @@ public class BaseDaoImpl {
 		try {
 			cn = dBP.getConnection();
 			psm = cn.prepareStatement(sql.toString());
-			prepareStatementSetValue(psm, obj, 1, columnName.length-1);
+			if(fkId == null) {
+				prepareStatementSetValue(psm, obj, 1, columnName.length-1);
+			} else {
+				prepareStatementSetValue(psm, obj, 1, columnName.length-2);
+				psm.setString(columnName.length-1,fkId);			
+			}
 			psm.setString(columnName.length, id);
 			return psm.executeUpdate();	
 		} catch (SQLException e) {
