@@ -1,17 +1,17 @@
 package cn.kgc.frame;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -19,6 +19,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import cn.kgc.model.MedicineType;
 import cn.kgc.frame.intf.BaseBusinessButtonFrame;
 import cn.kgc.frame.listener.MedicineDMLButtonListener;
+import cn.kgc.frame.listener.MedicineSearchKeyListener;
 import cn.kgc.frame.listener.MedicineTreeMouseAdapter;
 import cn.kgc.frame.model.MedicineTableModel;
 import cn.kgc.service.impl.MedicineServiceImpl;
@@ -30,6 +31,7 @@ import cn.kgc.utils.ScreenSizeUtils;
 public class MedicineFrame implements BaseBusinessButtonFrame {
 	private static final String TITLE = "药 品 设 置";
 	private static final String TABED_DRUG_LIST_TITLE = "药品列表";
+	private static final String MEDICINE_SEARCH_LABEL_CONTENT = "药品检索：";
 	private static final int WIDTH = 800;
 	private static final int HEIGHT = 500;
 	
@@ -39,6 +41,10 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 	
 	
 	private static final int MEDICINE_DML_BUTTON_WIDTH = 60;
+	private static final int MEDICINE_SEARCH_LABEL_POSITION_X = 100;
+	private static final int MEDICINE_SEARCH_LABEL_WIDTH = 70;
+	private static final int MEDICINE_SEARCH_LABEL_HEIGHT = 25;
+	private static final int MEDICINE_SEARCH_FIELD_WIDTH = 150;
 	
 	private JFrame medicineFrame = new JFrame(TITLE);
 	private JPanel medicineToolPanel = new JPanel();
@@ -46,10 +52,12 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 	private JScrollPane medicineTreePanel = new JScrollPane();
 	private JSplitPane medicineSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, medicineTreePanel, medicineTabbedPane);
 	
-	private static JTable medicineTable;
-	private static  JTree tree;
+	private JTable medicineTable;
+	private JTree tree;
 	
+	private JTextField medicineSearchField = new JTextField();
 	
+
 	private List<String> medicineButtonImgUrl;
 	private List<JButton> medicineDMLButtons = new ArrayList<>();
 	private MedicineTypeService medicineTypeService = new MedicineTypeServiceImpl();
@@ -63,7 +71,7 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 		createLayout();
 		createDrugToolPanel();
 		createDrugTabbedPane();
-		createDrugTreePanel();
+		createMedicineTreePanel();
 		
 		medicineFrame.setVisible(true);
 		
@@ -105,13 +113,24 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 		medicineToolPanel.setLayout(null);
 		MedicineDMLButtonListener medicineDMLButtonListener = new MedicineDMLButtonListener(this);
 		medicineButtonImgUrl = medicineDMLButtonListener.getList();
-		for (int i = 0,positionX=0; i < medicineButtonImgUrl.size(); i++) {
+		int positionX = 0;
+		for (int i = 0; i < medicineButtonImgUrl.size(); i++) {
 			JButton button = FrameUtils.addButton(medicineButtonImgUrl.get(i), positionX, MEDICINE_DML_BUTTON_WIDTH, TOOL_PANEL_HEIGHT, medicineToolPanel);
 			button.setName(medicineButtonImgUrl.get(i));
 			medicineDMLButtons.add(button);
 			button.addActionListener(medicineDMLButtonListener);
 			positionX += MEDICINE_DML_BUTTON_WIDTH;
 		} 
+		
+		
+		JLabel medicineSearchLabel = new  JLabel(MEDICINE_SEARCH_LABEL_CONTENT);
+		medicineSearchLabel.setBounds(positionX + MEDICINE_SEARCH_LABEL_POSITION_X, TOOL_PANEL_HEIGHT/2 - MEDICINE_SEARCH_LABEL_HEIGHT/2, MEDICINE_SEARCH_LABEL_WIDTH, MEDICINE_SEARCH_LABEL_HEIGHT);
+	
+		medicineSearchField.setBounds(medicineSearchLabel.getX() + medicineSearchLabel.getWidth(), medicineSearchLabel.getY(), MEDICINE_SEARCH_FIELD_WIDTH, MEDICINE_SEARCH_LABEL_HEIGHT);
+		medicineSearchField.addKeyListener(new MedicineSearchKeyListener(this));
+		
+		medicineToolPanel.add(medicineSearchLabel);
+		medicineToolPanel.add(medicineSearchField);
 
 	}
 
@@ -119,25 +138,31 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 
 
 
-	private void createDrugTreePanel() {		
+	private void createMedicineTreePanel() {		
 			//建tree
-		List<MedicineType> listArr = medicineTypeService.getAllInfoByParentId(null);
-		if(listArr.size() != 0) {
-			DefaultMutableTreeNode root = new DefaultMutableTreeNode(listArr.get(0));  
-			tree = new JTree(root);	
-			List<MedicineType> listArrChild = medicineTypeService.getAllInfoByParentId(listArr.get(0).getId());
-			addTreeNode(root,listArrChild);
-			
-			tree.addMouseListener(new MedicineTreeMouseAdapter(tree));
-			medicineTreePanel.getViewport().add(tree); 		
-		}				 
+		List<MedicineType> listArr;
+		try {
+			listArr = medicineTypeService.getAllInfoByParentId(null);
+			if(listArr.size() != 0) {
+				DefaultMutableTreeNode root = new DefaultMutableTreeNode(listArr.get(0));  
+				tree = new JTree(root);	
+				List<MedicineType> listArrChild = medicineTypeService.getAllInfoByParentId(listArr.get(0).getId());
+				addTreeNode(root,listArrChild);
+				
+				tree.addMouseListener(new MedicineTreeMouseAdapter(this));
+				medicineTreePanel.getViewport().add(tree); 		
+			}				 
+		} catch (Exception e) {
+			FrameUtils.DialogErorr("错误，" + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 
 
 	
 	
-	private void addTreeNode(DefaultMutableTreeNode treeNode, List<MedicineType> listArr) {
+	private void addTreeNode(DefaultMutableTreeNode treeNode, List<MedicineType> listArr) throws Exception {
 		if(listArr.size() != 0) {			
 			for (MedicineType medicineType : listArr) {
 				DefaultMutableTreeNode treeNodeChild = new DefaultMutableTreeNode(medicineType);  
@@ -146,6 +171,25 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 				addTreeNode(treeNodeChild,listArrChild);
 			}
 		}	
+	}
+
+
+	
+	public JTable getMedicineTable() {
+		return medicineTable;
+	}
+
+
+
+	public JTree getTree() {
+		return tree;
+	}
+
+
+
+
+	public JTextField getMedicineSearchField() {
+		return medicineSearchField;
 	}
 
 

@@ -64,7 +64,9 @@ public class FrameUtils {
 		if(status <= 0) {
 			throw new Exception(erorr);
 		} else {
-			JOptionPane.showMessageDialog(null, succuss, "成功", JOptionPane.INFORMATION_MESSAGE);
+			if(StringUtils.isNotEmpty(succuss)) {
+				JOptionPane.showMessageDialog(null, succuss, "成功", JOptionPane.INFORMATION_MESSAGE);			
+			}
 		}
 	}
 	

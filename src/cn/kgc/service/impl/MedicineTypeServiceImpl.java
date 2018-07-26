@@ -1,6 +1,5 @@
 package cn.kgc.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cn.kgc.dao.impl.MedicineTypeDaoImpl;
@@ -12,9 +11,26 @@ public class MedicineTypeServiceImpl implements MedicineTypeService {
 	MedicineTypeDao medicineTypeDao = new MedicineTypeDaoImpl();
 
 	@Override
-	public List<MedicineType> getAllInfoByParentId(String parentId) {
-		 List<MedicineType> medicineTypes = new ArrayList<>();
-		return medicineTypes;
+	public List<MedicineType> getAllInfoByParentId(String parentId) throws Exception {
+		return medicineTypeDao.query(parentId);
 	}
+
+	@Override
+	public int addTypeNode(MedicineType type) throws Exception {
+		String id = medicineTypeDao.queryMinEmptyId();
+		type.setId(id);
+		return medicineTypeDao.insert(type);
+	}
+
+	@Override
+	public int modifyTypeNode(MedicineType selectedType) throws Exception {
+		return medicineTypeDao.update(selectedType);
+	}
+
+	@Override
+	public int deleteTypeNode(MedicineType selectedType) throws Exception {
+		return medicineTypeDao.delete(selectedType);
+	}
+
 
 }

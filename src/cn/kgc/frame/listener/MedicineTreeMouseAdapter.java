@@ -9,13 +9,20 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import cn.kgc.frame.MedicineFrame;
+import cn.kgc.model.MedicineType;
+import cn.kgc.service.impl.MedicineServiceImpl;
+import cn.kgc.utils.FrameUtils;
+
 
 
 public class MedicineTreeMouseAdapter implements MouseListener {
+	private MedicineFrame medicineFrame;
 	private JTree tree;
 	
-	public MedicineTreeMouseAdapter(JTree tree) {
-		this.tree = tree;
+	public MedicineTreeMouseAdapter(MedicineFrame medicineFrame) {
+		this.medicineFrame = medicineFrame;
+		this.tree = medicineFrame.getTree();
 	}
 
 	@Override
@@ -33,8 +40,10 @@ public class MedicineTreeMouseAdapter implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();//选中的节点
-		selectedNode.getUserObject();				
+		DefaultMutableTreeNode selectedTree = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+		MedicineType type = (MedicineType)selectedTree.getUserObject();
+		String typeId = type.getId();
+		FrameUtils.getDataAndRefreshTableBySearch(medicineFrame.getMedicineTable(), MedicineServiceImpl.class, typeId);
 	}
 
 	@Override
@@ -47,11 +56,21 @@ public class MedicineTreeMouseAdapter implements MouseListener {
 	public void mouseExited(MouseEvent e) {}
 	
 	private JPopupMenu createPopMenu() {  
-		JPopupMenu popMenu = new JPopupMenu();  
+		JPopupMenu popMenu = new JPopupMenu(); 
+		
 		JMenuItem addItem = new JMenuItem("添加"); 
+		addItem.setName("add");
 		addItem.addActionListener(new MedicineTypeDMLMenuListener(tree));
+		
 		JMenuItem delItem = new JMenuItem("删除");  
+		delItem.setName("delete");
+		delItem.addActionListener(new MedicineTypeDMLMenuListener(tree));
+		
 		JMenuItem modifyItem = new JMenuItem("修改");  
+		modifyItem.setName("modify");
+		modifyItem.addActionListener(new MedicineTypeDMLMenuListener(tree));
+		
+		
 		popMenu.add(addItem);  
 		popMenu.add(delItem);  
 		popMenu.add(modifyItem); 

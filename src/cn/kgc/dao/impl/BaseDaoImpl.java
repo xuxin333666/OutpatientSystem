@@ -11,6 +11,7 @@ import java.util.List;
 
 import cn.kgc.utils.DBPoolConnection;
 import cn.kgc.utils.DateUtils;
+import cn.kgc.utils.StringUtils;
 
 public class BaseDaoImpl {	
 	protected final String SQL_ERORR = "后台数据错误，";
@@ -50,7 +51,9 @@ public class BaseDaoImpl {
 		try {
 			cn = dbp.getConnection();
 			psm = cn.prepareStatement(sql); 
-			psm.setString(1, id);
+			if(StringUtils.isNotEmpty(id)) {
+				psm.setString(1, id);			
+			}
 			result = psm.executeQuery();
 			result2List(result,list,clazz,subClazz,columnName);
 		} catch (SQLException e) {
@@ -69,9 +72,35 @@ public class BaseDaoImpl {
 	
 	protected void result2List(ResultSet result, List<Object> list,Class<?> clazz,Class<?> subClazz,String[] columnName) throws Exception {
 		while(result.next()) {
-			
 			Object obj = setValue(result,clazz,subClazz,columnName,0);
 			list.add(obj);
+		}
+	}
+	
+	public List<Object> queryBySearch(String sql,Object dto,Class<?> clazz,Class<?> subClazz,String[] columnName,int attributeStrat,int attributeEnd) throws Exception {
+		DBPoolConnection dbp = new DBPoolConnection();
+		Connection cn = null;
+		PreparedStatement psm = null;
+		ResultSet result = null;
+		try {
+			cn = dbp.getConnection();
+			psm = cn.prepareStatement(sql); 
+			prepareStatementSetValue(psm, dto, attributeStrat, attributeEnd);
+			result = psm.executeQuery();
+			List<Object> objs = new ArrayList<>();
+			result2List(result, objs, clazz, subClazz, columnName);
+			return objs;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new Exception(SQL_ERORR + e.getMessage());
+		} finally {
+			if(cn != null) {
+				try {
+					cn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
