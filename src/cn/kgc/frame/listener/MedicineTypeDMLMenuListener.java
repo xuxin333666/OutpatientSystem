@@ -88,22 +88,23 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
 	}
 	
 	private int delete(DefaultMutableTreeNode selectedTree) throws Exception {
-		if(selectedTree.getChildCount() == 0) {
-			int result = JOptionPane.showConfirmDialog(null, CONFIRM_DELETE_MESSAGE, CONFIRM_DELETE_TITLE, JOptionPane.WARNING_MESSAGE);
-			if(result == 0) {
-				MedicineType selectedType = (MedicineType)selectedTree.getUserObject();
-				int status = medicineTypeService.deleteTypeNode(selectedType);
-				if(status > 0) {
-					DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)(selectedTree.getParent());
-					int index = parentNode.getIndex(selectedTree);
-					parentNode.remove(index);
-				}
-				return status;
-			}
-		} else {
+		if(selectedTree.getChildCount() != 0) {
 			throw new Exception(DELETE_IS_NOT_EMPTY);
 		};
-		return 1;
+		
+		int result = JOptionPane.showConfirmDialog(null, CONFIRM_DELETE_MESSAGE, CONFIRM_DELETE_TITLE, JOptionPane.WARNING_MESSAGE);
+		if(result != 0) {
+			return 1;
+		}
+		
+		MedicineType selectedType = (MedicineType)selectedTree.getUserObject();
+		int status = medicineTypeService.deleteTypeNode(selectedType);
+		if(status > 0) {
+			DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)(selectedTree.getParent());
+			int index = parentNode.getIndex(selectedTree);
+			parentNode.remove(index);
+		}
+		return status;
 	}
 
 }
