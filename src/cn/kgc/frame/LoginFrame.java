@@ -129,4 +129,9 @@ public class LoginFrame {
 	public JPasswordField getPwdField() {
 		return pwdField;
 	}
+
+
+	public JFrame getjFrame() {
+		return jFrame;
+	}
 }

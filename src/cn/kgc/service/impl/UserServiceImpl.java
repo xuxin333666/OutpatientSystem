@@ -1,5 +1,6 @@
 package cn.kgc.service.impl;
 
+
 import cn.kgc.dao.impl.UserDaoImpl;
 import cn.kgc.dao.intf.UserDao;
 import cn.kgc.model.User;
@@ -31,5 +32,6 @@ public class UserServiceImpl implements UserService {
 		}
 		return login(username,pwdMD5);
 	}
+
 
 }

@@ -3,6 +3,7 @@ package cn.kgc.frame.listener.loginListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
 import cn.kgc.frame.LoginFrame;
 import cn.kgc.frame.MainFrame;
 import cn.kgc.model.User;
@@ -29,6 +30,7 @@ public class LoginFrameLoginButtonListener implements ActionListener {
 			String pwdByMD5 = MD5Utils.Encoder(new String(password));
 			User user = userService.login(username, pwdByMD5);
 			openMainFrame(user);
+			loginFrame.getjFrame().dispose();
 		} catch (Exception e1) {
 			FrameUtils.DialogErorr("´íÎó£¬" + e1.getMessage());
 			e1.printStackTrace();

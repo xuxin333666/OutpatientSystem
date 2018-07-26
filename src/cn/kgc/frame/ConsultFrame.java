@@ -21,7 +21,6 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.text.JTextComponent;
 
 import cn.kgc.frame.intf.BaseBusinessButtonFrame;
 import cn.kgc.frame.listener.patientConsultListener.CaseDMLButtonListener;
@@ -134,6 +133,7 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 		createLayout();
 		createPatientRegistTabbedPane();
 		createPatientTablePanel();
+		jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		jFrame.setVisible(true);		
 	}
 	
@@ -285,6 +285,7 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 				}
 				field.setBounds(X, Y, REGUST_INPUT_CONTENT_FIELD_SMALL_WIDTH, REGUST_INPUT_CONTENT_FIELD_HEIGHT);				
 				X += REGUST_INPUT_CONTENT_FIELD_SMALL_WIDTH + COMPONENT_DISTANSE;
+				field.setEnabled(false);
 			}
 			if((i-1)%2==0 || field.getWidth() != REGUST_INPUT_CONTENT_FIELD_SMALL_WIDTH) {
 				X = REGIST_INPUT_CONTENT_POSITON_X;
@@ -398,9 +399,10 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 			idLabel.setBounds(X, Y, REGUST_INPUT_CONTENT_LABEL_WIDTH, REGUST_INPUT_CONTENT_LABEL_HEIGHT);
 			X += REGUST_INPUT_CONTENT_LABEL_WIDTH;
 			
-			JTextComponent field = new JTextArea();
+			JComponent field = new JTextArea();
 			field.setBorder (BorderFactory.createLineBorder(Color.GRAY,1));
 			field.setBounds(X, Y, CASE_INPUT_CONTENT_AREA_WIDTH, CASE_INPUT_CONTENT_AREA_HEIGHT);	
+			field.setEnabled(false);
 			
 			X = REGIST_INPUT_CONTENT_POSITON_X;
 			Y += field.getHeight();	

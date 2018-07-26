@@ -141,4 +141,16 @@ public class FrameUtils {
 		throw new Exception("«Î—°‘Ò“ª––");
 	}
 	
+	public static void fieldsEnable(List<JComponent> fields) {
+		for (JComponent jComponent : fields) {
+			jComponent.setEnabled(true);
+		}
+	}
+	
+	public static void fieldsDisable(List<JComponent> fields) {
+		for (JComponent jComponent : fields) {
+			jComponent.setEnabled(false);
+		}
+	}
+	
 }
