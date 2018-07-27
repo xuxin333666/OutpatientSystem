@@ -1,15 +1,9 @@
 package cn.kgc.frame.listener;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
-import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -34,22 +28,11 @@ public abstract class BaseDMLButtonListener {
 	protected static final String DEFAULT_CONTENT = "";
 	
 	
-	public Properties p;	
-	
-	public BaseDMLButtonListener( String PROPERTIES_URL) {
-		InputStream is = BaseDMLButtonListener.class.getClassLoader().getResourceAsStream(PROPERTIES_URL);
-		p = new Properties();
-		try {
-			p.load(is);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	public BaseDMLButtonListener() {}
 
 	public void execute(JButton button) {
 		try {
-			String methodName = getMethodName(button.getName());
-			Method method = BaseDMLButtonListener.class.getMethod(methodName,JButton.class);
+			Method method = BaseDMLButtonListener.class.getMethod(button.getName(),JButton.class);
 			method.invoke(this,button);
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -79,6 +62,10 @@ public abstract class BaseDMLButtonListener {
 	public abstract void delete(JButton button);
 	
 	public abstract void save(JButton button);
+	
+	public void prescription(JButton button) {
+		
+	};
 	
 	public abstract void undo(JButton button);
 	
@@ -138,15 +125,15 @@ public abstract class BaseDMLButtonListener {
 				case COMMAND_MODIFY:
 		
 				case COMMAND_DELETE:
-					if(buttonName.equals(getButtonNameByMethodName("add"))) {
+					if(buttonName.equals("add")) {
 						button.setEnabled(false);
-					} else if(buttonName.equals(getButtonNameByMethodName("modify"))) {
+					} else if(buttonName.equals("modify")) {
 						button.setEnabled(false);
-					} else if(buttonName.equals(getButtonNameByMethodName("delete"))) {
+					} else if(buttonName.equals("delete")) {
 						button.setEnabled(false);
-					} else if(buttonName.equals(getButtonNameByMethodName("save"))) {
+					} else if(buttonName.equals("save")) {
 						button.setEnabled(true);
-					} else if(buttonName.equals(getButtonNameByMethodName("undo"))) {
+					} else if(buttonName.equals("undo")) {
 						button.setEnabled(true);
 					}
 					ConsultFrame.patientTable.setEnabled(false);
@@ -154,15 +141,15 @@ public abstract class BaseDMLButtonListener {
 				case COMMAND_SAVE:
 					
 				case COMMAND_UNDO:
-					if(buttonName.equals(getButtonNameByMethodName("add"))) {
+					if(buttonName.equals("add")) {
 						button.setEnabled(true);
-					} else if(buttonName.equals(getButtonNameByMethodName("modify"))) {
+					} else if(buttonName.equals("modify")) {
 						button.setEnabled(true);
-					} else if(buttonName.equals(getButtonNameByMethodName("delete"))) {
+					} else if(buttonName.equals("delete")) {
 						button.setEnabled(true);
-					} else if(buttonName.equals(getButtonNameByMethodName("save"))) {
+					} else if(buttonName.equals("save")) {
 						button.setEnabled(false);
-					} else if(buttonName.equals(getButtonNameByMethodName("undo"))) {
+					} else if(buttonName.equals("undo")) {
 						button.setEnabled(false);
 					}
 					ConsultFrame.patientTable.setEnabled(true);
@@ -175,30 +162,5 @@ public abstract class BaseDMLButtonListener {
 		};
 	}
 	
-	public String getMethodName(String imgUrl) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		return  p.getProperty(imgUrl);
-	}
-	
-	public List<String> getList() {
-		Set<Object> imgUrlSet = p.keySet();
-		List<String> imgUrlList = new ArrayList<>();
-		for (Object object : imgUrlSet) {
-			String imgUrl = object.toString();
-			imgUrlList.add(imgUrl);
-		}
-		Collections.sort(imgUrlList);
-		return imgUrlList;
-	} 
-	
-	public String getButtonNameByMethodName(String methodName) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		Set<Object> keySet = p.keySet();
-		for (Object key : keySet) {
-			String value = p.getProperty(key.toString());
-			if(value.equals(methodName)) {
-				return key.toString();
-			}
-		}
-		return null;
-	}
 
 }

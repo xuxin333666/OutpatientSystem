@@ -30,7 +30,6 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 	private PatientService patientService = new PatientServiceImpl();	
 	
 	public RegistDMLButtonListener(ConsultFrame consultFrame) {
-		super("./RegistDMLButton.properties");
 		this.consultFrame = consultFrame;
 		fields = consultFrame.getRegistContentFields();
 	}

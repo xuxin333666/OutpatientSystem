@@ -1,16 +1,11 @@
 package cn.kgc.dao.impl;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.kgc.dao.intf.CaseDao;
 import cn.kgc.model.Case;
 import cn.kgc.model.Patient;
-import cn.kgc.utils.DBPoolConnection;
 
 public class CaseDaoImpl extends BaseDaoImpl implements CaseDao {
 	private final String[] COLUMN_NAME = {"cid","examination_time","main_symptom","now_symptom","past_symptom","personal_symptom","body_test",
@@ -36,27 +31,9 @@ public class CaseDaoImpl extends BaseDaoImpl implements CaseDao {
 
 	@Override
 	public Case queryByPatientIdAndId(String caseId, String patientId) throws Exception {
-		DBPoolConnection dBP = DBPoolConnection.getInstance();
-		String sql =  SELECT_CASE_AND_PATINT_TABLE_SQL + " WHERE patient_id = ? AND c.id = ?";
-		Connection cn = null;
-		PreparedStatement psm = null;
-		ResultSet result = null;
-		try {
-			cn = dBP.getConnection();
-			psm = cn.prepareStatement(sql);
-			psm.setString(1, patientId);
-			psm.setString(2, caseId);
-			result = psm.executeQuery();
-			List<Object> objs = new ArrayList<>();
-			result2List(result, objs, Case.class, Patient.class, COLUMN_NAME);
-			return (Case)objs.get(0);
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			if(cn != null) {
-				cn.close();
-			}	
-		}
+		String sql =  SELECT_CASE_AND_PATINT_TABLE_SQL + " WHERE c.id = ?";
+		List<Object> objs = queryById(sql, Case.class, Patient.class, COLUMN_NAME, caseId);
+		return (Case)objs.get(0);
 	}
 	
 

@@ -18,9 +18,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import cn.kgc.model.MedicineType;
 import cn.kgc.frame.intf.BaseBusinessButtonFrame;
-import cn.kgc.frame.listener.MedicineDMLButtonListener;
-import cn.kgc.frame.listener.MedicineSearchKeyListener;
-import cn.kgc.frame.listener.MedicineTreeMouseAdapter;
+import cn.kgc.frame.listener.medicineListener.MedicineDMLButtonListener;
+import cn.kgc.frame.listener.medicineListener.MedicineSearchKeyListener;
+import cn.kgc.frame.listener.medicineListener.MedicineTreeMouseAdapter;
 import cn.kgc.frame.model.MedicineTableModel;
 import cn.kgc.service.impl.MedicineServiceImpl;
 import cn.kgc.service.impl.MedicineTypeServiceImpl;
@@ -32,6 +32,11 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 	private static final String TITLE = "药 品 设 置";
 	private static final String TABED_DRUG_LIST_TITLE = "药品列表";
 	private static final String MEDICINE_SEARCH_LABEL_CONTENT = "药品检索：";
+	
+	private static final String[] MEDICINE_DML_BUTTON_IMGURL = {"./img/yp_tool_001.PNG","./img/yp_tool_002.PNG","./img/yp_tool_003.PNG","./img/yp_tool_004.PNG","./img/yp_tool_007.PNG",
+			"./img/yp_tool_008.PNG","./img/yp_tool_009.PNG"};
+	private static final String[] MEDICINE_DML_BUTTON_NAMES = {"add","modify","delete","otherToDo","otherToDo","otherToDo","otherToDo"};
+	
 	private static final int WIDTH = 800;
 	private static final int HEIGHT = 500;
 	
@@ -58,7 +63,7 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 	private JTextField medicineSearchField = new JTextField();
 	
 
-	private List<String> medicineButtonImgUrl;
+	
 	private List<JButton> medicineDMLButtons = new ArrayList<>();
 	private MedicineTypeService medicineTypeService = new MedicineTypeServiceImpl();
 	
@@ -112,14 +117,12 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 
 	private void createDrugToolPanel() {
 		medicineToolPanel.setLayout(null);
-		MedicineDMLButtonListener medicineDMLButtonListener = new MedicineDMLButtonListener(this);
-		medicineButtonImgUrl = medicineDMLButtonListener.getList();
 		int positionX = 0;
-		for (int i = 0; i < medicineButtonImgUrl.size() -2; i++) {
-			JButton button = FrameUtils.addButton(medicineButtonImgUrl.get(i), positionX, MEDICINE_DML_BUTTON_WIDTH, TOOL_PANEL_HEIGHT, medicineToolPanel);
-			button.setName(medicineButtonImgUrl.get(i));
+		for (int i = 0; i < MEDICINE_DML_BUTTON_IMGURL.length; i++) {
+			JButton button = FrameUtils.addButton(MEDICINE_DML_BUTTON_IMGURL[i], positionX, MEDICINE_DML_BUTTON_WIDTH, TOOL_PANEL_HEIGHT, medicineToolPanel);
+			button.setName(MEDICINE_DML_BUTTON_NAMES[i]);
 			medicineDMLButtons.add(button);
-			button.addActionListener(medicineDMLButtonListener);
+			button.addActionListener(new MedicineDMLButtonListener(this));
 			positionX += MEDICINE_DML_BUTTON_WIDTH;
 		} 
 		

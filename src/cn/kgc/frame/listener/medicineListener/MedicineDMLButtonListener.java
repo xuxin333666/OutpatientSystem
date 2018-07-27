@@ -1,4 +1,4 @@
-package cn.kgc.frame.listener;
+package cn.kgc.frame.listener.medicineListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,7 +40,6 @@ public class MedicineDMLButtonListener extends BaseDMLButtonListener implements 
 	
 	
 	public MedicineDMLButtonListener(MedicineFrame medicineFrame) {
-		super("./MedicineDMLButton.properties");
 		this.medicineFrame = medicineFrame;
 	}
 
@@ -160,5 +159,6 @@ public class MedicineDMLButtonListener extends BaseDMLButtonListener implements 
 	public void setMedicineDMLFrame(MedicineDMLFrame medicineDMLFrame) {
 		this.medicineDMLFrame = medicineDMLFrame;		
 	}
+
 
 }

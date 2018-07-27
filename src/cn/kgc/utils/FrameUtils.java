@@ -27,7 +27,7 @@ public class FrameUtils {
 	
 	public static JButton addButton(String imgUrl,int positionX ,int width,int height,JPanel parentPanel) {
 		ImageIcon img = new ImageIcon(imgUrl);
-		img.setImage(img.getImage().getScaledInstance(width-10,height-10,Image.SCALE_DEFAULT ));
+		img.setImage(img.getImage().getScaledInstance(width-5,height-5,Image.SCALE_DEFAULT ));
 		JButton button = new JButton(img);
 		button.setBounds(positionX, 0,width, height);
 		button.setBackground(Color.WHITE);

@@ -53,6 +53,13 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 	private static final String REGIST_CONTENT_LINE_IMGURL = "./img/line.jpg";
 	private static final String[] QUERY_KEY_LIST = {"证号/姓名","性别","婚姻状况","职业","联系地址","初诊处理意见","初诊备注"};
 	
+	private static final String[] REGIST_DML_BUTTON_IMGURL = {"./img/001.PNG","./img/002.PNG","./img/003.PNG","./img/004.PNG",
+			"./img/005.PNG","./img/007.PNG","./img/008.PNG","./img/009.PNG"};
+	private static final String[] REGIST_DML_BUTTON_NAMES = {"add","modify","delete","save","undo","otherToDo","otherToDo","otherToDo"};
+	private static final String[] CASE_DML_BUTTON_IMGURL = {"./img/001.PNG","./img/002.PNG","./img/003.PNG","./img/004.PNG",
+			"./img/005.PNG","./img/006.PNG","./img/010.PNG","./img/011.PNG"};
+	private static final String[] CASE_DML_BUTTON_NAMES = {"add","modify","delete","save","undo","prescription","otherToDo","otherToDo"};
+	
 	private static final int PATIENT_ATTRIBUTE_COUNT = PatientUtils.PATIENT_ATTRIBUTE_COUNT;
 	private static final int CASE_ATTRIBUTE_COUNT = 11;
 	private static final int QUERY_PANEL_HEIGHT = 35;
@@ -118,10 +125,6 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 	private List<JLabel> caseToolLabels = new ArrayList<>();
 	private List<JComponent> caseDescriptionFields = new ArrayList<>();
 	
-	private RegistDMLButtonListener rbl = new RegistDMLButtonListener(this);
-	private CaseDMLButtonListener cbl = new CaseDMLButtonListener(this);
-	private List<String> registButtonImgUrl = rbl.getList();
-	private List<String> caseButtonImgUrl = cbl.getList();
 	
 	
 	
@@ -298,14 +301,14 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 	}
 
 	private void createDMLButtonPanel() {
-		for(int i=0,positionX=0;i<registButtonImgUrl.size();i++) {
-			JButton button = FrameUtils.addButton(registButtonImgUrl.get(i), positionX, DML_BUTTON_WIDTH, DML_BUTTON_PANEL_HEIGHT, DMLButtonPanel);
-			button.setName(registButtonImgUrl.get(i));
-			if("./img/004.PNG".equals(registButtonImgUrl.get(i)) || "./img/005.PNG".equals(registButtonImgUrl.get(i))) {
+		for(int i=0,positionX=0;i<REGIST_DML_BUTTON_IMGURL.length;i++) {
+			JButton button = FrameUtils.addButton(REGIST_DML_BUTTON_IMGURL[i], positionX, DML_BUTTON_WIDTH, DML_BUTTON_PANEL_HEIGHT, DMLButtonPanel);
+			button.setName(REGIST_DML_BUTTON_NAMES[i]);
+			if("save".equals(REGIST_DML_BUTTON_NAMES[i]) || "undo".equals(REGIST_DML_BUTTON_NAMES[i])) {
 				button.setEnabled(false);
 			}
 			registDMLButtons.add(button);
-			button.addActionListener(rbl);
+			button.addActionListener(new RegistDMLButtonListener(this));
 			positionX += DML_BUTTON_WIDTH;
 		}
 		
@@ -354,14 +357,14 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 	
 
 	private void createCaseDescriptionToolPanel(JPanel caseDescriptionPanel) {
-		for(int i=0,positionX=0;i<caseButtonImgUrl.size();i++) {
-			JButton button = FrameUtils.addButton(caseButtonImgUrl.get(i), positionX, DML_BUTTON_WIDTH, DML_BUTTON_PANEL_HEIGHT, caseDescriptionPanel);
-			button.setName(caseButtonImgUrl.get(i));
-			if("./img/004.PNG".equals(caseButtonImgUrl.get(i)) || "./img/005.PNG".equals(caseButtonImgUrl.get(i))) {
+		for(int i=0,positionX=0;i<CASE_DML_BUTTON_IMGURL.length;i++) {
+			JButton button = FrameUtils.addButton(CASE_DML_BUTTON_IMGURL[i], positionX, DML_BUTTON_WIDTH, DML_BUTTON_PANEL_HEIGHT, caseDescriptionPanel);
+			button.setName(CASE_DML_BUTTON_NAMES[i]);
+			if("save".equals(CASE_DML_BUTTON_NAMES[i]) || "undo".equals(CASE_DML_BUTTON_NAMES[i])) {
 				button.setEnabled(false);
 			}
 			caseDMLButtons.add(button);
-			button.addActionListener(cbl);
+			button.addActionListener(new CaseDMLButtonListener(this));
 			positionX += DML_BUTTON_WIDTH;
 		}
 		

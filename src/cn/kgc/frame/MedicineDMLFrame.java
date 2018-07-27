@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import cn.kgc.frame.listener.MedicineDMLButtonListener;
+import cn.kgc.frame.listener.medicineListener.MedicineDMLButtonListener;
 import cn.kgc.frame.model.MedicineTableModel;
 import cn.kgc.model.Medicine;
 import cn.kgc.model.MedicineType;

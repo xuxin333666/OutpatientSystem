@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 
 
 import cn.kgc.frame.ConsultFrame;
+import cn.kgc.frame.PrescriptionFrame;
 import cn.kgc.frame.listener.BaseDMLButtonListener;
 import cn.kgc.model.Case;
 import cn.kgc.model.Patient;
@@ -36,7 +37,6 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 	private PatientService patientService = new PatientServiceImpl();	
 	
 	public CaseDMLButtonListener(ConsultFrame consultFrame) {
-		super("./CaseDMLButton.properties");
 		this.consultFrame = consultFrame;
 		fields = consultFrame.getCaseDescriptionFields();
 	}
@@ -125,6 +125,18 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 			e.printStackTrace();
 		}
 	}
+	
+	public void prescription(JButton button) {
+		try {
+			cid = (String)FrameUtils.getTableSelectedRowInfo(ConsultFrame.caseTable, 0);
+			Case $case = caseService.getCaseInfoById(cid,null);
+			PrescriptionFrame prescriptionFrame = new PrescriptionFrame($case);
+			prescriptionFrame.execute();
+		} catch (Exception e) {
+			FrameUtils.DialogErorr("´íÎó£¬" + e.getMessage());
+			e.printStackTrace();
+		}
+	};
 	
 	public void undo(JButton button) {
 		emptyFields(fields);

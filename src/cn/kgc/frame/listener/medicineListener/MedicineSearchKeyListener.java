@@ -1,4 +1,4 @@
-package cn.kgc.frame.listener;
+package cn.kgc.frame.listener.medicineListener;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

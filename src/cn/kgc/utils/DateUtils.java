@@ -65,5 +65,10 @@ public class DateUtils {
 		}	
 		return null;
 	}
+	
+	public static String date2String(java.util.Date date) {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		return dateFormat.format(date);
+	}
 
 }
