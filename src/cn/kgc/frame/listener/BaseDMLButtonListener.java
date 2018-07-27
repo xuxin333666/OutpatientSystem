@@ -8,11 +8,11 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 
-import cn.kgc.frame.ConsultFrame;
 import cn.kgc.utils.DateUtils;
 import cn.kgc.utils.FrameUtils;
 import cn.kgc.utils.StringUtils;
@@ -42,18 +42,21 @@ public abstract class BaseDMLButtonListener {
 	
 	public abstract void add(JButton button);
 	
-	public void emptyFields(List<JComponent> fields) {
-		for (int i = 0; i < fields.size(); i++) {
-			if(fields.get(i) instanceof JTextField) {
-				JTextField field = (JTextField)fields.get(i);
-				field.setText(DEFAULT_CONTENT);
-			} else if(fields.get(i) instanceof JTextArea) {
-				JTextArea area = (JTextArea)fields.get(i);
-				area.setText(DEFAULT_CONTENT);
-			} else {
-				JComboBox<?> combo = (JComboBox<?>)fields.get(i);
-				combo.setSelectedIndex(DEFAULT_INDEX);
-			}
+	@SuppressWarnings("unchecked")
+	public void emptyFields(List<JComponent>...fields) {
+		for (List<JComponent> lists : fields) {
+			for (int i = 0; i < lists.size(); i++) {
+				if(lists.get(i) instanceof JTextField) {
+					JTextField field = (JTextField)lists.get(i);
+					field.setText(DEFAULT_CONTENT);
+				} else if(lists.get(i) instanceof JTextArea) {
+					JTextArea area = (JTextArea)lists.get(i);
+					area.setText(DEFAULT_CONTENT);
+				} else {
+					JComboBox<?> combo = (JComboBox<?>)lists.get(i);
+					combo.setSelectedIndex(DEFAULT_INDEX);
+				}
+			}		
 		}
 	}
 
@@ -68,6 +71,10 @@ public abstract class BaseDMLButtonListener {
 	};
 	
 	public abstract void undo(JButton button);
+	
+	public void exit(JButton button) {
+
+	};
 	
 	public void otherToDo(JButton button) {
 		FrameUtils.DialogErorr(OTHER_TO_DO);
@@ -112,9 +119,11 @@ public abstract class BaseDMLButtonListener {
 		}
 		
 	}
-
-	
 	public void controlButtonEnable(List<JButton> buttons,int command) {
+		controlButtonEnable(buttons,null,command);
+	}
+	
+	public void controlButtonEnable(List<JButton> buttons,JTable table,int command) {
 		for(int i=0;i<buttons.size();i++) {	
 			try {
 				JButton button = buttons.get(i);
@@ -136,7 +145,9 @@ public abstract class BaseDMLButtonListener {
 					} else if(buttonName.equals("undo")) {
 						button.setEnabled(true);
 					}
-					ConsultFrame.patientTable.setEnabled(false);
+					if(table != null) {
+						table.setEnabled(false);					
+					}
 					break;
 				case COMMAND_SAVE:
 					
@@ -152,14 +163,39 @@ public abstract class BaseDMLButtonListener {
 					} else if(buttonName.equals("undo")) {
 						button.setEnabled(false);
 					}
-					ConsultFrame.patientTable.setEnabled(true);
+					if(table != null) {
+						table.setEnabled(true);					
+					}
 					break;
 				}
 
 			} catch (Exception e) {
+				e.printStackTrace();
 				FrameUtils.DialogErorr("´íÎó£¬" + e.getMessage());
 			}
 		};
+	}
+	
+	
+	public void controlComponentsEnable(int command,@SuppressWarnings("unchecked") List<JComponent>...componets) {
+		switch(command) {
+		case COMMAND_ADD:			
+				
+		case COMMAND_MODIFY:
+
+		case COMMAND_DELETE:
+			for (List<JComponent> lists : componets) {
+				FrameUtils.fieldsEnable(lists);		
+			}				
+			break;
+		case COMMAND_SAVE:
+			
+		case COMMAND_UNDO:			
+			for (List<JComponent> lists : componets) {
+				FrameUtils.fieldsDisable(lists);		
+			}		
+			break;
+		}
 	}
 	
 

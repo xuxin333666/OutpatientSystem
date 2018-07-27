@@ -174,24 +174,14 @@ public class BaseDaoImpl {
 	}
 	
 	protected int insert(String sql,Object obj,int attributeStrat,int attributeEnd) throws Exception {
-		DBPoolConnection dBP = DBPoolConnection.getInstance();
-		Connection cn = null;
-		PreparedStatement psm = null;
-		try {
-			cn = dBP.getConnection();
-			psm = cn.prepareStatement(sql);
-			prepareStatementSetValue(psm, obj, attributeStrat, attributeEnd);
-			return psm.executeUpdate();	
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			if(cn != null) {
-				cn.close();
-			}	
-		}
+		return insert(sql, obj, attributeStrat, attributeEnd, new String[]{null});
 	}
 	
 	protected int insert(String sql,Object obj,int attributeStrat,int attributeEnd, String fkId) throws Exception {
+		return insert(sql, obj, attributeStrat, attributeEnd, new String[]{fkId});
+	}
+	
+	protected int insert(String sql,Object obj,int attributeStrat,int attributeEnd, String[] fkIds) throws Exception {
 		DBPoolConnection dBP = DBPoolConnection.getInstance();
 		Connection cn = null;
 		PreparedStatement psm = null;
@@ -199,7 +189,11 @@ public class BaseDaoImpl {
 			cn = dBP.getConnection();
 			psm = cn.prepareStatement(sql);
 			prepareStatementSetValue(psm, obj, attributeStrat, attributeEnd);
-			psm.setString(attributeEnd+2, fkId);
+			for (int i = 0; i < fkIds.length; i++) {
+				if(fkIds[i] != null) {
+					psm.setString(attributeEnd+2+i, fkIds[i]);				
+				}				
+			}
 			return psm.executeUpdate();	
 		} catch (SQLException e) {
 			throw new Exception(e.getMessage());

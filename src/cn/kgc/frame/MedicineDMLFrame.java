@@ -172,7 +172,7 @@ public class MedicineDMLFrame {
 		saveButton.addActionListener(medicineDMLButtonListener);
 		
 		
-		closeButton.setName("undo");
+		closeButton.setName("exit");
 		MedicineDMLButtonListener medicineDMLButtonListener2 = new MedicineDMLButtonListener(medicineFrame);
 		medicineDMLButtonListener2.setMedicineDMLFrame(this);
 		closeButton.addActionListener(medicineDMLButtonListener2);

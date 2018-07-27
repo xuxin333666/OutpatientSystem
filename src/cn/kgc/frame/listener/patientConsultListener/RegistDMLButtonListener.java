@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 
@@ -27,11 +28,13 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 	private ConsultFrame consultFrame;
 	private static int command;
 	private List<JComponent> fields;
+	private JTable table;
 	private PatientService patientService = new PatientServiceImpl();	
 	
 	public RegistDMLButtonListener(ConsultFrame consultFrame) {
 		this.consultFrame = consultFrame;
 		fields = consultFrame.getRegistContentFields();
+		table = ConsultFrame.patientTable;
 	}
 
 	@Override
@@ -46,7 +49,7 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 	@Override
 	public void add(JButton button) {
 		command = COMMAND_ADD;
-		controlButtonEnable(consultFrame.getRegistDMLButtons(),command);
+		controlButtonEnable(consultFrame.getRegistDMLButtons(),table,command);
 		FrameUtils.fieldsEnable(fields);
 		emptyFields(fields);
 		JTextField field = (JTextField)fields.get(0);		
@@ -64,7 +67,7 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 		try {
 			FrameUtils.getTableSelectedRowInfo(ConsultFrame.patientTable, 0);
 			command = COMMAND_MODIFY;
-			controlButtonEnable(consultFrame.getRegistDMLButtons(),command);
+			controlButtonEnable(consultFrame.getRegistDMLButtons(),table,command);
 			FrameUtils.fieldsEnable(fields);
 		} catch (Exception e) {
 			FrameUtils.DialogErorr("´íÎó£¬" + e.getMessage());
@@ -77,7 +80,7 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 		try {
 			FrameUtils.getTableSelectedRowInfo(ConsultFrame.patientTable, 0);
 			command = COMMAND_DELETE;
-			controlButtonEnable(consultFrame.getRegistDMLButtons(),command);
+			controlButtonEnable(consultFrame.getRegistDMLButtons(),table,command);
 		} catch (Exception e) {
 			FrameUtils.DialogErorr("´íÎó£¬" + e.getMessage());
 			e.printStackTrace();
@@ -109,7 +112,7 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 			FrameUtils.statusInfo(status, SAVE_SUCCUSS, SAVE_ERORR);
 			FrameUtils.getDataAndRefreshTable(ConsultFrame.patientTable,patientService.getClass());
 			command = COMMAND_SAVE;
-			controlButtonEnable(consultFrame.getRegistDMLButtons(),command);
+			controlButtonEnable(consultFrame.getRegistDMLButtons(),table,command);
 			FrameUtils.fieldsDisable(fields);
 		} catch (Exception e) {
 			FrameUtils.DialogErorr("´íÎó£¬" + e.getMessage());
@@ -120,7 +123,7 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 	public void undo(JButton button) {
 		emptyFields(fields);
 		command = COMMAND_UNDO;
-		controlButtonEnable(consultFrame.getRegistDMLButtons(),command);
+		controlButtonEnable(consultFrame.getRegistDMLButtons(),table,command);
 		FrameUtils.fieldsDisable(fields);
 	}
 	

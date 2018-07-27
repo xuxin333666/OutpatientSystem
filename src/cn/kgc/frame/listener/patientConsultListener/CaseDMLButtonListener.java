@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -33,12 +34,14 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 	private List<JComponent> fields;
 	private Patient patient;
 	private String cid;
+	private JTable table;
 	private CaseService caseService = new CaseServiceImpl();	
 	private PatientService patientService = new PatientServiceImpl();	
 	
 	public CaseDMLButtonListener(ConsultFrame consultFrame) {
 		this.consultFrame = consultFrame;
 		fields = consultFrame.getCaseDescriptionFields();
+		table = ConsultFrame.caseTable;
 	}
 
 	@Override
@@ -57,7 +60,7 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 	@Override
 	public void add(JButton button) {
 		command = COMMAND_ADD;
-		controlButtonEnable(consultFrame.getCaseDMLButtons(),command);
+		controlButtonEnable(consultFrame.getCaseDMLButtons(),table,command);
 		FrameUtils.fieldsEnable(fields);
 		emptyFields(fields);	
 	}
@@ -71,7 +74,7 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 			JTextField field = (JTextField)fields.get(0);
 			field.setEditable(false);
 			command = COMMAND_MODIFY;
-			controlButtonEnable(consultFrame.getCaseDMLButtons(),command);
+			controlButtonEnable(consultFrame.getCaseDMLButtons(),table,command);
 		} catch (Exception e) {
 			FrameUtils.DialogErorr("´íÎó£¬" + e.getMessage());
 			e.printStackTrace();
@@ -83,7 +86,7 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 		try {
 			cid = (String)FrameUtils.getTableSelectedRowInfo(ConsultFrame.caseTable, 0);
 			command = COMMAND_DELETE;
-			controlButtonEnable(consultFrame.getCaseDMLButtons(),command);
+			controlButtonEnable(consultFrame.getCaseDMLButtons(),table,command);
 		} catch (Exception e) {
 			FrameUtils.DialogErorr("´íÎó£¬" + e.getMessage());
 			e.printStackTrace();
@@ -118,7 +121,7 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 			FrameUtils.statusInfo(status, SAVE_SUCCUSS, SAVE_ERORR);
 			FrameUtils.getDataAndRefreshTableBySearch(ConsultFrame.caseTable,caseService.getClass(), patient.getId());
 			command = COMMAND_SAVE;
-			controlButtonEnable(consultFrame.getCaseDMLButtons(),command);
+			controlButtonEnable(consultFrame.getCaseDMLButtons(),table,command);
 			FrameUtils.fieldsDisable(fields);
 		} catch (Exception e) {
 			FrameUtils.DialogErorr("´íÎó£¬" + e.getMessage());
@@ -141,7 +144,7 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 	public void undo(JButton button) {
 		emptyFields(fields);
 		command = COMMAND_UNDO;
-		controlButtonEnable(consultFrame.getCaseDMLButtons(),command);
+		controlButtonEnable(consultFrame.getCaseDMLButtons(),table,command);
 		FrameUtils.fieldsDisable(fields);
 	}
 	

@@ -10,6 +10,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import cn.kgc.frame.MedicineFrame;
+import cn.kgc.frame.PrescriptionFrame;
 import cn.kgc.model.MedicineType;
 import cn.kgc.service.impl.MedicineServiceImpl;
 import cn.kgc.utils.FrameUtils;
@@ -25,6 +26,10 @@ public class MedicineTreeMouseAdapter implements MouseListener {
 		this.tree = medicineFrame.getTree();
 	}
 
+	public MedicineTreeMouseAdapter(PrescriptionFrame prescriptionFrame) {
+		this.tree = prescriptionFrame.getPrescriptiontTree();
+	}
+
 	@Override
 	public void mousePressed(MouseEvent e) {
 		TreePath path = tree.getPathForLocation(e.getX(), e.getY()); // 关键是这个方法的使用  
@@ -33,17 +38,22 @@ public class MedicineTreeMouseAdapter implements MouseListener {
         }  
         tree.setSelectionPath(path);
         if (e.getButton() == 3) {//点击的是右键
-        	
-        	createPopMenu().show(tree, e.getX(), e.getY());  
+        	DefaultMutableTreeNode selectedTree = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+			Object type = selectedTree.getUserObject();
+			if(type instanceof MedicineType) {
+				createPopMenu().show(tree, e.getX(), e.getY());  				
+			}
         } 
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		DefaultMutableTreeNode selectedTree = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-		MedicineType type = (MedicineType)selectedTree.getUserObject();
-		String typeId = type.getId();
-		FrameUtils.getDataAndRefreshTableBySearch(medicineFrame.getMedicineTable(), MedicineServiceImpl.class, typeId);
+		if(medicineFrame != null) {
+			DefaultMutableTreeNode selectedTree = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+			MedicineType type = (MedicineType)selectedTree.getUserObject();
+			String typeId = type.getId();
+			FrameUtils.getDataAndRefreshTableBySearch(medicineFrame.getMedicineTable(), MedicineServiceImpl.class, typeId);			
+		}
 	}
 
 	@Override

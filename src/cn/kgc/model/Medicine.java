@@ -74,9 +74,7 @@ public class Medicine {
 	}
 	@Override
 	public String toString() {
-		return "Medicine [id=" + id + ", name=" + name + ", norms=" + norms + ", unit=" + unit + ", price=" + price
-				+ ", uasge=" + uasge + ", needingAttention=" + needingAttention + ", medicineType=" + medicineType
-				+ "]";
+		return name;
 	}
 	
 	

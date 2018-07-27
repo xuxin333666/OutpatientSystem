@@ -56,4 +56,9 @@ public Double getPrice() {
 public void setPrice(Double price) {
 	this.price = price;
 }
+@Override
+public String toString() {
+	return "Prescription [id=" + id + ", time=" + time + ", advice=" + advice + ", price=" + price + ", $case=" + $case
+			+ ", patient=" + patient + "]";
+}
 }

@@ -25,6 +25,7 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
 	private MedicineTypeService medicineTypeService = new MedicineTypeServiceImpl();
 	
 	private JTree tree;  
+	private MedicineType selectedType;
 	  
      public MedicineTypeDMLMenuListener(JTree tree) {  
          this.tree = tree;  
@@ -34,6 +35,7 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
     	 JMenuItem item = (JMenuItem)e.getSource();
     	 int status = 1;
     	 DefaultMutableTreeNode selectedTree = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+    	 selectedType = (MedicineType)selectedTree.getUserObject();
 		 try {
 	    	 if("add".equals(item.getName())) {
 	    		 status = add(selectedTree);
@@ -58,11 +60,8 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
         	return 1;      	
         } else if(name.equals("")) {
         	throw new Exception(NODE_NAME_IS_EMPTY);
-        }
-        
-        MedicineType parentType = (MedicineType)parentTree.getUserObject();
-        
-        MedicineType type = new MedicineType(null,name,parentType);
+        }    
+        MedicineType type = new MedicineType(null,name,selectedType);
         int status = medicineTypeService.addTypeNode(type);
         if(status > 0) {
         	DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(type);  
@@ -79,7 +78,6 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
         	throw new Exception(NODE_NAME_IS_EMPTY);
         }		
 		
-        MedicineType selectedType = (MedicineType)selectedTree.getUserObject();
         selectedType.setName(name);
         
         return medicineTypeService.modifyTypeNode(selectedType);
@@ -97,7 +95,6 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
 			return 1;
 		}
 		
-		MedicineType selectedType = (MedicineType)selectedTree.getUserObject();
 		int status = medicineTypeService.deleteTypeNode(selectedType);
 		if(status > 0) {
 			DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)(selectedTree.getParent());

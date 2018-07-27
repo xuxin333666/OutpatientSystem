@@ -14,17 +14,14 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
-import javax.swing.tree.DefaultMutableTreeNode;
 
-import cn.kgc.model.MedicineType;
 import cn.kgc.frame.intf.BaseBusinessButtonFrame;
 import cn.kgc.frame.listener.medicineListener.MedicineDMLButtonListener;
 import cn.kgc.frame.listener.medicineListener.MedicineSearchKeyListener;
 import cn.kgc.frame.listener.medicineListener.MedicineTreeMouseAdapter;
 import cn.kgc.frame.model.MedicineTableModel;
 import cn.kgc.service.impl.MedicineServiceImpl;
-import cn.kgc.service.impl.MedicineTypeServiceImpl;
-import cn.kgc.service.intf.MedicineTypeService;
+
 import cn.kgc.utils.FrameUtils;
 import cn.kgc.utils.ScreenSizeUtils;
 
@@ -65,8 +62,7 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 
 	
 	private List<JButton> medicineDMLButtons = new ArrayList<>();
-	private MedicineTypeService medicineTypeService = new MedicineTypeServiceImpl();
-	
+
 	@Override
 	public void execute() {
 		
@@ -84,10 +80,6 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 	}
 	
 
-
-
-
-
 	private void createLayout() {
 		medicineToolPanel.setBounds(0, 0, TOOL_PANEL_WIDTH, TOOL_PANEL_HEIGHT);
 		medicineSplitPane.setBounds(0, TOOL_PANEL_HEIGHT, TOOL_PANEL_WIDTH, HEIGHT - TOOL_PANEL_HEIGHT);
@@ -95,12 +87,10 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 			
 		medicineFrame.add(medicineToolPanel);
 		medicineFrame.add(medicineSplitPane);
-
-		
+	
 	}
 	
 	
-
 	private void createDrugTabbedPane() {
 		MedicineTableModel drugTableModel = MedicineTableModel.getInstance();
 		medicineTable = new JTable(drugTableModel);
@@ -140,43 +130,13 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 
 
 
-
-
 	private void createMedicineTreePanel() {		
-			//½¨tree
-		List<MedicineType> listArr;
-		try {
-			listArr = medicineTypeService.getAllInfoByParentId(null);
-			if(listArr.size() != 0) {
-				DefaultMutableTreeNode root = new DefaultMutableTreeNode(listArr.get(0));  
-				tree = new JTree(root);	
-				List<MedicineType> listArrChild = medicineTypeService.getAllInfoByParentId(listArr.get(0).getId());
-				addTreeNode(root,listArrChild);
-				
-				tree.addMouseListener(new MedicineTreeMouseAdapter(this));
-				medicineTreePanel.getViewport().add(tree); 		
-			}				 
-		} catch (Exception e) {
-			FrameUtils.DialogErorr("´íÎó£¬" + e.getMessage());
-			e.printStackTrace();
-		}
+		//½¨tree
+		MedicineTypeTreeFrame medicineTypeTreeFrame = MedicineTypeTreeFrame.getInstance();
+		tree = medicineTypeTreeFrame.regist(medicineTreePanel);
+		tree.addMouseListener(new MedicineTreeMouseAdapter(this));
+
 	}
-
-
-
-	
-	
-	private void addTreeNode(DefaultMutableTreeNode treeNode, List<MedicineType> listArr) throws Exception {
-		if(listArr.size() != 0) {			
-			for (MedicineType medicineType : listArr) {
-				DefaultMutableTreeNode treeNodeChild = new DefaultMutableTreeNode(medicineType);  
-				treeNode.add(treeNodeChild);
-				List<MedicineType> listArrChild = medicineTypeService.getAllInfoByParentId(medicineType.getId());
-				addTreeNode(treeNodeChild,listArrChild);
-			}
-		}	
-	}
-
 
 	
 	public JTable getMedicineTable() {
@@ -184,21 +144,14 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 	}
 
 
-
 	public JTree getTree() {
 		return tree;
 	}
 
 
-
-
 	public JTextField getMedicineSearchField() {
 		return medicineSearchField;
 	}
-
-
-
-
 
 
 	public static void main(String[] args) {

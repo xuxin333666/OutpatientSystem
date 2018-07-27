@@ -53,6 +53,11 @@ public class MedicineServiceImpl implements MedicineService {
 	public int delete(String medicineId) throws Exception {
 		return medicineDao.delete(medicineId);
 	}
+
+	@Override
+	public List<Medicine> getAllInfoByTypeId(String typeId) throws Exception {
+		return medicineDao.queryByTypeId(typeId);
+	}
 	
 
 }

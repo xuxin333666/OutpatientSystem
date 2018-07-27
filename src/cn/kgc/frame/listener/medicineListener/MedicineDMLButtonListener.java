@@ -143,6 +143,12 @@ public class MedicineDMLButtonListener extends BaseDMLButtonListener implements 
 
 	@Override
 	public void undo(JButton button) {
+		exit(button);
+	}
+	
+
+	@Override
+	public void exit(JButton button) {
 		medicineDMLFrame.getMedicineDMLFrame().dispose();	
 	}
 	
@@ -159,6 +165,7 @@ public class MedicineDMLButtonListener extends BaseDMLButtonListener implements 
 	public void setMedicineDMLFrame(MedicineDMLFrame medicineDMLFrame) {
 		this.medicineDMLFrame = medicineDMLFrame;		
 	}
+
 
 
 }

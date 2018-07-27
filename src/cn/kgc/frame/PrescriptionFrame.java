@@ -11,12 +11,16 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 
 import cn.kgc.frame.listener.PrescriptionDMLButtonListener;
+import cn.kgc.frame.listener.PrescriptionQueryButtonListener;
+import cn.kgc.frame.listener.medicineListener.MedicineTreeMouseAdapter;
 import cn.kgc.model.Case;
 import cn.kgc.model.Patient;
 import cn.kgc.model.Prescription;
@@ -40,11 +44,13 @@ public class PrescriptionFrame {
 	private static final String TABLE_UASGE_LABEL_CONTENT = "用法";
 	private static final String ADVICE_LABEL_CONTENT = "医嘱：";
 	private static final String PRICE_LABEL_CONTENT = "价格：";
+	private static final String KEY_LABEL_CONTENT = "查找关键字";
+	private static final String SEARCH_BUTTON_TITLE = "查找";
 	private static final String[] PETINENT_INFO_LABEL_CONTENTS = {"姓名：","性别：","年龄：","住址：","联系电话：","过敏史：","诊断：","其他说明："};
 	
 	private static final String[] PRESCRIPTION_DML_BUTTON_IMGURL = {"./img/1new.PNG","./img/2save.PNG","./img/3shoufei.PNG",
 			"./img/4qingchu.PNG","./img/5daying.PNG","./img/6cyanfang.PNG","./img/7lishi.PNG","./img/8close.PNG"};
-	private static final String[] PRESCRIPTION_DML_BUTTON_NAMES = {"add","save","otherToDo","undo","otherToDo","otherToDo","otherToDo","otherToDo"};
+	private static final String[] PRESCRIPTION_DML_BUTTON_NAMES = {"add","save","otherToDo","undo","otherToDo","otherToDo","otherToDo","exit"};
 	
 	private static final int WIDTH = 800;
 	private static final int HEIGHT = 700;
@@ -68,6 +74,15 @@ public class PrescriptionFrame {
 	private static final int ADVICE_AREA_WIDTH = 300;
 	private static final int ADVICE_AREA_HEIGHT = 80;
 	private static final int PRICE_FIELD_WIDTH = 150;
+	
+	private static final int SEARCH_PANEL_HEIGHT = 150;
+	private static final int TREE_PANEL_HEIGHT = 350;
+	
+	private static final int KEY_LABEL_WIDTH = 65;
+	private static final int KEY_LABEL_HEIGHT = 25;
+	private static final int KEY_FIELD_WIDTH = 70;
+	private static final int SEARCH_BUTTON_WIDTH = 65;
+
 
 
 
@@ -82,6 +97,7 @@ public class PrescriptionFrame {
 	private JPanel prescriptionMedicinePanel = new JPanel();	
 	private JPanel prescriptionPanel = new JPanel();
 	
+	private JTextField keyField = new JTextField();
 	
 	private Case $case;
 	private Prescription prescription;
@@ -89,8 +105,11 @@ public class PrescriptionFrame {
 	private List<JLabel> patientInfoLabels = new ArrayList<>();
 	private List<JComponent> medicineFields = new ArrayList<>();
 	private List<JComponent> uasgeFields = new ArrayList<>();
+	private List<JComponent> prescriptionFields = new ArrayList<>();
 	
-	
+	private JTree prescriptiontTree;
+
+
 	private PrescriptionService prescriptionService = new PrescriptionServiceImpl();
 	
 	public PrescriptionFrame(Case $case) {
@@ -108,6 +127,7 @@ public class PrescriptionFrame {
 		try {
 			String id = prescriptionService.getMinEmptyId();
 			prescription.setId(id);
+
 		} catch (Exception e) {
 			FrameUtils.DialogErorr("错误," + e.getMessage());
 			e.printStackTrace();
@@ -115,13 +135,14 @@ public class PrescriptionFrame {
 		
 		createLayout();
 		createPrescriptionPanel();
-//		createDrugTabbedPane();
+		createPrescriptionMedicineTabbedPane();
 //		createMedicineTreePanel();
 		
 		prescriptionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		prescriptionFrame.setVisible(true);
 		
 	}
+
 
 
 
@@ -183,6 +204,7 @@ public class PrescriptionFrame {
 		prescriptionIdField.setBounds(prescriptionIdLabel.getX() + prescriptionIdLabel.getWidth(), COMPONENT_DISTANCE, PRESCRIOTION_ID_FIELD_WIDTH, PRESCRIOTION_ID_LABEL_HEIGHT);
 		prescriptionIdField.setText(prescription.getId());
 		prescriptionIdField.setEditable(false);
+		prescriptionFields.add(prescriptionIdField);
 		prescriptionInfoPanel.add(prescriptionIdField);
 		
 		JLabel prescriptionTimeLabel = new JLabel(PRESCRIOTION_TIME_LABEL_TITLE);
@@ -196,6 +218,7 @@ public class PrescriptionFrame {
 		DateChooser dateChooser = DateChooser.getInstance();
 		dateChooser.register(prescriptionTimeField);
 		prescriptionInfoPanel.add(prescriptionTimeField);
+		prescriptionFields.add(prescriptionTimeField);
 		
 		JLabel titleLable = new JLabel(PRESCRIOTION_TITLE_LABEL_CONTENT,JLabel.CENTER);
 		titleLable.setBounds(0, prescriptionTimeField.getHeight() + COMPONENT_DISTANCE*2, WIDTH-SPLIT_DIVIDER_LOCATION, PRESCRIOTION_TITLE_LABEL_HEIGHT);
@@ -286,6 +309,7 @@ public class PrescriptionFrame {
 		adviceArea.setBounds(X, Y, ADVICE_AREA_WIDTH, ADVICE_AREA_HEIGHT);
 		inputContentPanel.add(adviceArea);
 		adviceArea.setBorder(BorderFactory.createLineBorder(Color.GRAY,1));
+		prescriptionFields.add(adviceArea);
 		X += ADVICE_AREA_WIDTH + COMPONENT_DISTANCE;
 		Y += PRESCRIOTION_TITLE_LABEL_HEIGHT;
 		
@@ -296,7 +320,10 @@ public class PrescriptionFrame {
 		
 		JTextField priceField = new JTextField();
 		priceField.setBounds(X, Y, PRICE_FIELD_WIDTH, PRESCRIOTION_TITLE_LABEL_HEIGHT);
+		prescriptionFields.add(priceField);
 		inputContentPanel.add(priceField);
+		
+		FrameUtils.fieldsDisable(prescriptionFields);
 	}
 
 	private void patientInfo2Lables() {
@@ -312,10 +339,90 @@ public class PrescriptionFrame {
 		patientInfoLabels.get(index).setText(PETINENT_INFO_LABEL_CONTENTS[index++] + "  " + $case.getOtherExplain());
 
 	}
+	
+
+	private void createPrescriptionMedicineTabbedPane() {
+		
+		JPanel searchPanel = new JPanel();
+		searchPanel.setBounds(0, 0, SPLIT_DIVIDER_LOCATION, SEARCH_PANEL_HEIGHT);
+		prescriptionMedicinePanel.add(searchPanel);
+		createSearchPanel(searchPanel);
+		
+		JScrollPane treeScrollPane = new JScrollPane();
+		treeScrollPane.setBounds(0, searchPanel.getHeight(), SPLIT_DIVIDER_LOCATION, TREE_PANEL_HEIGHT);
+		prescriptionMedicinePanel.add(treeScrollPane);
+		createTreeScrollPane(treeScrollPane);
+		
+		JPanel contentPanel = new JPanel();
+		contentPanel.setBounds(0, treeScrollPane.getY()+treeScrollPane.getHeight(), SPLIT_DIVIDER_LOCATION, HEIGHT-SEARCH_PANEL_HEIGHT-SEARCH_PANEL_HEIGHT);
+		prescriptionMedicinePanel.add(contentPanel);
+		
+	}
+
+	private void createTreeScrollPane(JScrollPane treeScrollPane) {
+		MedicineTypeTreeFrame medicineTypeTreeFrame = MedicineTypeTreeFrame.getInstance();
+		prescriptiontTree = medicineTypeTreeFrame.registWithMedicine(treeScrollPane);
+		prescriptiontTree.addMouseListener(new MedicineTreeMouseAdapter(this));
+		
+	}
+	
+
+	private void createSearchPanel(JPanel searchPanel) {
+		searchPanel.setLayout(null);
+		
+		int X = 0;
+		int Y = 0;
+		JLabel keyLabel = new JLabel(KEY_LABEL_CONTENT);
+		keyLabel.setBounds(X, Y, KEY_LABEL_WIDTH, KEY_LABEL_HEIGHT);
+		searchPanel.add(keyLabel);
+		X += KEY_LABEL_WIDTH;
+		
+		
+		keyField.setBounds(X, Y, KEY_FIELD_WIDTH, KEY_LABEL_HEIGHT);
+		searchPanel.add(keyField);
+		X += KEY_FIELD_WIDTH;
+		
+		JButton searchButton = new JButton(SEARCH_BUTTON_TITLE);
+		searchButton.setBounds(X, Y, SEARCH_BUTTON_WIDTH, KEY_LABEL_HEIGHT);
+		searchPanel.add(searchButton);
+		
+		searchButton.addActionListener(new PrescriptionQueryButtonListener(this));
+		
+	}
 
 	public static void main(String[] args) {
 		PrescriptionFrame PrescriptionFrame = new PrescriptionFrame(new Case(null, null, null, null, null, null, null, null, null, null, null, new Patient(null, null, null, null, null, null, null, null, null, null, null, null, null, null)));
 		PrescriptionFrame.execute();
 	}
+
+	public List<JButton> getPrescriptionDMLButtons() {
+		return prescriptionDMLButtons;
+	}
+
+	public List<JComponent> getMedicineFields() {
+		return medicineFields;
+	}
+
+	public List<JComponent> getUasgeFields() {
+		return uasgeFields;
+	}
+
+	public JFrame getPrescriptionFrame() {
+		return prescriptionFrame;
+	}
+
+	public List<JComponent> getPrescriptionFields() {
+		return prescriptionFields;
+	}
+
+	public Case get$case() {
+		return $case;
+	}
+
+	public JTree getPrescriptiontTree() {
+		return prescriptiontTree;
+	}
+	
+	
 
 }

@@ -1,5 +1,7 @@
 package cn.kgc.service.intf;
 
+import java.util.List;
+
 import cn.kgc.dto.MedicineDto;
 import cn.kgc.model.Medicine;
 
@@ -20,4 +22,6 @@ public interface MedicineService {
 	int modify(Medicine medicine) throws Exception;
 
 	int delete(String medicineId) throws Exception;
+
+	List<Medicine> getAllInfoByTypeId(String typeId) throws Exception;
 }
