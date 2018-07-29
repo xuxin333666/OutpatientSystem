@@ -8,7 +8,8 @@ import cn.kgc.utils.BusinessButtonUtils;
 import cn.kgc.utils.FrameUtils;
 
 public class BusinessButtonListener implements ActionListener {
-	private final String BUSINESS_STATUS_EXCEPTION = "系统异常，请联系管理员,";
+	private static final String BUSINESS_STATUS_EXCEPTION = "系统异常，请联系管理员,";
+	private static final String BUSINESS_NOTFOUND_EXCEPTION = "该功能正在建设中";
 	
 	private String imgUrl;
 	
@@ -23,6 +24,8 @@ public class BusinessButtonListener implements ActionListener {
 		try {
 			businessButtonFrameIntf = BusinessButtonUtils.getBusinessButtonFrame(imgUrl);
 			businessButtonFrameIntf.execute();
+		} catch(ClassNotFoundException e1) {
+			FrameUtils.DialogErorr(BUSINESS_NOTFOUND_EXCEPTION);
 		} catch (Exception e1) {
 			FrameUtils.DialogErorr(BUSINESS_STATUS_EXCEPTION + e1.getMessage());
 		}

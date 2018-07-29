@@ -16,21 +16,38 @@ import cn.kgc.utils.PatientUtils;
 import cn.kgc.utils.StringUtils;
 
 public class PatientDaoImpl extends BaseDaoImpl implements PatientDao {
-	private final String[] COLUMN_NAME = {"id","name","sex","age","married","job",
+	private static final String[] COLUMN_NAME = {"id","name","sex","age","married","job",
 										"weight","blood","phone_number","register_time",
 										"address","allergy","handling_sug","remark"};
 	private static final String[] QUERY_KEY_LIST = {"证号/姓名","性别","婚姻状况","职业","联系地址","初诊处理意见","初诊备注"};  
+	
+	public PatientDaoImpl() {
+		super("PatientDao");
+	}
+	
+	
+	/**
+	 * 全条件查询病人数据，返回list
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public List<Patient> query() throws Exception {
-		String sql = "SELECT * FROM t_patient ORDER BY id";
-		List<Object> objs = query(sql, Patient.class, null, COLUMN_NAME);
+		List<Object> objs = query(sqlMap.get("QUERY_SQL"), Patient.class, null, COLUMN_NAME);
 		return obj2Patient(objs);
 	}
-
+	
+	
+	/**
+	 * 根据dto查询满足条件的病人数据，返回list
+	 * @param patientDto
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public List<Patient> query(PatientDto patientDto) throws Exception {
 		DBPoolConnection dbp = new DBPoolConnection();
-		StringBuilder sql = new StringBuilder("SELECT * FROM t_patient WHERE 1=1");
+		StringBuilder sql = new StringBuilder(sqlMap.get("QUERY_SEARCH_SQL"));
 		String queryColumnName = patientDto.getQueryColumnNameStr();
 		String key = patientDto.getKeyStr();
 		if(StringUtils.isNotEmpty(patientDto.getStartTimeStr())) {
@@ -98,40 +115,67 @@ public class PatientDaoImpl extends BaseDaoImpl implements PatientDao {
 		}
 	}
 	
+
+	/**
+	 * 根据病人id查询病人数据。返回盖病人对象
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public Patient query(String id) throws Exception {
-		String sql = "SELECT * FROM t_patient WHERE id = ?";
-		List<Object> objs = queryById(sql, Patient.class, null, COLUMN_NAME, id);
+		List<Object> objs = queryById(sqlMap.get("QUERY_BY_ID_SQL"), Patient.class, null, COLUMN_NAME, id);
 		return (Patient)objs.get(0);
 	}
 	
+	/**
+	 * 查询病人表数据库中最小的未被使用的id号，返回字符串的该值
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public String queryMinEmptyId() throws Exception {
-		String sql = "SELECT minid FROM (SELECT id,ROWNUM+10000 minid FROM t_patient) WHERE minid <> id AND ROWNUM = 1";
-		String sql2 = "SELECT nvl(max(id),10000)+1 minid FROM t_patient";
-		return queryMinEmptyId(sql,sql2,"minid");
+		return queryMinEmptyId(sqlMap.get("QUERY_MIN_EMPTY_ID_SQL1"),sqlMap.get("QUERY_MIN_EMPTY_ID_SQL2"),"minid");
 	}
 	
+	/**
+	 * 将病人对象添加到数据库，返回影响行数
+	 * @param patient
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public int insert(Patient patient) throws Exception {
-		String sql = "INSERT INTO t_patient VALUES (?,?,?,?,?,?,?,?,?,nvl(?,SYSDATE),?,?,?,?)";
-		return insert(sql, patient, 0, 13);
+		return insert(sqlMap.get("INSERT_SQL"), patient, 0, 13);
 	}
 	
+	/**
+	 * 根据给定的病人id和数据修改数据库数据。返回影响行数
+	 * @param patient
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public int update(Patient patient) throws Exception {
-		StringBuilder sql = new StringBuilder("UPDATE t_patient SET");
-		return updateById(sql, patient, COLUMN_NAME, patient.getId());
+		return updateById(sqlMap.get("UPDATE_SQL"), patient, COLUMN_NAME, patient.getId());
 	}
 	
-	
+	/**
+	 * 根据给定的病人id删除病人数据，返回影响行数
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public int delete(String id) throws Exception {
-		String sql = "DELETE FROM t_patient WHERE id = ?";
-		return deleteById(sql, id);
+		return deleteById(sqlMap.get("DELETE_SQL"), id);
 	}
 	
-	
+	/**
+	 * 将List<Object>转换为List<Patient>返回
+	 * @param objs
+	 * @return
+	 */
 	private List<Patient> obj2Patient(List<Object> objs) {
 		List<Patient> patients = new ArrayList<>();
 		for (Object object : objs) {

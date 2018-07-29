@@ -191,6 +191,15 @@ public class MyTableFrame {
 	public JTable getTable() {
 		return table;
 	}
+
+	/**
+	 * 设置表格的激活状态
+	 * @param b
+	 */
+	public void enable(boolean b) {
+		table.setEnabled(b);
+		
+	}
 	
 	
 	

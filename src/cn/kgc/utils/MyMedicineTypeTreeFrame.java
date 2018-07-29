@@ -16,16 +16,18 @@ import cn.kgc.service.intf.MedicineService;
 import cn.kgc.service.intf.MedicineTypeService;
 
 public class MyMedicineTypeTreeFrame {
-	private JTree tree;
-	private DefaultMutableTreeNode root;
-	private MedicineType rootType;
-	private DefaultMutableTreeNode selectedTree;
-	private MedicineType selectedtype;
-	private boolean flag;
-	MedicineTypeService medicineTypeService = new MedicineTypeServiceImpl();
-	MedicineService medicineService = new MedicineServiceImpl();
+	private JTree tree;		//生成的树控件
+	private DefaultMutableTreeNode root;		//生成的树根节点
+	private MedicineType rootType;		//根节点放入的药品分类对象
+	private DefaultMutableTreeNode selectedTree;		//选中的树节点
+	private MedicineType selectedtype;		//选中的树节点放入的药品分类对象
+	private boolean flag;		//是否加载叶子节点上的药品对象
+	MedicineTypeService medicineTypeService = new MedicineTypeServiceImpl();		//药品分类service对象
+	MedicineService medicineService = new MedicineServiceImpl();		//药品service对象
 	
-	
+	/**
+	 * 构造方法，获取根节点数据，生成jtree
+	 */
 	public MyMedicineTypeTreeFrame() {
 		List<MedicineType> listArr;
 		try {
@@ -41,18 +43,28 @@ public class MyMedicineTypeTreeFrame {
 		}
 	}
 	
+	/**
+	 * 注册在给定的scrollpane上，且不加载叶子节点上的药品对象
+	 * @param scrollPane
+	 */
 	public void regist(JScrollPane scrollPane) {
 		flag = false;
 		registBoth(scrollPane);
 	}
 	
+	/**
+	 * 注册在给定的scrollpane上，加载叶子节点上的药品对象
+	 * @param scrollPane
+	 */
 	public void registWithMedicine(JScrollPane scrollPane) {
 		flag = true;
 		registBoth(scrollPane);
 	}
 	
-	
-	
+	/**
+	 * 注册在给定的scrollpane上，判断是否加载叶子节点上的药品对象
+	 * @param scrollPane
+	 */	
 	private void registBoth(JScrollPane scrollPane) {
 		//建tree
 		try {
@@ -68,6 +80,11 @@ public class MyMedicineTypeTreeFrame {
 		}
 	}
 	
+	/**
+	 * 刷新树控件
+	 * @param selectedTree
+	 * @throws Exception
+	 */
 	public void refreshTree(DefaultMutableTreeNode selectedTree) throws Exception {
 		this.selectedTree = selectedTree;
 		selectedtype = (MedicineType)selectedTree.getUserObject();
@@ -82,7 +99,12 @@ public class MyMedicineTypeTreeFrame {
         tree.updateUI(); 
 	}
 	
-	
+	/**
+	 * 递归方法，用来添加节点
+	 * @param treeNode
+	 * @param listArr
+	 * @throws Exception
+	 */
 	private void addTreeNode(DefaultMutableTreeNode treeNode, List<MedicineType> listArr) throws Exception {
 		if(listArr.size() != 0) {			
 			for (MedicineType medicineType : listArr) {
@@ -109,10 +131,18 @@ public class MyMedicineTypeTreeFrame {
 		}
 	}
 
+	/**
+	 * 给jtree增加鼠标监听的方法
+	 * @param mouseAdapter
+	 */
 	public void addMouseListener(MouseListener mouseAdapter) {
 		tree.addMouseListener(mouseAdapter);	
 	}
 
+	/**
+	 * 返回生成的jtree
+	 * @return
+	 */
 	public JTree getTree() {
 		return tree;
 	}

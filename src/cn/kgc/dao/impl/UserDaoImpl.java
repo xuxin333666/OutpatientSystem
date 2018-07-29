@@ -11,12 +11,17 @@ import cn.kgc.dao.intf.UserDao;
 import cn.kgc.model.User;
 import cn.kgc.utils.DBPoolConnection;
 
-public class UserDaoImpl implements UserDao {
+public class UserDaoImpl extends BaseDaoImpl implements UserDao {
+
+	public UserDaoImpl() {
+		super("UserDao");
+	}
+
 
 	@Override
 	public User query(User user) throws Exception {
 		DBPoolConnection dBP = DBPoolConnection.getInstance();
-		String sql = "SELECT * FROM t_user WHERE name = ? AND pwd = ?";
+		String sql = sqlMap.get("QUERY_SQL");
 		Connection cn = null;
 		PreparedStatement psm = null;
 		ResultSet result = null;
@@ -61,7 +66,7 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public int updatePwd(String id, String newPwd) throws Exception {
 		DBPoolConnection dBP = DBPoolConnection.getInstance();
-		String sql = "UPDATE t_user SET pwd = ?,status = ? WHERE id = ?";
+		String sql = sqlMap.get("UPDATE_SQL");
 		Connection cn = null;
 		PreparedStatement psm = null;
 		try {

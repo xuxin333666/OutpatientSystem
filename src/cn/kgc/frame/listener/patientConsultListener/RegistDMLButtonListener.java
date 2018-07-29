@@ -10,7 +10,7 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-
+import cn.kgc.dto.PatientDto;
 import cn.kgc.frame.ConsultFrame;
 import cn.kgc.frame.listener.BaseDMLButtonListener;
 import cn.kgc.model.Patient;
@@ -114,7 +114,13 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 				break;
 			}
 			FrameUtils.statusInfo(status, SAVE_SUCCUSS, SAVE_ERORR);
-			consultFrame.getPatientTableFrame().getDataAndRefreshTable(patientService.getClass());
+			
+			String startTimeStr = consultFrame.getStartTimeField().getText();
+			String endTimeStr = consultFrame.getEndTimeField().getText();
+			String queryColumnNameStr = consultFrame.getQueryColumnNameComboBox().getSelectedItem().toString();
+			String keyStr = consultFrame.getKeyField().getText();
+			PatientDto patientDto = new PatientDto(startTimeStr,endTimeStr,queryColumnNameStr,keyStr);
+			consultFrame.getPatientTableFrame().getDataAndRefreshTable(patientDto);
 			command = COMMAND_SAVE;
 			controlButtonEnable(consultFrame.getRegistDMLButtons(),table,command);
 			FrameUtils.fieldsDisable(fields);

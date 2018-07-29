@@ -8,69 +8,95 @@ import cn.kgc.model.Case;
 import cn.kgc.model.Patient;
 
 public class CaseDaoImpl extends BaseDaoImpl implements CaseDao {
-	private final String[] COLUMN_NAME = {"cid","examination_time","main_symptom","now_symptom","past_symptom","personal_symptom","body_test",
+	private static final String[] COLUMN_NAME = {"cid","examination_time","main_symptom","now_symptom","past_symptom","personal_symptom","body_test",
 			"lab_test","examination","advice","other_explain",
 			"pid","name","sex","age","married","job",
 			"weight","blood","phone_number","register_time",
 			"address","allergy","handling_sug","remark"};
-	private final String[] COLUMN_NAME_UPDATE = {"id","examination_time","main_symptom","now_symptom","past_symptom","personal_symptom","body_test",
+	private static final String[] COLUMN_NAME_UPDATE = {"id","examination_time","main_symptom","now_symptom","past_symptom","personal_symptom","body_test",
 			"lab_test","examination","advice","other_explain"};
-	private final String SELECT_CASE_AND_PATINT_TABLE_SQL =  "SELECT c.id cid,examination_time,main_symptom,now_symptom,past_symptom,personal_symptom,body_test,"
-			+ "lab_test,examination,advice,other_explain,"
-			+ "p.id pid,name,sex,age,married,job,"
-			+ "weight,blood,phone_number,register_time,"
-			+ "address,allergy,handling_sug,remark FROM t_case c JOIN t_patient p ON patient_id = p.id";
-
+	
+	public CaseDaoImpl() {
+		super("CaseDao");
+	}
+	
+	
+	/**
+	 * 根据病人的id查询所有病例，组成list返回
+	 * @param patientId
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public List<Case> queryByPatientId(String patientId) throws Exception {
-		String sql = SELECT_CASE_AND_PATINT_TABLE_SQL + " WHERE patient_id = ?";
-		List<Object> objs = queryById(sql, Case.class, Patient.class, COLUMN_NAME, patientId);
+		List<Object> objs = queryById(sqlMap.get("SELECT_CASE_AND_PATINT_TABLE_SQL") + sqlMap.get("QUERY_BY_PATIENT_ID_SQL"), Case.class, Patient.class, COLUMN_NAME, patientId);
 		return obj2Case(objs);
 	}
 	
-
+	/**
+	 * 根据病例的id查询病例，返回唯一的病例对象
+	 * @param caseId
+	 * @param patientId
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public Case queryByPatientIdAndId(String caseId, String patientId) throws Exception {
-		String sql =  SELECT_CASE_AND_PATINT_TABLE_SQL + " WHERE c.id = ?";
-		List<Object> objs = queryById(sql, Case.class, Patient.class, COLUMN_NAME, caseId);
+		List<Object> objs = queryById(sqlMap.get("SELECT_CASE_AND_PATINT_TABLE_SQL") + sqlMap.get("QUERY_BY_CASE_ID_SQL"), Case.class, Patient.class, COLUMN_NAME, caseId);
 		return (Case)objs.get(0);
 	}
 	
 
+	/**
+	 * 查询病例表数据库中最小的未被使用的id号，返回字符串的该值
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
-	public int insert(Case $case) throws Exception {
-		String sql =  "insert into t_case(id,examination_time,main_symptom,now_symptom,past_symptom,personal_symptom,body_test,"
-				+ "lab_test,examination,advice,other_explain,patient_id) "
-				+ "values (?,nvl(?,sysdate),?,?,?,?,?,?,?,?,?,?)";
-		return insert(sql, $case, 0, 10,$case.getPatient().getId());
+	public String queryMinEmptyId() throws Exception {
+		return queryMinEmptyId(sqlMap.get("QUERY_MIN_EMPTY_ID_SQL1"),sqlMap.get("QUERY_MIN_EMPTY_ID_SQL2"),"minid");
+	}
+	
+	/**
+	 * 将给定的病例加入病例表数据库，返回该操作所影响的行数
+	 * @param $case
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public int insert(Case $case) throws Exception {	
+		return insert(sqlMap.get("INSERT_SQL"), $case, 0, 10,$case.getPatient().getId());
 		
 	}
 	
 
-
-
-	@Override
-	public String queryMinEmptyId() throws Exception {
-		String sql = "SELECT minid FROM (SELECT id,ROWNUM minid FROM t_case ORDER BY id) WHERE minid <> id AND ROWNUM = 1";
-		String sql2 = "SELECT nvl(max(id),0)+1 minid FROM t_case";
-		return queryMinEmptyId(sql,sql2,"minid");
-	}
-	
-
+	/**
+	 * 根据给定的病例的id修改数据库的病例，返回该操作所影响的行数
+	 * @param $case
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public int Update(Case $case) throws Exception {
-		StringBuilder sql = new StringBuilder("UPDATE t_case SET");
-		return updateById(sql, $case, COLUMN_NAME_UPDATE, $case.getId());
+		return updateById(sqlMap.get("UPDATE_SQL"), $case, COLUMN_NAME_UPDATE, $case.getId());
 	}
 	
-
+	/**
+	 * 根据给定的病例id删除相应的病例，返回该操作所影响的行数
+	 * @param cid
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public int delete(String cid) throws Exception {
-		String sql = "DELETE FROM t_case WHERE id = ?";
-		return deleteById(sql, cid);
+		return deleteById(sqlMap.get("DELETE_SQL"), cid);
 	}
 	
-	
+	/**
+	 * 将List<Object>转换为List<Case>返回
+	 * @param objs
+	 * @return
+	 */
 	private List<Case> obj2Case(List<Object> objs) {
 		List<Case> cases = new ArrayList<>();
 		for (Object object : objs) {

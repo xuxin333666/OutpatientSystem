@@ -2,7 +2,6 @@ package cn.kgc.frame;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -28,7 +27,6 @@ import cn.kgc.model.Patient;
 import cn.kgc.model.PrescriptionMedicine;
 import cn.kgc.service.impl.MedicineServiceImpl;
 import cn.kgc.utils.DateChooser;
-import cn.kgc.utils.DateUtils;
 import cn.kgc.utils.FrameUtils;
 import cn.kgc.utils.MyMedicineTypeTreeFrame;
 import cn.kgc.utils.MyTableFrame;
@@ -204,8 +202,6 @@ public class PrescriptionFrame {
 		
 		JTextField prescriptionTimeField = new JTextField();
 		prescriptionTimeField.setBounds(prescriptionTimeLabel.getX() + prescriptionTimeLabel.getWidth(), COMPONENT_DISTANCE, PRESCRIOTION_ID_FIELD_WIDTH, PRESCRIOTION_ID_LABEL_HEIGHT);
-		Date date = new Date();
-		prescriptionTimeField.setText(DateUtils.date2String(date));
 		DateChooser dateChooser = DateChooser.getInstance();
 		dateChooser.register(prescriptionTimeField);
 		prescriptionInfoPanel.add(prescriptionTimeField);

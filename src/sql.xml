@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao>
+    <UserDao>
+        <QUERY_SQL>SELECT * FROM t_user WHERE name = ? AND pwd = ?</QUERY_SQL>
+        <UPDATE_SQL>UPDATE t_user SET pwd = ?,status = ? WHERE id = ?</UPDATE_SQL>
+    </UserDao>
+    <PatientDao>
+        <QUERY_SQL >SELECT * FROM t_patient ORDER BY id</QUERY_SQL>
+        <QUERY_SEARCH_SQL>SELECT * FROM t_patient WHERE 1=1</QUERY_SEARCH_SQL>
+        <QUERY_BY_ID_SQL>SELECT * FROM t_patient WHERE id = ? ORDER BY id</QUERY_BY_ID_SQL>
+        <QUERY_MIN_EMPTY_ID_SQL1>SELECT minid FROM (SELECT id,ROWNUM+10000 minid FROM t_patient) WHERE minid != id AND ROWNUM = 1</QUERY_MIN_EMPTY_ID_SQL1>
+        <QUERY_MIN_EMPTY_ID_SQL2>SELECT nvl(max(id),10000)+1 minid FROM t_patient</QUERY_MIN_EMPTY_ID_SQL2>
+        <INSERT_SQL>INSERT INTO t_patient VALUES (?,?,?,?,?,?,?,?,?,nvl(?,SYSDATE),?,?,?,?)</INSERT_SQL>
+        <UPDATE_SQL>UPDATE t_patient SET</UPDATE_SQL>
+        <DELETE_SQL>DELETE FROM t_patient WHERE id = ?</DELETE_SQL>
+    </PatientDao>
+    <CaseDao>
+        <SELECT_CASE_AND_PATINT_TABLE_SQL>SELECT c.id cid,examination_time,main_symptom,now_symptom,past_symptom,personal_symptom,body_test,
+        lab_test,examination,advice,other_explain,p.id pid,name,sex,age,married,job,weight,blood,phone_number,register_time,
+        address,allergy,handling_sug,remark FROM t_case c JOIN t_patient p ON patient_id = p.id</SELECT_CASE_AND_PATINT_TABLE_SQL>
+        <QUERY_BY_PATIENT_ID_SQL> WHERE patient_id = ?</QUERY_BY_PATIENT_ID_SQL>
+        <QUERY_BY_CASE_ID_SQL> WHERE c.id = ?</QUERY_BY_CASE_ID_SQL>
+        <QUERY_MIN_EMPTY_ID_SQL1>SELECT minid FROM (SELECT id,ROWNUM minid FROM t_case ORDER BY id) WHERE minid != id AND ROWNUM = 1</QUERY_MIN_EMPTY_ID_SQL1>
+        <QUERY_MIN_EMPTY_ID_SQL2>SELECT nvl(max(id),0)+1 minid FROM t_case</QUERY_MIN_EMPTY_ID_SQL2>
+        <INSERT_SQL>insert into t_case(id,examination_time,main_symptom,now_symptom,past_symptom,personal_symptom,body_test,lab_test,examination,advice,other_explain,patient_id) values (?,nvl(?,sysdate),?,?,?,?,?,?,?,?,?,?)</INSERT_SQL>
+        <UPDATE_SQL>UPDATE t_case SET</UPDATE_SQL>
+        <DELETE_SQL>DELETE FROM t_case WHERE id = ?</DELETE_SQL>
+    </CaseDao>
+    <MedicineDao>
+        <SELECT_MEDICINE_AND_TYPE_TABLE_SQL>SELECT m.id mid,m.name mname,norms,unit,price,uasge,needing_attention,t.id tid,t.name tname,parent_id FROM t_medicine m JOIN t_medicine_type t ON medicine_type_id = t.id</SELECT_MEDICINE_AND_TYPE_TABLE_SQL>
+        <QUERY_SQL> ORDER BY mid</QUERY_SQL>
+        <QUERY_BY_TYPE_ID_SQL> WHERE medicine_type_id = ANY (SELECT id FROM t_medicine_type START WITH id = ? CONNECT BY PRIOR id = parent_id)  ORDER BY mid</QUERY_BY_TYPE_ID_SQL>
+        <QUERY_BY_SEARCH_SQL> WHERE m.id LIKE ? OR m.name LIKE ? OR m.price LIKE ? OR t.name LIKE ?  ORDER BY mid</QUERY_BY_SEARCH_SQL>
+        <QUERY_MIN_EMPTY_ID_SQL1>SELECT minid FROM (SELECT id,ROWNUM minid FROM t_medicine ORDER BY id) WHERE minid != id AND ROWNUM = 1</QUERY_MIN_EMPTY_ID_SQL1>
+        <QUERY_MIN_EMPTY_ID_SQL2>SELECT nvl(max(id),0)+1 minid FROM t_medicine</QUERY_MIN_EMPTY_ID_SQL2>
+        <QUERY_BY_ID_SQL> WHERE m.id = ? ORDER BY mid</QUERY_BY_ID_SQL>
+        <QUERY_BY_MEDICINE_ID_SQL> WHERE m.id = ? ORDER BY mid</QUERY_BY_MEDICINE_ID_SQL>
+        <INSERT_SQL>INSERT INTO t_medicine VALUES (?,?,?,?,?,?,?,?)</INSERT_SQL>
+        <DELETE_SQL>DELETE FROM t_medicine WHERE id = ?</DELETE_SQL>
+        <UPDATE_SQL>UPDATE t_medicine SET</UPDATE_SQL>
+    </MedicineDao>
+    <MedicineTypeDao>
+        <QUERY_SQL>SELECT c.id cid,c.name cname,p.id pid FROM t_medicine_type c LEFT OUTER JOIN t_medicine_type p ON c.parent_id = p.id</QUERY_SQL>
+        <QUERY_MIN_EMPTY_ID_SQL1>SELECT minid FROM (SELECT id,ROWNUM+99 minid FROM t_medicine_type ORDER BY id) WHERE minid != id AND ROWNUM = 1</QUERY_MIN_EMPTY_ID_SQL1>
+        <QUERY_MIN_EMPTY_ID_SQL2>SELECT nvl(max(id),99)+1 minid FROM t_medicine_type</QUERY_MIN_EMPTY_ID_SQL2>
+        <QUERY_BY_NO_CHILD_ID_SQL>SELECT id cid,name cname,parent_id pid FROM  t_medicine_type WHERE id != ALL (SELECT  NVL(parent_id,0) FROM t_medicine_type)</QUERY_BY_NO_CHILD_ID_SQL>
+        <INSERT_SQL>INSERT INTO t_medicine_type(id,name,parent_id) VALUES (?,?,?)</INSERT_SQL>
+        <UPDATE_SQL>UPDATE t_medicine_type SET</UPDATE_SQL>
+        <DELETE_SQL>DELETE FROM t_medicine_type WHERE id = ?</DELETE_SQL>
+    </MedicineTypeDao>
+    <PrescriptionDao>
+        <QUERY_MIN_EMPTY_ID_SQL1>SELECT minid FROM (SELECT id,ROWNUM+100000 minid FROM t_prescription ORDER BY id) WHERE minid != id AND ROWNUM = 1</QUERY_MIN_EMPTY_ID_SQL1>
+        <QUERY_MIN_EMPTY_ID_SQL2>SELECT nvl(max(id),100000)+1 minid FROM t_prescription</QUERY_MIN_EMPTY_ID_SQL2>
+        <INSERT_SQL>INSERT INTO t_prescription VALUES (?,nvl(?,sysdate),?,?,?,?)</INSERT_SQL>
+    </PrescriptionDao>
+    <PrescriptionMedicineDao>
+        <QUERY_MIN_EMPTY_ID_SQL1>SELECT minid FROM (SELECT id,ROWNUM minid FROM t_prescription_medicine ORDER BY id) WHERE minid != id AND ROWNUM = 1</QUERY_MIN_EMPTY_ID_SQL1>
+        <QUERY_MIN_EMPTY_ID_SQL2>SELECT nvl(max(id),0)+1 minid FROM t_prescription_medicine</QUERY_MIN_EMPTY_ID_SQL2>
+        <INSERT_SQL>INSERT INTO t_prescription_medicine VALUES (?,?,?,?)</INSERT_SQL>
+    </PrescriptionMedicineDao>
+</dao>

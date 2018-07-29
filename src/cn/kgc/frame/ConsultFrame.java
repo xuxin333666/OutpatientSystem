@@ -282,12 +282,12 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 				}
 				field.setBounds(X, Y, REGUST_INPUT_CONTENT_FIELD_SMALL_WIDTH, REGUST_INPUT_CONTENT_FIELD_HEIGHT);				
 				X += REGUST_INPUT_CONTENT_FIELD_SMALL_WIDTH + COMPONENT_DISTANSE;
-				field.setEnabled(false);
 			}
 			if((i-1)%2==0 || field.getWidth() != REGUST_INPUT_CONTENT_FIELD_SMALL_WIDTH) {
 				X = REGIST_INPUT_CONTENT_POSITON_X;
 				Y += field.getHeight() + COMPONENT_DISTANSE;			
 			}
+			field.setEnabled(false);
 			registContentFields.add(field);
 			registInputContentPanel.add(field);
 			registInputContentPanel.add(idLabel);

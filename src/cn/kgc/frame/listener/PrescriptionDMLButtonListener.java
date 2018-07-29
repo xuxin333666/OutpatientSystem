@@ -2,6 +2,7 @@ package cn.kgc.frame.listener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -17,6 +18,7 @@ import cn.kgc.service.impl.PrescriptionMedicineServiceImpl;
 import cn.kgc.service.impl.PrescriptionServiceImpl;
 import cn.kgc.service.intf.PrescriptionMedicineService;
 import cn.kgc.service.intf.PrescriptionService;
+import cn.kgc.utils.DateUtils;
 import cn.kgc.utils.FrameUtils;
 
 public class PrescriptionDMLButtonListener extends BaseDMLButtonListener implements ActionListener {
@@ -53,6 +55,9 @@ public class PrescriptionDMLButtonListener extends BaseDMLButtonListener impleme
 	public void add(JButton button) {
 		emptyFields(medicineFields,uasgeFields,prescriptionFields);
 		JTextField idField = (JTextField)prescriptionFields.get(0);
+		JTextField timeField = (JTextField)prescriptionFields.get(1);
+		Date date = new Date();
+		timeField.setText(DateUtils.date2String(date));
 		try {
 			String id = prescriptionService.getMinEmptyId();
 			idField.setText(id);
