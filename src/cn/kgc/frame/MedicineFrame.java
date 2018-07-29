@@ -10,10 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
 
 import cn.kgc.frame.intf.BaseBusinessButtonFrame;
 import cn.kgc.frame.listener.medicineListener.MedicineDMLButtonListener;
@@ -23,6 +20,8 @@ import cn.kgc.frame.model.MedicineTableModel;
 import cn.kgc.service.impl.MedicineServiceImpl;
 
 import cn.kgc.utils.FrameUtils;
+import cn.kgc.utils.MyMedicineTypeTreeFrame;
+import cn.kgc.utils.MyTableFrame;
 import cn.kgc.utils.ScreenSizeUtils;
 
 public class MedicineFrame implements BaseBusinessButtonFrame {
@@ -54,8 +53,8 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 	private JScrollPane medicineTreePanel = new JScrollPane();
 	private JSplitPane medicineSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, medicineTreePanel, medicineTabbedPane);
 	
-	private JTable medicineTable;
-	private JTree tree;
+	private MyTableFrame medicineTableFrame;
+	private MyMedicineTypeTreeFrame medicineTypeTreeFrame;
 	
 	private JTextField medicineSearchField = new JTextField();
 	
@@ -92,14 +91,9 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 	
 	
 	private void createDrugTabbedPane() {
-		MedicineTableModel drugTableModel = MedicineTableModel.getInstance();
-		medicineTable = new JTable(drugTableModel);
-		JScrollPane drugTableListPane = new JScrollPane(medicineTable);
-		FrameUtils.getDataAndRefreshTable(medicineTable,MedicineServiceImpl.class);
-
-		medicineTabbedPane.add(TABED_DRUG_LIST_TITLE, drugTableListPane);
-		
-		medicineTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		MedicineTableModel medicineTableModel = MedicineTableModel.getInstance();
+		medicineTableFrame = new MyTableFrame(medicineTableModel,MedicineServiceImpl.class);
+		medicineTableFrame.regist(TABED_DRUG_LIST_TITLE, medicineTabbedPane);
 		
 	}
 
@@ -132,25 +126,26 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 
 	private void createMedicineTreePanel() {		
 		//½¨tree
-		MedicineTypeTreeFrame medicineTypeTreeFrame = MedicineTypeTreeFrame.getInstance();
-		tree = medicineTypeTreeFrame.regist(medicineTreePanel);
-		tree.addMouseListener(new MedicineTreeMouseAdapter(this));
+		medicineTypeTreeFrame = new MyMedicineTypeTreeFrame();
+		medicineTypeTreeFrame.regist(medicineTreePanel);
+		medicineTypeTreeFrame.addMouseListener(new MedicineTreeMouseAdapter(this));
 
 	}
 
-	
-	public JTable getMedicineTable() {
-		return medicineTable;
-	}
-
-
-	public JTree getTree() {
-		return tree;
-	}
 
 
 	public JTextField getMedicineSearchField() {
 		return medicineSearchField;
+	}
+
+
+	public MyTableFrame getMedicineTableFrame() {
+		return medicineTableFrame;
+	}
+
+
+	public MyMedicineTypeTreeFrame getMedicineTypeTreeFrame() {
+		return medicineTypeTreeFrame;
 	}
 
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,19 +17,21 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTree;
 
 import cn.kgc.frame.listener.PrescriptionDMLButtonListener;
+import cn.kgc.frame.listener.PrescriptionFieldMouseListener;
 import cn.kgc.frame.listener.PrescriptionQueryButtonListener;
 import cn.kgc.frame.listener.medicineListener.MedicineTreeMouseAdapter;
+import cn.kgc.frame.model.PrescriptionMedicineTableModel;
 import cn.kgc.model.Case;
 import cn.kgc.model.Patient;
-import cn.kgc.model.Prescription;
-import cn.kgc.service.impl.PrescriptionServiceImpl;
-import cn.kgc.service.intf.PrescriptionService;
+import cn.kgc.model.PrescriptionMedicine;
+import cn.kgc.service.impl.MedicineServiceImpl;
 import cn.kgc.utils.DateChooser;
 import cn.kgc.utils.DateUtils;
 import cn.kgc.utils.FrameUtils;
+import cn.kgc.utils.MyMedicineTypeTreeFrame;
+import cn.kgc.utils.MyTableFrame;
 import cn.kgc.utils.PatientUtils;
 
 
@@ -47,6 +50,7 @@ public class PrescriptionFrame {
 	private static final String KEY_LABEL_CONTENT = "查找关键字";
 	private static final String SEARCH_BUTTON_TITLE = "查找";
 	private static final String[] PETINENT_INFO_LABEL_CONTENTS = {"姓名：","性别：","年龄：","住址：","联系电话：","过敏史：","诊断：","其他说明："};
+	private static final String[] USAGE_ARRAYS = {"","一日一次","一日两次","一日三次"};
 	
 	private static final String[] PRESCRIPTION_DML_BUTTON_IMGURL = {"./img/1new.PNG","./img/2save.PNG","./img/3shoufei.PNG",
 			"./img/4qingchu.PNG","./img/5daying.PNG","./img/6cyanfang.PNG","./img/7lishi.PNG","./img/8close.PNG"};
@@ -100,21 +104,20 @@ public class PrescriptionFrame {
 	private JTextField keyField = new JTextField();
 	
 	private Case $case;
-	private Prescription prescription;
 	private List<JButton> prescriptionDMLButtons = new ArrayList<>();
 	private List<JLabel> patientInfoLabels = new ArrayList<>();
 	private List<JComponent> medicineFields = new ArrayList<>();
 	private List<JComponent> uasgeFields = new ArrayList<>();
 	private List<JComponent> prescriptionFields = new ArrayList<>();
+	private List<PrescriptionMedicine> bufferPrescriptionMedicine = new ArrayList<>();
 	
-	private JTree prescriptiontTree;
+	private MyMedicineTypeTreeFrame medicineTypeTreeFrame;
+	private MyTableFrame prescriptionMedicineTableFrame;
 
 
-	private PrescriptionService prescriptionService = new PrescriptionServiceImpl();
 	
 	public PrescriptionFrame(Case $case) {
 		this.$case = $case;
-		prescription = new Prescription();
 	}
 
 	public void execute() {
@@ -122,21 +125,11 @@ public class PrescriptionFrame {
 		prescriptionFrame.setSize(WIDTH, HEIGHT);
 		prescriptionFrame.setLocationRelativeTo(null);
 		prescriptionFrame.setLayout(null);
-		
 	
-		try {
-			String id = prescriptionService.getMinEmptyId();
-			prescription.setId(id);
-
-		} catch (Exception e) {
-			FrameUtils.DialogErorr("错误," + e.getMessage());
-			e.printStackTrace();
-		}
 		
 		createLayout();
 		createPrescriptionPanel();
 		createPrescriptionMedicineTabbedPane();
-//		createMedicineTreePanel();
 		
 		prescriptionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		prescriptionFrame.setVisible(true);
@@ -202,8 +195,6 @@ public class PrescriptionFrame {
 		
 		JTextField prescriptionIdField = new JTextField();
 		prescriptionIdField.setBounds(prescriptionIdLabel.getX() + prescriptionIdLabel.getWidth(), COMPONENT_DISTANCE, PRESCRIOTION_ID_FIELD_WIDTH, PRESCRIOTION_ID_LABEL_HEIGHT);
-		prescriptionIdField.setText(prescription.getId());
-		prescriptionIdField.setEditable(false);
 		prescriptionFields.add(prescriptionIdField);
 		prescriptionInfoPanel.add(prescriptionIdField);
 		
@@ -285,13 +276,13 @@ public class PrescriptionFrame {
 			field.setBorder(BorderFactory.createLineBorder(Color.GRAY,1));
 			inputContentPanel.add(field);
 			medicineFields.add(field);
+			field.addMouseListener(new PrescriptionFieldMouseListener(this));
 			X += TABLE_MEDICINE_LABEL_WIDTH;
 			
-			JTextField field2 = new JTextField();
-			field2.setBounds(X, Y, TABLE_UASGE_LABEL_WIDTH, PRESCRIOTION_TITLE_LABEL_HEIGHT);
-			field2.setBorder(BorderFactory.createLineBorder(Color.GRAY,1));
-			inputContentPanel.add(field2);
-			uasgeFields.add(field2);
+			JComboBox<String> usageCombo = new JComboBox<String>(USAGE_ARRAYS);
+			usageCombo.setBounds(X, Y, TABLE_UASGE_LABEL_WIDTH, PRESCRIOTION_TITLE_LABEL_HEIGHT);
+			inputContentPanel.add(usageCombo);
+			uasgeFields.add(usageCombo);
 			X = 0;
 			Y += PRESCRIOTION_TITLE_LABEL_HEIGHT;
 			
@@ -353,16 +344,22 @@ public class PrescriptionFrame {
 		prescriptionMedicinePanel.add(treeScrollPane);
 		createTreeScrollPane(treeScrollPane);
 		
-		JPanel contentPanel = new JPanel();
-		contentPanel.setBounds(0, treeScrollPane.getY()+treeScrollPane.getHeight(), SPLIT_DIVIDER_LOCATION, HEIGHT-SEARCH_PANEL_HEIGHT-SEARCH_PANEL_HEIGHT);
-		prescriptionMedicinePanel.add(contentPanel);
+		
+		PrescriptionMedicineTableModel prescriptionMedicineTableModel = PrescriptionMedicineTableModel.getInstance();
+		prescriptionMedicineTableFrame = new MyTableFrame(prescriptionMedicineTableModel,MedicineServiceImpl.class,"getAllMedicine","getMedicineInPrescription");
+		prescriptionMedicineTableFrame.regist(prescriptionMedicinePanel);
+		prescriptionMedicineTableFrame.setScrollPaneBounds(0, treeScrollPane.getY()+treeScrollPane.getHeight(), SPLIT_DIVIDER_LOCATION, HEIGHT-SEARCH_PANEL_HEIGHT-SEARCH_PANEL_HEIGHT);
 		
 	}
 
+	public MyTableFrame getPrescriptionMedicineTableFrame() {
+		return prescriptionMedicineTableFrame;
+	}
+
 	private void createTreeScrollPane(JScrollPane treeScrollPane) {
-		MedicineTypeTreeFrame medicineTypeTreeFrame = MedicineTypeTreeFrame.getInstance();
-		prescriptiontTree = medicineTypeTreeFrame.registWithMedicine(treeScrollPane);
-		prescriptiontTree.addMouseListener(new MedicineTreeMouseAdapter(this));
+		medicineTypeTreeFrame = new MyMedicineTypeTreeFrame();
+		medicineTypeTreeFrame.registWithMedicine(treeScrollPane);
+		medicineTypeTreeFrame.addMouseListener(new MedicineTreeMouseAdapter(this));
 		
 	}
 	
@@ -419,10 +416,18 @@ public class PrescriptionFrame {
 		return $case;
 	}
 
-	public JTree getPrescriptiontTree() {
-		return prescriptiontTree;
+	public MyMedicineTypeTreeFrame getMedicineTypeTreeFrame() {
+		return medicineTypeTreeFrame;
 	}
-	
+
+	public List<PrescriptionMedicine> getBufferPrescriptionMedicine() {
+		return bufferPrescriptionMedicine;
+	}
+
+	public void setBufferPrescriptionMedicine(List<PrescriptionMedicine> bufferPrescriptionMedicine) {
+		this.bufferPrescriptionMedicine = bufferPrescriptionMedicine;
+	}
+
 	
 
 }

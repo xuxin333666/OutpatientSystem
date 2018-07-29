@@ -13,6 +13,10 @@ public interface MedicineService {
 	
 	Object[][] getAllInfoBySearch(String typeId) throws Exception;
 
+	Object[][] getAllMedicine();
+	
+	Object[][] getMedicineInPrescription(String medicineId) throws Exception;
+	
 	Medicine getInfoById(String id) throws Exception;
 
 	String getMinEmptyId() throws Exception;
@@ -24,4 +28,5 @@ public interface MedicineService {
 	int delete(String medicineId) throws Exception;
 
 	List<Medicine> getAllInfoByTypeId(String typeId) throws Exception;
+	
 }

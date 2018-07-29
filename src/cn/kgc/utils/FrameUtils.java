@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.MouseListener;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -13,10 +12,8 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.table.TableModel;
 
 
 
@@ -74,39 +71,6 @@ public class FrameUtils {
 		JOptionPane.showMessageDialog(null, msg, "¥ÌŒÛ", JOptionPane.ERROR_MESSAGE);
 	}
 	
-	
-	public static void getDataAndRefreshTable(JTable table,Class<?> clazz) {
-		try {
-			Object service = clazz.newInstance();
-			Method method = clazz.getMethod("getAllInfo");
-			Object[][] datas = (Object[][])method.invoke(service);
-			refreshTable(datas,table);			
-		} catch (Exception e) {
-			e.printStackTrace();
-			FrameUtils.DialogErorr(e.getMessage());
-		}
-	}
-		
-	public static void getDataAndRefreshTableBySearch(JTable table,Class<?> clazz,Object dto) {
-		try {
-			Object service = clazz.newInstance();
-			Method method = clazz.getMethod("getAllInfoBySearch",dto.getClass());
-			Object[][] datas = (Object[][])method.invoke(service,dto);
-			refreshTable(datas,table);		
-		} catch (Exception e) {
-			e.printStackTrace();
-			FrameUtils.DialogErorr(e.getMessage());
-		}
-	}
-	
-	public static void refreshTable(Object[][] datas,JTable table) throws Exception {
-		TableModel model = table.getModel();
-		Field field = model.getClass().getDeclaredField("datas");
-		field.setAccessible(true);
-		field.set(model, datas);
-		table.updateUI();
-	}
-	
 	public static void object2Component(Object obj,List<JComponent> fields,int AttributeStart) throws IllegalArgumentException, IllegalAccessException {
 		Field[] attributes = obj.getClass().getDeclaredFields();
 		for (int i=0;i<fields.size();i++,AttributeStart++) {
@@ -132,15 +96,7 @@ public class FrameUtils {
 	public static void object2Component(Object obj,List<JComponent> fields) throws IllegalArgumentException, IllegalAccessException {
 		object2Component(obj,fields,0);
 	}
-	
-	public static Object getTableSelectedRowInfo(JTable table,int columnNum) throws Exception {
-		if(table.getSelectedRowCount() == 1) {
-			int rowNo = table.getSelectedRow();
-			return table.getValueAt(rowNo, columnNum);
-		}
-		throw new Exception("«Î—°‘Ò“ª––");
-	}
-	
+
 	public static void fieldsEnable(List<JComponent> fields) {
 		for (JComponent jComponent : fields) {
 			jComponent.setEnabled(true);

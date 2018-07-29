@@ -12,7 +12,6 @@ import javax.swing.JTextField;
 
 import cn.kgc.frame.ConsultFrame;
 import cn.kgc.model.Patient;
-import cn.kgc.service.impl.CaseServiceImpl;
 import cn.kgc.service.impl.PatientServiceImpl;
 import cn.kgc.service.intf.PatientService;
 import cn.kgc.utils.DateUtils;
@@ -31,7 +30,7 @@ public class PatientTableMouseAdapter implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		JTable table = ConsultFrame.patientTable;
+		JTable table = consultFrame.getPatientTableFrame().getTable();
 		if(table.getSelectedRowCount() == 1) {
 			int rowNo = table.getSelectedRow();
 			id = table.getValueAt(rowNo, 0).toString();
@@ -76,7 +75,7 @@ public class PatientTableMouseAdapter implements MouseListener {
 	}
 
 	private void refreshCaseTable() {
-		FrameUtils.getDataAndRefreshTableBySearch(ConsultFrame.caseTable,CaseServiceImpl.class,id);
+		consultFrame.getCaseTableFrame().getDataAndRefreshTable(id);
 	}
 
 	@Override

@@ -14,13 +14,10 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
 
 import cn.kgc.frame.intf.BaseBusinessButtonFrame;
 import cn.kgc.frame.listener.patientConsultListener.CaseDMLButtonListener;
@@ -34,6 +31,7 @@ import cn.kgc.service.impl.CaseServiceImpl;
 import cn.kgc.service.impl.PatientServiceImpl;
 import cn.kgc.utils.DateChooser;
 import cn.kgc.utils.FrameUtils;
+import cn.kgc.utils.MyTableFrame;
 import cn.kgc.utils.PatientUtils;
 import cn.kgc.utils.ScreenSizeUtils;
 import cn.kgc.utils.StringUtils;
@@ -104,7 +102,7 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 	private JPanel patientTablePanel = new JPanel();
 	private JTabbedPane patientRegistTabbedPane = new JTabbedPane();
 	private JSplitPane contentPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, patientTablePanel, patientRegistTabbedPane);
-	public static JTable patientTable;
+	private MyTableFrame patientTableFrame;
 	
 	private JPanel queryPanel = new JPanel();
 	private JTextField startTimeField  = new JTextField();
@@ -120,7 +118,7 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 	
 	private JPanel caseManagerPanel = new JPanel();
 	private JTabbedPane caseManagerChildpanel = new JTabbedPane();
-	public static JTable caseTable;
+	private MyTableFrame caseTableFrame;
 	private List<JButton> caseDMLButtons = new ArrayList<>();
 	private List<JLabel> caseToolLabels = new ArrayList<>();
 	private List<JComponent> caseDescriptionFields = new ArrayList<>();
@@ -195,14 +193,10 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 	
 	private void createPatientTablePanel() {
 		PatientTableModel patientTableModel = PatientTableModel.getInstance();
-		patientTable = new JTable(patientTableModel);
-		patientTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		patientTablePanel.setLayout(null);
-		JScrollPane scrollPane = new JScrollPane(patientTable);
-		scrollPane.setBounds(0, 0, PATIENT_SCROLL_PANE_WIDTH, ScreenSizeUtils.screenHeight-QUERY_PANEL_HEIGHT - FOOTER_HEIGHT);
-		patientTablePanel.add(scrollPane);
-		patientTable.addMouseListener(new PatientTableMouseAdapter(this));
-		FrameUtils.getDataAndRefreshTable(patientTable,PatientServiceImpl.class);
+		patientTableFrame = new MyTableFrame(patientTableModel,PatientServiceImpl.class);
+		patientTableFrame.regist(patientTablePanel);
+		patientTableFrame.setScrollPaneBounds(0, 0, PATIENT_SCROLL_PANE_WIDTH, ScreenSizeUtils.screenHeight-QUERY_PANEL_HEIGHT - FOOTER_HEIGHT);
+		patientTableFrame.addMouseListener(new PatientTableMouseAdapter(this));
 	}
 	
 	private void createPatientRegistTabbedPane() {
@@ -315,25 +309,24 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 	}
 	
 	private void createCaseManagerPanel() {
+		
 		caseManagerChildpanel.setBounds(0, 0, ScreenSizeUtils.screenWidth - SPLIT_PANE_DIVIDER_LOCATION, contentPane.getHeight() - CASE_TABLE_HEIGHT);
+		caseManagerPanel.add(caseManagerChildpanel);
 		createCaseDescriptionPanel();
 		
+		
 		createCaseTablePane();
-		JScrollPane caseTablePane = new JScrollPane(caseTable);
-		caseTablePane.setBounds(0, caseManagerChildpanel.getHeight(), caseManagerChildpanel.getWidth(), CASE_TABLE_HEIGHT);
-		caseManagerPanel.add(caseManagerChildpanel);
-		caseManagerPanel.add(caseTablePane);
-		FrameUtils.getDataAndRefreshTable(caseTable,CaseServiceImpl.class);
-		caseTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 
 
 	private void createCaseTablePane() {
-		CaseTableModel caseTableModel = CaseTableModel.getInstance();
-		
-		caseTable = new JTable(caseTableModel);	
-		caseTable.addMouseListener(new CaseTableMouseAdapter(this));
+		CaseTableModel caseTableModel = CaseTableModel.getInstance();	
+		caseTableFrame = new MyTableFrame(caseTableModel,CaseServiceImpl.class);	
+		caseTableFrame.regist(caseManagerPanel);
+		caseTableFrame.setScrollPaneBounds(0, caseManagerChildpanel.getHeight(), caseManagerChildpanel.getWidth(), CASE_TABLE_HEIGHT);
+		caseTableFrame.addMouseListener(new CaseTableMouseAdapter(this));
 	}
+
 
 	private void createCaseDescriptionPanel() {
 		JPanel caseDescriptionPanel = new JPanel();
@@ -460,6 +453,14 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 		return caseDMLButtons;
 	}
 	
+
+	public MyTableFrame getPatientTableFrame() {
+		return patientTableFrame;
+	}
+
+	public MyTableFrame getCaseTableFrame() {
+		return caseTableFrame;
+	}
 
 	public static void main(String[] args) {
 		ConsultFrame c = new ConsultFrame();

@@ -33,12 +33,14 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 	
 	public RegistDMLButtonListener(ConsultFrame consultFrame) {
 		this.consultFrame = consultFrame;
-		fields = consultFrame.getRegistContentFields();
-		table = ConsultFrame.patientTable;
+
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		fields = consultFrame.getRegistContentFields();
+		table = consultFrame.getPatientTableFrame().getTable();
+		
 		JTextField field = (JTextField)fields.get(0);
 		field.setEditable(false);
 		
@@ -46,6 +48,7 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 		execute(button);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void add(JButton button) {
 		command = COMMAND_ADD;
@@ -65,7 +68,7 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 	@Override
 	public void modify(JButton button) {
 		try {
-			FrameUtils.getTableSelectedRowInfo(ConsultFrame.patientTable, 0);
+			consultFrame.getPatientTableFrame().getTableSelectedRowInfo(0);
 			command = COMMAND_MODIFY;
 			controlButtonEnable(consultFrame.getRegistDMLButtons(),table,command);
 			FrameUtils.fieldsEnable(fields);
@@ -78,7 +81,7 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 	@Override
 	public void delete(JButton button) {
 		try {
-			FrameUtils.getTableSelectedRowInfo(ConsultFrame.patientTable, 0);
+			consultFrame.getPatientTableFrame().getTableSelectedRowInfo(0);
 			command = COMMAND_DELETE;
 			controlButtonEnable(consultFrame.getRegistDMLButtons(),table,command);
 		} catch (Exception e) {
@@ -87,6 +90,7 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void save(JButton button) {
 		int status = 0;
@@ -110,7 +114,7 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 				break;
 			}
 			FrameUtils.statusInfo(status, SAVE_SUCCUSS, SAVE_ERORR);
-			FrameUtils.getDataAndRefreshTable(ConsultFrame.patientTable,patientService.getClass());
+			consultFrame.getPatientTableFrame().getDataAndRefreshTable(patientService.getClass());
 			command = COMMAND_SAVE;
 			controlButtonEnable(consultFrame.getRegistDMLButtons(),table,command);
 			FrameUtils.fieldsDisable(fields);
@@ -120,6 +124,7 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void undo(JButton button) {
 		emptyFields(fields);
 		command = COMMAND_UNDO;

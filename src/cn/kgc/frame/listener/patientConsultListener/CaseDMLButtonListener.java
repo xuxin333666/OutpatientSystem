@@ -40,14 +40,14 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 	
 	public CaseDMLButtonListener(ConsultFrame consultFrame) {
 		this.consultFrame = consultFrame;
-		fields = consultFrame.getCaseDescriptionFields();
-		table = ConsultFrame.caseTable;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		fields = consultFrame.getCaseDescriptionFields();
+		table = consultFrame.getCaseTableFrame().getTable();
 		try {
-			String pid = (String)FrameUtils.getTableSelectedRowInfo(ConsultFrame.patientTable, 0);
+			String pid = (String)consultFrame.getPatientTableFrame().getTableSelectedRowInfo(0);
 			patient = patientService.getPatientInfoById(pid);	
 			JButton button = (JButton)e.getSource();
 			execute(button);
@@ -57,6 +57,7 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void add(JButton button) {
 		command = COMMAND_ADD;
@@ -69,7 +70,7 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 	@Override
 	public void modify(JButton button) {
 		try {
-			cid = (String)FrameUtils.getTableSelectedRowInfo(ConsultFrame.caseTable, 0);
+			cid = (String)consultFrame.getCaseTableFrame().getTableSelectedRowInfo( 0);
 			FrameUtils.fieldsEnable(fields);
 			JTextField field = (JTextField)fields.get(0);
 			field.setEditable(false);
@@ -84,7 +85,7 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 	@Override
 	public void delete(JButton button) {
 		try {
-			cid = (String)FrameUtils.getTableSelectedRowInfo(ConsultFrame.caseTable, 0);
+			cid = (String)consultFrame.getCaseTableFrame().getTableSelectedRowInfo(0);
 			command = COMMAND_DELETE;
 			controlButtonEnable(consultFrame.getCaseDMLButtons(),table,command);
 		} catch (Exception e) {
@@ -93,6 +94,7 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void save(JButton button) {
 		int status = 0;
@@ -119,7 +121,7 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 				break;
 			}
 			FrameUtils.statusInfo(status, SAVE_SUCCUSS, SAVE_ERORR);
-			FrameUtils.getDataAndRefreshTableBySearch(ConsultFrame.caseTable,caseService.getClass(), patient.getId());
+			consultFrame.getCaseTableFrame().getDataAndRefreshTable(patient.getId());
 			command = COMMAND_SAVE;
 			controlButtonEnable(consultFrame.getCaseDMLButtons(),table,command);
 			FrameUtils.fieldsDisable(fields);
@@ -131,7 +133,7 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 	
 	public void prescription(JButton button) {
 		try {
-			cid = (String)FrameUtils.getTableSelectedRowInfo(ConsultFrame.caseTable, 0);
+			cid = (String)consultFrame.getCaseTableFrame().getTableSelectedRowInfo(0);
 			Case $case = caseService.getCaseInfoById(cid,null);
 			PrescriptionFrame prescriptionFrame = new PrescriptionFrame($case);
 			prescriptionFrame.execute();
@@ -141,6 +143,7 @@ public class CaseDMLButtonListener extends BaseDMLButtonListener implements Acti
 		}
 	};
 	
+	@SuppressWarnings("unchecked")
 	public void undo(JButton button) {
 		emptyFields(fields);
 		command = COMMAND_UNDO;

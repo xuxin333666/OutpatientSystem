@@ -58,6 +58,18 @@ public class MedicineServiceImpl implements MedicineService {
 	public List<Medicine> getAllInfoByTypeId(String typeId) throws Exception {
 		return medicineDao.queryByTypeId(typeId);
 	}
+
+	@Override
+	public Object[][] getAllMedicine() {
+		return new Object[0][4];
+	}
+
+	@Override
+	public Object[][] getMedicineInPrescription(String medicineId) throws Exception {
+		List<Medicine> medicines = medicineDao.queryByMedicineId(medicineId);
+		return ListUtils.list2TableArray(medicines, 4);
+	}
+	
 	
 
 }

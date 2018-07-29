@@ -5,14 +5,13 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 
 import cn.kgc.model.MedicineType;
 import cn.kgc.service.impl.MedicineTypeServiceImpl;
 import cn.kgc.service.intf.MedicineTypeService;
 import cn.kgc.utils.FrameUtils;
+import cn.kgc.utils.MyMedicineTypeTreeFrame;
 
 public class MedicineTypeDMLMenuListener implements ActionListener {
 
@@ -24,17 +23,17 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
 	
 	private MedicineTypeService medicineTypeService = new MedicineTypeServiceImpl();
 	
-	private JTree tree;  
+	private MyMedicineTypeTreeFrame treeFrame;  
 	private MedicineType selectedType;
 	  
-     public MedicineTypeDMLMenuListener(JTree tree) {  
-         this.tree = tree;  
+     public MedicineTypeDMLMenuListener(MyMedicineTypeTreeFrame treeFrame) {  
+         this.treeFrame = treeFrame;  
      }  
 
      public void actionPerformed(ActionEvent e) {  
     	 JMenuItem item = (JMenuItem)e.getSource();
     	 int status = 1;
-    	 DefaultMutableTreeNode selectedTree = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+    	 DefaultMutableTreeNode selectedTree = (DefaultMutableTreeNode) treeFrame.getTree().getLastSelectedPathComponent();
     	 selectedType = (MedicineType)selectedTree.getUserObject();
 		 try {
 	    	 if("add".equals(item.getName())) {
@@ -45,8 +44,7 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
 	    		 status = delete(selectedTree);
 	    	 } 
 	         FrameUtils.statusInfo(status, null, ADD_TREE_NODE_ERORR);           
-	         tree.expandPath(new TreePath(selectedTree.getPath()));  
-	         tree.updateUI(); 
+	         treeFrame.refreshTree(selectedTree);
 		 } catch (Exception e1) {
 			 FrameUtils.DialogErorr(e1.getMessage());
 			 e1.printStackTrace();
@@ -62,12 +60,7 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
         	throw new Exception(NODE_NAME_IS_EMPTY);
         }    
         MedicineType type = new MedicineType(null,name,selectedType);
-        int status = medicineTypeService.addTypeNode(type);
-        if(status > 0) {
-        	DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(type);  
-        	parentTree.add(treeNode);      	
-        }
-        return status;
+        return medicineTypeService.addTypeNode(type);
 	}  
 	
 	private int modify(DefaultMutableTreeNode selectedTree) throws Exception {
@@ -78,8 +71,7 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
         	throw new Exception(NODE_NAME_IS_EMPTY);
         }		
 		
-        selectedType.setName(name);
-        
+        selectedType.setName(name);      
         return medicineTypeService.modifyTypeNode(selectedType);
 
 		
@@ -95,13 +87,7 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
 			return 1;
 		}
 		
-		int status = medicineTypeService.deleteTypeNode(selectedType);
-		if(status > 0) {
-			DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)(selectedTree.getParent());
-			int index = parentNode.getIndex(selectedTree);
-			parentNode.remove(index);
-		}
-		return status;
+		return medicineTypeService.deleteTypeNode(selectedType);
 	}
 
 }

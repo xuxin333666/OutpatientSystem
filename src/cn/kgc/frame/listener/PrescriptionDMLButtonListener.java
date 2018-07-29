@@ -5,12 +5,17 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JTextField;
 
 import cn.kgc.frame.PrescriptionFrame;
 import cn.kgc.frame.listener.BaseDMLButtonListener;
 import cn.kgc.model.Prescription;
+import cn.kgc.model.PrescriptionMedicine;
+import cn.kgc.service.impl.PrescriptionMedicineServiceImpl;
 import cn.kgc.service.impl.PrescriptionServiceImpl;
+import cn.kgc.service.intf.PrescriptionMedicineService;
 import cn.kgc.service.intf.PrescriptionService;
 import cn.kgc.utils.FrameUtils;
 
@@ -26,6 +31,7 @@ public class PrescriptionDMLButtonListener extends BaseDMLButtonListener impleme
 	private List<JComponent> prescriptionFields;
 	
 	private PrescriptionService prescriptionService = new PrescriptionServiceImpl();
+	private PrescriptionMedicineService prescriptionMedicineService = new PrescriptionMedicineServiceImpl();
 
 
 	public PrescriptionDMLButtonListener(PrescriptionFrame prescriptionFrame) {
@@ -46,9 +52,20 @@ public class PrescriptionDMLButtonListener extends BaseDMLButtonListener impleme
 	@Override
 	public void add(JButton button) {
 		emptyFields(medicineFields,uasgeFields,prescriptionFields);
-		command = COMMAND_ADD;
-		controlComponentsEnable(command,medicineFields,uasgeFields,prescriptionFields);
-		controlButtonEnable(buttons,command);
+		JTextField idField = (JTextField)prescriptionFields.get(0);
+		try {
+			String id = prescriptionService.getMinEmptyId();
+			idField.setText(id);
+			idField.setEditable(false);
+			List<PrescriptionMedicine> prescriptionMedicines = prescriptionFrame.getBufferPrescriptionMedicine();
+			prescriptionMedicines.clear();
+			command = COMMAND_ADD;
+			controlComponentsEnable(command,medicineFields,uasgeFields,prescriptionFields);
+			controlButtonEnable(buttons,command);
+		} catch (Exception e) {
+			FrameUtils.DialogErorr("´íÎó£¬" + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -67,7 +84,18 @@ public class PrescriptionDMLButtonListener extends BaseDMLButtonListener impleme
 				Prescription prescription = prescriptionContentFieldsValue2Patient(prescriptionFields);
 				prescription.set$case(prescriptionFrame.get$case());
 				prescription.setPatient(prescriptionFrame.get$case().getPatient());
-				status = prescriptionService.add(prescription);				
+				int pStatus = prescriptionService.add(prescription);		
+				
+				List<PrescriptionMedicine> prescriptionMedicines = prescriptionFrame.getBufferPrescriptionMedicine();
+				for (int i = 0; i < prescriptionMedicines.size(); i++) {
+					JComboBox<String> usageCombo = (JComboBox<String>)uasgeFields.get(i);
+					String uasge = usageCombo.getSelectedItem().toString();
+					prescriptionMedicines.get(i).setUasge(uasge);				
+				}
+				int pmStatus = prescriptionMedicineService.add(prescriptionMedicines);
+				if(pStatus > 0 && pmStatus == prescriptionMedicines.size()) {
+					status = 1;
+				}
 			break;
 			case COMMAND_MODIFY:
 				break;
@@ -87,6 +115,8 @@ public class PrescriptionDMLButtonListener extends BaseDMLButtonListener impleme
 	@SuppressWarnings("unchecked")
 	@Override
 	public void undo(JButton button) {
+		List<PrescriptionMedicine> prescriptionMedicines = prescriptionFrame.getBufferPrescriptionMedicine();
+		prescriptionMedicines.clear();
 		emptyFields(medicineFields,uasgeFields,prescriptionFields);
 		command = COMMAND_UNDO;
 		controlButtonEnable(buttons,command);

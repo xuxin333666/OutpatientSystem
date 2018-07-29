@@ -75,9 +75,15 @@ public class MedicineDaoImpl extends BaseDaoImpl implements MedicineDao {
 
 	@Override
 	public int update(Medicine medicine) throws Exception {
-		System.out.println(medicine.getMedicineType().getId());
 		StringBuilder sql = new StringBuilder("UPDATE t_medicine SET");
 		return updateById(sql, medicine, COLUMN_NAMES_UPDATE, medicine.getId(),medicine.getMedicineType().getId());
+	}
+
+	@Override
+	public List<Medicine> queryByMedicineId(String medicineId) throws Exception {
+		String sql = SELECT_MEDICINE_AND_TYPE_TABLE_SQL + " WHERE m.id = ? ";
+		List<Object> objs = queryById(sql, Medicine.class, MedicineType.class, COLUMN_NAMES, medicineId);
+		return obj2Medicine(objs);
 	}
 
 

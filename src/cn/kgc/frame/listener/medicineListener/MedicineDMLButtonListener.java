@@ -40,6 +40,7 @@ public class MedicineDMLButtonListener extends BaseDMLButtonListener implements 
 	
 	
 	public MedicineDMLButtonListener(MedicineFrame medicineFrame) {
+		
 		this.medicineFrame = medicineFrame;
 	}
 
@@ -56,7 +57,7 @@ public class MedicineDMLButtonListener extends BaseDMLButtonListener implements 
 
 	@Override
 	public void add(JButton button) {
-		DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)medicineFrame.getTree().getLastSelectedPathComponent();	
+		DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)medicineFrame.getMedicineTypeTreeFrame().getTree().getLastSelectedPathComponent();	
 		if(treeNode != null && treeNode.getChildCount() == 0) {
 			command = COMMAND_ADD;
 			MedicineType type = (MedicineType)treeNode.getUserObject();
@@ -73,7 +74,7 @@ public class MedicineDMLButtonListener extends BaseDMLButtonListener implements 
 	@Override
 	public void modify(JButton button) {
 		try {
-			String medicineId = (String)FrameUtils.getTableSelectedRowInfo(medicineFrame.getMedicineTable(), 0);
+			String medicineId = (String)medicineFrame.getMedicineTableFrame().getTableSelectedRowInfo(0);
 			Medicine medicine = medicineService.getInfoById(medicineId);
 			command = COMMAND_MODIFY;
 			MedicineDMLFrame medicineDMLFrame = new MedicineDMLFrame(medicine, this.medicineFrame);
@@ -89,17 +90,17 @@ public class MedicineDMLButtonListener extends BaseDMLButtonListener implements 
 	public void delete(JButton button) {
 		String medicineId;
 		try {
-			medicineId = (String)FrameUtils.getTableSelectedRowInfo(medicineFrame.getMedicineTable(), 0);
+			medicineId = (String)medicineFrame.getMedicineTableFrame().getTableSelectedRowInfo(0);
 			int result = JOptionPane.showConfirmDialog(null, DELETE_MESSAGE,DELETE_MESSAGE_TITLE, JOptionPane.WARNING_MESSAGE);
 			if(result == 0) {
 				int status = medicineService.delete(medicineId);
 				FrameUtils.statusInfo(status, SAVE_SUCCUSS, SAVE_ERORR);
-				DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)medicineFrame.getTree().getLastSelectedPathComponent();	
+				DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)medicineFrame.getMedicineTypeTreeFrame().getTree().getLastSelectedPathComponent();	
 				if(treeNode != null) {
 					MedicineType type = (MedicineType)treeNode.getUserObject();
-					FrameUtils.getDataAndRefreshTableBySearch(medicineFrame.getMedicineTable(),MedicineServiceImpl.class, type.getId());				
+					medicineFrame.getMedicineTableFrame().getDataAndRefreshTable(type.getId());				
 				}else {
-					FrameUtils.getDataAndRefreshTable(medicineFrame.getMedicineTable(),MedicineServiceImpl.class);				
+					medicineFrame.getMedicineTableFrame().getDataAndRefreshTable();				
 				}	
 				command = COMMAND_SAVE;			
 			}
@@ -130,7 +131,7 @@ public class MedicineDMLButtonListener extends BaseDMLButtonListener implements 
 				break;
 			}
 			FrameUtils.statusInfo(status, SAVE_SUCCUSS, SAVE_ERORR);
-			FrameUtils.getDataAndRefreshTableBySearch(medicineFrame.getMedicineTable(),MedicineServiceImpl.class, medicineDMLFrame.getType().getId());
+			medicineFrame.getMedicineTableFrame().getDataAndRefreshTable(medicineDMLFrame.getType().getId());
 			command = COMMAND_SAVE;
 			medicineDMLFrame.getMedicineDMLFrame().dispose();	
 		} catch (Exception e) {

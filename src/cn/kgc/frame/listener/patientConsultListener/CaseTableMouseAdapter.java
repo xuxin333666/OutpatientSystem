@@ -26,8 +26,8 @@ public class CaseTableMouseAdapter implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		try {
-			caseId = FrameUtils.getTableSelectedRowInfo(ConsultFrame.caseTable, 0);
-			patientId = FrameUtils.getTableSelectedRowInfo(ConsultFrame.patientTable, 0);
+			caseId = consultFrame.getCaseTableFrame().getTableSelectedRowInfo(0);
+			patientId = consultFrame.getPatientTableFrame().getTableSelectedRowInfo(0);
 			CaseService caseService = new CaseServiceImpl();
 			Case $case = caseService.getCaseInfoById(caseId.toString(),patientId.toString());
 			fields = consultFrame.getCaseDescriptionFields();

@@ -9,7 +9,6 @@ import cn.kgc.dto.MedicineDto;
 import cn.kgc.frame.MedicineFrame;
 import cn.kgc.model.MedicineType;
 import cn.kgc.service.impl.MedicineServiceImpl;
-import cn.kgc.utils.FrameUtils;
 import cn.kgc.utils.StringUtils;
 
 public class MedicineSearchKeyListener implements KeyListener {
@@ -36,9 +35,9 @@ public class MedicineSearchKeyListener implements KeyListener {
 		
 		Object dto = null;
 		if(StringUtils.isEmpty(key)) {
-			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)medicineFrame.getTree().getLastSelectedPathComponent();
+			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)medicineFrame.getMedicineTypeTreeFrame().getTree().getLastSelectedPathComponent();
 			if(treeNode == null) {
-				FrameUtils.getDataAndRefreshTable(medicineFrame.getMedicineTable(), MedicineServiceImpl.class);
+				medicineFrame.getMedicineTableFrame().getDataAndRefreshTable(MedicineServiceImpl.class);
 				return;
 			} else {
 				dto = ((MedicineType)treeNode.getUserObject()).getId();
@@ -46,7 +45,7 @@ public class MedicineSearchKeyListener implements KeyListener {
 		} else {
 			dto = new MedicineDto("%" + key + "%");				
 		}
-		FrameUtils.getDataAndRefreshTableBySearch(medicineFrame.getMedicineTable(), MedicineServiceImpl.class,dto);
+		medicineFrame.getMedicineTableFrame().getDataAndRefreshTable(dto);
 	}
 
 }

@@ -23,4 +23,6 @@ public interface MedicineDao {
 
 	int update(Medicine medicine) throws Exception;
 
+	List<Medicine> queryByMedicineId(String medicineId) throws Exception;
+
 }
