@@ -27,7 +27,7 @@ public class MedicineTypeDaoImpl extends BaseDaoImpl implements MedicineTypeDao 
 		if(StringUtils.isEmpty(parentId)) {
 			sql.append(" WHERE c.parent_id iS NULL");
 		} else {
-			sql.append(" WHERE c.parent_id IN ?");
+			sql.append(" WHERE c.parent_id = ?");
 		}
 		List<Object> objs = queryById(sql.toString(), MedicineType.class, MedicineType.class, columnName, parentId);
 		return obj2MedicineType(objs);

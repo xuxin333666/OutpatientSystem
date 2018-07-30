@@ -48,8 +48,11 @@ public class MyMedicineTypeTreeFrame {
 	 * @param scrollPane
 	 */
 	public void regist(JScrollPane scrollPane) {
-		flag = false;
-		registBoth(scrollPane);
+		if(tree != null) {
+			flag = false;
+			registBoth(scrollPane);
+		}
+		
 	}
 	
 	/**
@@ -57,8 +60,10 @@ public class MyMedicineTypeTreeFrame {
 	 * @param scrollPane
 	 */
 	public void registWithMedicine(JScrollPane scrollPane) {
-		flag = true;
-		registBoth(scrollPane);
+		if(tree != null) {
+			flag = true;
+			registBoth(scrollPane);
+		}
 	}
 	
 	/**
@@ -86,6 +91,9 @@ public class MyMedicineTypeTreeFrame {
 	 * @throws Exception
 	 */
 	public void refreshTree(DefaultMutableTreeNode selectedTree) throws Exception {
+		if(tree == null) {
+			return;
+		}
 		this.selectedTree = selectedTree;
 		selectedtype = (MedicineType)selectedTree.getUserObject();
 		root.removeAllChildren();
@@ -136,14 +144,21 @@ public class MyMedicineTypeTreeFrame {
 	 * @param mouseAdapter
 	 */
 	public void addMouseListener(MouseListener mouseAdapter) {
+		if(tree == null) {
+			return;
+		}
 		tree.addMouseListener(mouseAdapter);	
 	}
 
 	/**
 	 * 返回生成的jtree
 	 * @return
+	 * @throws Exception 
 	 */
-	public JTree getTree() {
+	public JTree getTree() throws Exception {
+		if(tree == null) {
+			throw new Exception("暂无分类，无法操作");
+		}
 		return tree;
 	}
 	

@@ -33,9 +33,9 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
      public void actionPerformed(ActionEvent e) {  
     	 JMenuItem item = (JMenuItem)e.getSource();
     	 int status = 1;
-    	 DefaultMutableTreeNode selectedTree = (DefaultMutableTreeNode) treeFrame.getTree().getLastSelectedPathComponent();
-    	 selectedType = (MedicineType)selectedTree.getUserObject();
 		 try {
+			 DefaultMutableTreeNode selectedTree = (DefaultMutableTreeNode) treeFrame.getTree().getLastSelectedPathComponent();
+			 selectedType = (MedicineType)selectedTree.getUserObject();
 	    	 if("add".equals(item.getName())) {
 	    		 status = add(selectedTree);
 	    	 } else if("modify".equals(item.getName())) {

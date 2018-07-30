@@ -34,7 +34,7 @@ public class BaseDaoImpl {
 	public BaseDaoImpl(String daoName) {
 		SAXReader reader = new SAXReader();
 		try {
-			Document doc = reader.read(new File("src/sql.xml"));
+			Document doc = reader.read(new File("src/sql_mysql.xml"));
 			Element root = doc.getRootElement();
 			Element dao = root.element(daoName);
 			Iterator<Element> iter = dao.elementIterator();

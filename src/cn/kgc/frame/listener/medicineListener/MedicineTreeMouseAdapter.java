@@ -34,13 +34,23 @@ public class MedicineTreeMouseAdapter implements MouseListener {
 	public MedicineTreeMouseAdapter(MedicineFrame medicineFrame) {
 		this.medicineFrame = medicineFrame;
 		this.treeFrame = medicineFrame.getMedicineTypeTreeFrame();
-		this.tree = treeFrame.getTree();
+		try {
+			this.tree = treeFrame.getTree();
+		} catch (Exception e) {
+			 FrameUtils.DialogErorr(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	public MedicineTreeMouseAdapter(PrescriptionFrame prescriptionFrame) {
 		this.prescriptionFrame = prescriptionFrame;
 		this.treeFrame = prescriptionFrame.getMedicineTypeTreeFrame();
-		this.tree = treeFrame.getTree();
+		try {
+			this.tree = treeFrame.getTree();
+		} catch (Exception e) {
+			 FrameUtils.DialogErorr(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	@Override

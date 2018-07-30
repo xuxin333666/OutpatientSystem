@@ -57,18 +57,22 @@ public class MedicineDMLButtonListener extends BaseDMLButtonListener implements 
 
 	@Override
 	public void add(JButton button) {
-		DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)medicineFrame.getMedicineTypeTreeFrame().getTree().getLastSelectedPathComponent();	
-		if(treeNode != null && treeNode.getChildCount() == 0) {
-			command = COMMAND_ADD;
-			MedicineType type = (MedicineType)treeNode.getUserObject();
-			Medicine medicine = new Medicine();
-			medicine.setMedicineType(type);
-			MedicineDMLFrame medicineDMLFrame = new MedicineDMLFrame(medicine, this.medicineFrame);
-			medicineDMLFrame.add();
-			
-		} else {
-			FrameUtils.DialogErorr(USER_CHOOSE_TREE_ERORR);
-		}
+		try {
+			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)medicineFrame.getMedicineTypeTreeFrame().getTree().getLastSelectedPathComponent();
+			if(treeNode != null && treeNode.getChildCount() == 0) {
+				command = COMMAND_ADD;
+				MedicineType type = (MedicineType)treeNode.getUserObject();
+				Medicine medicine = new Medicine();
+				medicine.setMedicineType(type);
+				MedicineDMLFrame medicineDMLFrame = new MedicineDMLFrame(medicine, this.medicineFrame);
+				medicineDMLFrame.add();				
+			} else {
+				throw new Exception(USER_CHOOSE_TREE_ERORR);				
+			}
+		} catch (Exception e) {
+			FrameUtils.DialogErorr(e.getMessage());
+			e.printStackTrace();
+		}	
 	}
 
 	@Override

@@ -61,6 +61,7 @@ public class RegistDMLButtonListener extends BaseDMLButtonListener implements Ac
 			field.setText(id);
 		} catch (Exception e) {
 			FrameUtils.DialogErorr("´íÎó£¬" + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	

@@ -21,7 +21,7 @@ public class DBPoolConnection extends DruidPasswordCallback {
 	   private static DruidDataSource druidDataSource = null;
 	   
 	   static {
-	       Properties properties = loadPropertiesFile("db-druid.properties");
+	       Properties properties = loadPropertiesFile("db-druid-mysql.properties");
 	       
 	       
 	       

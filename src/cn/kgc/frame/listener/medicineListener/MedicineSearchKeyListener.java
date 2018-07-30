@@ -8,6 +8,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import cn.kgc.dto.MedicineDto;
 import cn.kgc.frame.MedicineFrame;
 import cn.kgc.model.MedicineType;
+import cn.kgc.utils.FrameUtils;
 import cn.kgc.utils.StringUtils;
 
 public class MedicineSearchKeyListener implements KeyListener {
@@ -34,12 +35,17 @@ public class MedicineSearchKeyListener implements KeyListener {
 		
 		Object dto = null;
 		if(StringUtils.isEmpty(key)) {
-			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)medicineFrame.getMedicineTypeTreeFrame().getTree().getLastSelectedPathComponent();
-			if(treeNode == null) {
-				medicineFrame.getMedicineTableFrame().getDataAndRefreshTable();
-				return;
-			} else {
-				dto = ((MedicineType)treeNode.getUserObject()).getId();
+			try {
+				DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)medicineFrame.getMedicineTypeTreeFrame().getTree().getLastSelectedPathComponent();
+				if(treeNode == null) {
+					medicineFrame.getMedicineTableFrame().getDataAndRefreshTable();
+					return;
+				} else {
+					dto = ((MedicineType)treeNode.getUserObject()).getId();
+				}
+			} catch (Exception e1) {
+				FrameUtils.DialogErorr(e1.getMessage());
+				e1.printStackTrace();
 			}
 		} else {
 			dto = new MedicineDto("%" + key + "%");				
