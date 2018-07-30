@@ -126,7 +126,7 @@ public class PrintRrescriptionFrame {
 		}
 		
 		
-		JTextField Field1 = new JTextField("易软门诊处方笔");
+		JTextField Field1 = new JTextField("易软门诊处方笺");
 		Field1.setBounds(120,40, 180,20);//某医院
 		Field1.setBorder(null);
 		Field1.setFont(new Font("楷体",Font.BOLD,20));

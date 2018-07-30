@@ -25,6 +25,7 @@ import cn.kgc.utils.StringUtils;
 
 public class BaseDaoImpl {	
 	protected final String SQL_ERORR = "后台数据错误，";
+	protected final String CONFIG_FILE_ERORR = "配置文件读取错误，";
 	protected final Map<String, String> sqlMap = new HashMap<>();
 	
 	/**
@@ -43,7 +44,7 @@ public class BaseDaoImpl {
 				sqlMap.put(e.getName(),e.getText());
 			}
 		} catch (DocumentException e) {
-			FrameUtils.DialogErorr("配置文件读取错误，" + e.getMessage());
+			FrameUtils.DialogErorr(CONFIG_FILE_ERORR + e.getMessage());
 			e.printStackTrace();
 		}
 	}
