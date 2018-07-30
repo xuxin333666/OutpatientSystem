@@ -76,6 +76,10 @@ public abstract class BaseDMLButtonListener {
 
 	};
 	
+	public void print(JButton button) {
+
+	};
+	
 	public void otherToDo(JButton button) {
 		FrameUtils.DialogErorr(OTHER_TO_DO);
 	}

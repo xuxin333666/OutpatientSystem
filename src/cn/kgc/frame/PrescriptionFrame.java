@@ -52,7 +52,7 @@ public class PrescriptionFrame {
 	
 	private static final String[] PRESCRIPTION_DML_BUTTON_IMGURL = {"./img/1new.PNG","./img/2save.PNG","./img/3shoufei.PNG",
 			"./img/4qingchu.PNG","./img/5daying.PNG","./img/6cyanfang.PNG","./img/7lishi.PNG","./img/8close.PNG"};
-	private static final String[] PRESCRIPTION_DML_BUTTON_NAMES = {"add","save","otherToDo","undo","otherToDo","otherToDo","otherToDo","exit"};
+	private static final String[] PRESCRIPTION_DML_BUTTON_NAMES = {"add","save","otherToDo","undo","print","otherToDo","otherToDo","exit"};
 	
 	private static final int WIDTH = 800;
 	private static final int HEIGHT = 700;

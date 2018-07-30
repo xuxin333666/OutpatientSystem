@@ -11,6 +11,7 @@ import javax.swing.JComponent;
 import javax.swing.JTextField;
 
 import cn.kgc.frame.PrescriptionFrame;
+import cn.kgc.frame.PrintRrescriptionFrame;
 import cn.kgc.frame.listener.BaseDMLButtonListener;
 import cn.kgc.model.Prescription;
 import cn.kgc.model.PrescriptionMedicine;
@@ -31,6 +32,8 @@ public class PrescriptionDMLButtonListener extends BaseDMLButtonListener impleme
 	private List<JComponent> medicineFields;
 	private List<JComponent> uasgeFields;
 	private List<JComponent> prescriptionFields;
+	private static Prescription prescription;
+	private static List<PrescriptionMedicine> prescriptionMedicines;
 	
 	private PrescriptionService prescriptionService = new PrescriptionServiceImpl();
 	private PrescriptionMedicineService prescriptionMedicineService = new PrescriptionMedicineServiceImpl();
@@ -86,12 +89,12 @@ public class PrescriptionDMLButtonListener extends BaseDMLButtonListener impleme
 		try {
 			switch(command) {
 			case COMMAND_ADD:
-				Prescription prescription = prescriptionContentFieldsValue2Patient(prescriptionFields);
+				prescription = prescriptionContentFieldsValue2Patient(prescriptionFields);
 				prescription.set$case(prescriptionFrame.get$case());
 				prescription.setPatient(prescriptionFrame.get$case().getPatient());
 				int pStatus = prescriptionService.add(prescription);		
 				
-				List<PrescriptionMedicine> prescriptionMedicines = prescriptionFrame.getBufferPrescriptionMedicine();
+				prescriptionMedicines = prescriptionFrame.getBufferPrescriptionMedicine();
 				for (int i = 0; i < prescriptionMedicines.size(); i++) {
 					JComboBox<String> usageCombo = (JComboBox<String>)uasgeFields.get(i);
 					String uasge = usageCombo.getSelectedItem().toString();
@@ -134,6 +137,15 @@ public class PrescriptionDMLButtonListener extends BaseDMLButtonListener impleme
 	}
 	
 	
+	@Override
+	public void print(JButton button) {
+		if(prescription == null) {
+			FrameUtils.DialogErorr("请选创建一个处方并保存");
+		} else {
+			new PrintRrescriptionFrame(prescription,prescriptionMedicines);		
+		}
+	}
+
 	private Prescription prescriptionContentFieldsValue2Patient(List<JComponent> fields) throws Exception {	
 		Object obj = fieldsValue2Patient(fields, Prescription.class, 0);
 		Prescription prescription = (Prescription)obj;
