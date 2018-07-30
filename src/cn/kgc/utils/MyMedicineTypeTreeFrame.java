@@ -19,8 +19,6 @@ public class MyMedicineTypeTreeFrame {
 	private JTree tree;		//生成的树控件
 	private DefaultMutableTreeNode root;		//生成的树根节点
 	private MedicineType rootType;		//根节点放入的药品分类对象
-	private DefaultMutableTreeNode selectedTree;		//选中的树节点
-	private MedicineType selectedtype;		//选中的树节点放入的药品分类对象
 	private boolean flag;		//是否加载叶子节点上的药品对象
 	MedicineTypeService medicineTypeService = new MedicineTypeServiceImpl();		//药品分类service对象
 	MedicineService medicineService = new MedicineServiceImpl();		//药品service对象
@@ -91,19 +89,7 @@ public class MyMedicineTypeTreeFrame {
 	 * @throws Exception
 	 */
 	public void refreshTree(DefaultMutableTreeNode selectedTree) throws Exception {
-		if(tree == null) {
-			return;
-		}
-		this.selectedTree = selectedTree;
-		selectedtype = (MedicineType)selectedTree.getUserObject();
-		root.removeAllChildren();
-		List<MedicineType> listArrChild = medicineTypeService.getAllInfoByParentId(rootType.getId());
-		addTreeNode(root,listArrChild);
-		if(this.selectedTree.getParent() != null) {
-			this.selectedTree = (DefaultMutableTreeNode)(this.selectedTree.getParent());
-		}
-		TreePath path = new TreePath(this.selectedTree.getPath());
-		tree.expandPath(path);  
+		tree.expandPath(new TreePath(selectedTree.getPath()));  
         tree.updateUI(); 
 	}
 	
@@ -118,9 +104,6 @@ public class MyMedicineTypeTreeFrame {
 			for (MedicineType medicineType : listArr) {
 				DefaultMutableTreeNode treeNodeChild = new DefaultMutableTreeNode(medicineType);  
 				treeNode.add(treeNodeChild);
-				if(medicineType.equals(selectedtype)) {
-					selectedTree = treeNodeChild;					
-				}
 				List<MedicineType> listArrChild = medicineTypeService.getAllInfoByParentId(medicineType.getId());
 				addTreeNode(treeNodeChild,listArrChild);				
 

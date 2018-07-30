@@ -18,8 +18,6 @@ public class MedicineTypeServiceImpl implements MedicineTypeService {
 
 	@Override
 	public int addTypeNode(MedicineType type) throws Exception {
-		String id = medicineTypeDao.queryMinEmptyId();
-		type.setId(id);
 		return medicineTypeDao.insert(type);
 	}
 

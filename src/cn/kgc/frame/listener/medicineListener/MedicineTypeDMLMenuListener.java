@@ -7,6 +7,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import cn.kgc.dao.impl.MedicineTypeDaoImpl;
+import cn.kgc.dao.intf.MedicineTypeDao;
 import cn.kgc.model.MedicineType;
 import cn.kgc.service.impl.MedicineTypeServiceImpl;
 import cn.kgc.service.intf.MedicineTypeService;
@@ -43,8 +45,8 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
 	    	 } else if("delete".equals(item.getName())) {
 	    		 status = delete(selectedTree);
 	    	 } 
-	         FrameUtils.statusInfo(status, null, ADD_TREE_NODE_ERORR);           
-	         treeFrame.refreshTree(selectedTree);
+	         FrameUtils.statusInfo(status, null, ADD_TREE_NODE_ERORR); 
+	        treeFrame.refreshTree(selectedTree);
 		 } catch (Exception e1) {
 			 FrameUtils.DialogErorr(e1.getMessage());
 			 e1.printStackTrace();
@@ -59,8 +61,14 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
         } else if(name.equals("")) {
         	throw new Exception(NODE_NAME_IS_EMPTY);
         }    
-        MedicineType type = new MedicineType(null,name,selectedType);
-        return medicineTypeService.addTypeNode(type);
+        MedicineTypeDao medicineTypeDao = new MedicineTypeDaoImpl();
+        MedicineType type = new MedicineType(medicineTypeDao.queryMinEmptyId(),name,selectedType);
+        int status = medicineTypeService.addTypeNode(type);
+        if(status > 0) {
+        	DefaultMutableTreeNode node = new DefaultMutableTreeNode(type);
+        	parentTree.add(node);
+        }
+        return status;
 	}  
 	
 	private int modify(DefaultMutableTreeNode selectedTree) throws Exception {
@@ -71,7 +79,7 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
         	throw new Exception(NODE_NAME_IS_EMPTY);
         }		
 		
-        selectedType.setName(name);      
+        selectedType.setName(name);   
         return medicineTypeService.modifyTypeNode(selectedType);
 
 		
@@ -86,8 +94,19 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
 		if(result != 0) {
 			return 1;
 		}
-		
-		return medicineTypeService.deleteTypeNode(selectedType);
+		int status = medicineTypeService.deleteTypeNode(selectedType);
+		if(status > 0) {
+			DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)selectedTree.getParent();
+			for(int i=0;i<parentNode.getLeafCount();i++) {
+				DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)parentNode.getChildAt(i);
+				if(selectedTree.equals(childNode)) {
+					parentNode.remove(i);
+					break;
+				}
+			}
+			
+		}
+		return status;
 	}
 
 }

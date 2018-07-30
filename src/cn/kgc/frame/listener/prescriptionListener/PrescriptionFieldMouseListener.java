@@ -1,4 +1,4 @@
-package cn.kgc.frame.listener;
+package cn.kgc.frame.listener.prescriptionListener;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -9,18 +9,24 @@ import javax.swing.JComponent;
 import javax.swing.JTextField;
 
 import cn.kgc.frame.PrescriptionFrame;
+import cn.kgc.model.Medicine;
 import cn.kgc.model.PrescriptionMedicine;
+import cn.kgc.service.impl.MedicineServiceImpl;
+import cn.kgc.service.intf.MedicineService;
+import cn.kgc.utils.FrameUtils;
 import cn.kgc.utils.StringUtils;
 
 public class PrescriptionFieldMouseListener implements MouseListener {
 	private List<JComponent> medicineFields;
 	private  List<JComponent> usageFields;
+	private List<JComponent> prescriptionFields;
 	private List<PrescriptionMedicine> prescriptionMedicines;
 	
 	public PrescriptionFieldMouseListener(PrescriptionFrame prescriptionFrame) {
 		medicineFields = prescriptionFrame.getMedicineFields();
 		usageFields = prescriptionFrame.getUasgeFields();
 		prescriptionMedicines = prescriptionFrame.getBufferPrescriptionMedicine();
+		prescriptionFields = prescriptionFrame.getPrescriptionFields();
 		
 	}
 
@@ -58,7 +64,16 @@ public class PrescriptionFieldMouseListener implements MouseListener {
 					preCombo.setSelectedItem(combo.getSelectedItem());
 					
 				}
-				
+				MedicineService medicineService = new MedicineServiceImpl();
+				try {
+					Medicine medicine = medicineService.getInfoById(prescriptionMedicines.get(clickedRow).getMedicineId());
+					JTextField priceField = (JTextField)prescriptionFields.get(3);
+					double price = Double.parseDouble(priceField.getText()) - medicine.getPrice();
+					priceField.setText(price+"");
+				} catch (Exception e1) {
+					FrameUtils.DialogErorr(e1.getMessage());
+					e1.printStackTrace();
+				}
 				prescriptionMedicines.remove(clickedRow);
 			}
 		}
