@@ -15,18 +15,16 @@ public class BusinessButtonListener implements ActionListener {
 
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		BaseBusinessButtonFrame businessButtonFrameIntf;
+	public void actionPerformed(ActionEvent e) {		
 		try {
 			JButton button = (JButton)e.getSource();
-			businessButtonFrameIntf = BusinessButtonUtils.getBusinessButtonFrame(button.getName());
-			businessButtonFrameIntf.execute();
+			BaseBusinessButtonFrame businessButtonFrame = BusinessButtonUtils.getBusinessButtonFrame(button.getName());
+			businessButtonFrame.execute();
 		} catch(ClassNotFoundException e1) {
 			FrameUtils.DialogErorr(BUSINESS_NOTFOUND_EXCEPTION);
 		} catch (Exception e1) {
 			FrameUtils.DialogErorr(BUSINESS_STATUS_EXCEPTION + e1.getMessage());
 		}
-
 	}
 
 }
