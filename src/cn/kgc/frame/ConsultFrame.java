@@ -192,10 +192,10 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 	}
 	
 	private void createPatientTablePanel() {
-		PatientTableModel patientTableModel = PatientTableModel.getInstance();
-		patientTableFrame = new MyTableFrame(patientTableModel,PatientServiceImpl.class);
+		patientTableFrame = new MyTableFrame(PatientTableModel.getInstance(),PatientServiceImpl.class);
 		patientTableFrame.regist(patientTablePanel);
-		patientTableFrame.setScrollPaneBounds(0, 0, PATIENT_SCROLL_PANE_WIDTH, ScreenSizeUtils.screenHeight-QUERY_PANEL_HEIGHT - FOOTER_HEIGHT);
+		patientTableFrame.setScrollPaneBounds(0, 0, PATIENT_SCROLL_PANE_WIDTH, 
+											ScreenSizeUtils.screenHeight-QUERY_PANEL_HEIGHT - FOOTER_HEIGHT);
 		patientTableFrame.addMouseListener(new PatientTableMouseAdapter(this));
 	}
 	
@@ -320,10 +320,10 @@ public class ConsultFrame implements BaseBusinessButtonFrame {
 
 
 	private void createCaseTablePane() {
-		CaseTableModel caseTableModel = CaseTableModel.getInstance();	
-		caseTableFrame = new MyTableFrame(caseTableModel,CaseServiceImpl.class);	
+		caseTableFrame = new MyTableFrame(CaseTableModel.getInstance(),CaseServiceImpl.class);	
 		caseTableFrame.regist(caseManagerPanel);
-		caseTableFrame.setScrollPaneBounds(0, caseManagerChildpanel.getHeight(), caseManagerChildpanel.getWidth(), CASE_TABLE_HEIGHT);
+		caseTableFrame.setScrollPaneBounds(0, caseManagerChildpanel.getHeight(), 
+												caseManagerChildpanel.getWidth(), CASE_TABLE_HEIGHT);
 		caseTableFrame.addMouseListener(new CaseTableMouseAdapter(this));
 	}
 

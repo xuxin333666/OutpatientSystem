@@ -91,10 +91,8 @@ public class MedicineFrame implements BaseBusinessButtonFrame {
 	
 	
 	private void createDrugTabbedPane() {
-		MedicineTableModel medicineTableModel = MedicineTableModel.getInstance();
-		medicineTableFrame = new MyTableFrame(medicineTableModel,MedicineServiceImpl.class);
-		medicineTableFrame.regist(TABED_DRUG_LIST_TITLE, medicineTabbedPane);
-		
+		medicineTableFrame = new MyTableFrame(MedicineTableModel.getInstance(),MedicineServiceImpl.class);
+		medicineTableFrame.regist(TABED_DRUG_LIST_TITLE, medicineTabbedPane);		
 	}
 
 

@@ -2,7 +2,6 @@ package cn.kgc.frame;
 
 
 import java.awt.Image;
-import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -16,7 +15,6 @@ import javax.swing.JPasswordField;
 import cn.kgc.frame.listener.BusinessButtonListener;
 import cn.kgc.frame.listener.loginListener.ModifyPswButtonListener;
 import cn.kgc.model.User;
-import cn.kgc.utils.BusinessButtonUtils;
 import cn.kgc.utils.FrameUtils;
 import cn.kgc.utils.ScreenSizeUtils;
 
@@ -181,7 +179,11 @@ public class MainFrame {
 		
 		
 		
-		private List<String> BusinessButtonUrlList = BusinessButtonUtils.getList();
+		private String[] BusinessButtonUrlList = {"./img/tool_img01.PNG","./img/tool_img02.PNG","./img/tool_img03.PNG"
+				,"./img/tool_img04.PNG","./img/tool_img05.PNG","./img/tool_img06.PNG","./img/tool_img07.PNG","./img/tool_img08.PNG"
+				,"./img/tool_img09.PNG","./img/tool_img10.PNG","./img/tool_img11.PNG"};
+		private String[] BusinessButtonNameList = {"charge","consult","case","health","analysis","remind",
+				"medicine","financial","shift","lock","exit"};
 		private JPanel servicePanel;
 		private JPanel buttonPanel = new JPanel();
 		
@@ -199,9 +201,10 @@ public class MainFrame {
 
 		private void addButton() {
 			int positionX = 0;
-			for (String string : BusinessButtonUrlList) {
-				JButton button = FrameUtils.addButton(string, positionX, BUSINESS_BUTTON_WIDTH, BUSINESS_BUTTON_PANEL_HEIGHT, buttonPanel);
-				button.addActionListener(new BusinessButtonListener(string));
+			for (int i=0;i<BusinessButtonUrlList.length;i++) {
+				JButton button = FrameUtils.addButton(BusinessButtonUrlList[i], positionX, BUSINESS_BUTTON_WIDTH, BUSINESS_BUTTON_PANEL_HEIGHT, buttonPanel);
+				button.setName(BusinessButtonNameList[i]);
+				button.addActionListener(new BusinessButtonListener());
 				positionX += BUSINESS_BUTTON_WIDTH;
 			}
 		}

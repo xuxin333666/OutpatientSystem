@@ -2,6 +2,7 @@ package cn.kgc.frame.listener.medicineListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -9,8 +10,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import cn.kgc.dao.impl.MedicineTypeDaoImpl;
 import cn.kgc.dao.intf.MedicineTypeDao;
+import cn.kgc.model.Medicine;
 import cn.kgc.model.MedicineType;
+import cn.kgc.service.impl.MedicineServiceImpl;
 import cn.kgc.service.impl.MedicineTypeServiceImpl;
+import cn.kgc.service.intf.MedicineService;
 import cn.kgc.service.intf.MedicineTypeService;
 import cn.kgc.utils.FrameUtils;
 import cn.kgc.utils.MyMedicineTypeTreeFrame;
@@ -19,9 +23,10 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
 
 	private static final String ADD_TREE_NODE_ERORR = "保存失败";
 	private static final String NODE_NAME_IS_EMPTY = "药品类目名不能为空";
+	private static final String ADD_IS_NOT_EMPTY = "不能增加，该节点含有药品";
 	private static final Object CONFIRM_DELETE_MESSAGE = "是否确认删除？";
 	private static final String CONFIRM_DELETE_TITLE = "删除";
-	private static final String DELETE_IS_NOT_EMPTY = "不能删除，该节点含有其他子节点";
+	private static final String DELETE_IS_NOT_EMPTY = "不能删除，该节点含有其他子节点或药品";
 	
 	private MedicineTypeService medicineTypeService = new MedicineTypeServiceImpl();
 	
@@ -55,6 +60,9 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
 
 
 	private int add(DefaultMutableTreeNode parentTree) throws Exception {
+		if(isMedicineExist()) {
+			throw new Exception(ADD_IS_NOT_EMPTY);
+		}
         String name = JOptionPane.showInputDialog("请输入分类节点名称："); 
         if(name == null) {
         	return 1;      	
@@ -86,10 +94,9 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
 	}
 	
 	private int delete(DefaultMutableTreeNode selectedTree) throws Exception {
-		if(selectedTree.getChildCount() != 0) {
+		if(selectedTree.getChildCount() != 0 || isMedicineExist()) {
 			throw new Exception(DELETE_IS_NOT_EMPTY);
 		};
-		
 		int result = JOptionPane.showConfirmDialog(null, CONFIRM_DELETE_MESSAGE, CONFIRM_DELETE_TITLE, JOptionPane.WARNING_MESSAGE);
 		if(result != 0) {
 			return 1;
@@ -107,6 +114,15 @@ public class MedicineTypeDMLMenuListener implements ActionListener {
 			
 		}
 		return status;
+	}
+	
+	private boolean isMedicineExist() throws Exception {
+		MedicineService medicineDao = new MedicineServiceImpl();
+		List<Medicine> medicine = medicineDao.getAllInfoByTypeId(selectedType.getId());
+		if(medicine.size() == 0) {
+			return false;
+		}
+		return true;
 	}
 
 }
