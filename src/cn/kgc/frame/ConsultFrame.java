@@ -19,7 +19,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import cn.kgc.frame.intf.BaseBusinessButtonFrame;
 import cn.kgc.frame.listener.patientConsultListener.CaseDMLButtonListener;
 import cn.kgc.frame.listener.patientConsultListener.CaseTableMouseAdapter;
 import cn.kgc.frame.listener.patientConsultListener.PatientQueryButtonListener;

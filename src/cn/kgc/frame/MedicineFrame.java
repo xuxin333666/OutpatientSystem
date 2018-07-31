@@ -12,7 +12,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-import cn.kgc.frame.intf.BaseBusinessButtonFrame;
 import cn.kgc.frame.listener.medicineListener.MedicineDMLButtonListener;
 import cn.kgc.frame.listener.medicineListener.MedicineSearchKeyListener;
 import cn.kgc.frame.listener.medicineListener.MedicineTreeMouseAdapter;

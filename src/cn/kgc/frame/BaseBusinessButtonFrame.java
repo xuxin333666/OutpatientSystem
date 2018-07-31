@@ -1,4 +1,4 @@
-package cn.kgc.frame.intf;
+package cn.kgc.frame;
 
 
 public interface BaseBusinessButtonFrame {

@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
-import cn.kgc.frame.intf.BaseBusinessButtonFrame;
+import cn.kgc.frame.BaseBusinessButtonFrame;
 import cn.kgc.utils.BusinessButtonUtils;
 import cn.kgc.utils.FrameUtils;
 

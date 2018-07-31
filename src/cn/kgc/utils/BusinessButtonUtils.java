@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import cn.kgc.frame.intf.BaseBusinessButtonFrame;
+import cn.kgc.frame.BaseBusinessButtonFrame;
 
 
 public class BusinessButtonUtils {
